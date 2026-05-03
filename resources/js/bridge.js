@@ -8,7 +8,6 @@ export const fetchData = () => {
         console.error(e);
     }
 };
-
 export const fetchEnv = () => {
     try {
         const data = document.querySelector("meta[name='env']");
