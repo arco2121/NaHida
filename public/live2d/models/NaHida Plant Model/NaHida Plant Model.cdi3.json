@@ -1,0 +1,392 @@
+{
+	"Version": 3,
+	"Parameters": [
+		{
+			"Id": "RootX",
+			"GroupId": "",
+			"Name": "Root X"
+		},
+		{
+			"Id": "RootY",
+			"GroupId": "",
+			"Name": "Root Y"
+		},
+		{
+			"Id": "PlantZ",
+			"GroupId": "",
+			"Name": "Plant Z"
+		},
+		{
+			"Id": "PlantY",
+			"GroupId": "",
+			"Name": "Plant Y"
+		},
+		{
+			"Id": "Pot_Color",
+			"GroupId": "",
+			"Name": "Pot Color"
+		},
+		{
+			"Id": "EyeOpenR",
+			"GroupId": "",
+			"Name": "EyeOpen R"
+		},
+		{
+			"Id": "EyeOpenL",
+			"GroupId": "",
+			"Name": "EyeOpen L"
+		},
+		{
+			"Id": "EyePositionX",
+			"GroupId": "",
+			"Name": "Eye Position X"
+		},
+		{
+			"Id": "EyePositionY",
+			"GroupId": "",
+			"Name": "Eye Position Y"
+		},
+		{
+			"Id": "ClosedEyes",
+			"GroupId": "",
+			"Name": "Closed Eyes"
+		},
+		{
+			"Id": "EyeExpression",
+			"GroupId": "",
+			"Name": "Eye Expression"
+		},
+		{
+			"Id": "MouthOpen",
+			"GroupId": "",
+			"Name": "Mouth Open"
+		},
+		{
+			"Id": "MouthExpression",
+			"GroupId": "",
+			"Name": "Mouth Expression"
+		},
+		{
+			"Id": "Blush",
+			"GroupId": "",
+			"Name": "Blush"
+		},
+		{
+			"Id": "SadShadow",
+			"GroupId": "",
+			"Name": "Sad Shadow"
+		},
+		{
+			"Id": "ReactionToggleSad",
+			"GroupId": "",
+			"Name": "ReactionToggle Sad"
+		},
+		{
+			"Id": "ReactionToggleStars",
+			"GroupId": "",
+			"Name": "ReactionToggle Stars"
+		},
+		{
+			"Id": "ReactionToggleFlowers",
+			"GroupId": "",
+			"Name": "ReactionToggle Flowers"
+		},
+		{
+			"Id": "ReactionToggleSleep",
+			"GroupId": "",
+			"Name": "ReactionToggle Sleep"
+		},
+		{
+			"Id": "ReactionToggleSleepHide",
+			"GroupId": "",
+			"Name": "ReactionToggle Sleep Hide"
+		},
+		{
+			"Id": "HideRactionsToggle",
+			"GroupId": "",
+			"Name": "HideRactions"
+		},
+		{
+			"Id": "CartoonReactionsAnimation1",
+			"GroupId": "",
+			"Name": "Cartoon Reactions Animation 1"
+		},
+		{
+			"Id": "CartoonReactionsAnimation2",
+			"GroupId": "",
+			"Name": "Cartoon Reactions Animation 2"
+		},
+		{
+			"Id": "CartoonReactionsAnimation3",
+			"GroupId": "",
+			"Name": "Cartoon Reactions Animation 3"
+		},
+		{
+			"Id": "PlantVariant",
+			"GroupId": "",
+			"Name": "Plant Variant"
+		},
+		{
+			"Id": "PlantColor",
+			"GroupId": "",
+			"Name": "Plant Color"
+		},
+		{
+			"Id": "FlowerColor",
+			"GroupId": "",
+			"Name": "Flower Color"
+		},
+		{
+			"Id": "IdleAnimatiobCycle",
+			"GroupId": "",
+			"Name": "Idle Animatiob Cycle"
+		},
+		{
+			"Id": "IdleAnimatiobCycle2",
+			"GroupId": "",
+			"Name": "Idle Animatiob Cycle 2"
+		},
+		{
+			"Id": "IdleAnimatiobCycle3",
+			"GroupId": "",
+			"Name": "Idle Animatiob Cycle 3"
+		},
+		{
+			"Id": "IdleAnimatiobCycle4",
+			"GroupId": "",
+			"Name": "Idle Animatiob Cycle 4"
+		},
+		{
+			"Id": "SadPlant",
+			"GroupId": "",
+			"Name": "Sad Plant"
+		},
+		{
+			"Id": "SadPlantColor",
+			"GroupId": "",
+			"Name": "Sad Plant Color"
+		},
+		{
+			"Id": "PlantSquish0",
+			"GroupId": "",
+			"Name": "Plant Squish 0"
+		},
+		{
+			"Id": "PlantSquish1",
+			"GroupId": "",
+			"Name": "Plant Squish 1"
+		},
+		{
+			"Id": "PhysicsX0",
+			"GroupId": "",
+			"Name": "Physics X 0"
+		},
+		{
+			"Id": "PhysicsX1",
+			"GroupId": "",
+			"Name": "Physics X 1"
+		},
+		{
+			"Id": "PhysicsX2",
+			"GroupId": "",
+			"Name": "Physics X 2"
+		},
+		{
+			"Id": "PhysicsY0",
+			"GroupId": "",
+			"Name": "Physics Y 0"
+		},
+		{
+			"Id": "PhysicsY1",
+			"GroupId": "",
+			"Name": "Physics Y 1"
+		},
+		{
+			"Id": "EyePopR",
+			"GroupId": "",
+			"Name": "EyePop R"
+		},
+		{
+			"Id": "EyePopL",
+			"GroupId": "",
+			"Name": "EyePop L"
+		}
+	],
+	"ParameterGroups": [],
+	"Parts": [
+		{
+			"Id": "CartoonReactionsPart",
+			"Name": "CartoonReactions"
+		},
+		{
+			"Id": "VaseTop",
+			"Name": "Vase Top"
+		},
+		{
+			"Id": "Plants",
+			"Name": "Plants"
+		},
+		{
+			"Id": "Vase",
+			"Name": "Vase"
+		},
+		{
+			"Id": "FlowersReactionPart",
+			"Name": "Flowers Reaction"
+		},
+		{
+			"Id": "SleepReactionPart",
+			"Name": "Sleep Reaction"
+		},
+		{
+			"Id": "StarReactionPart",
+			"Name": "Star Reaction"
+		},
+		{
+			"Id": "Dirt",
+			"Name": "Dirt"
+		},
+		{
+			"Id": "SadOverlayPart",
+			"Name": "SadOverlay"
+		},
+		{
+			"Id": "ColorOverlay",
+			"Name": "ColorOverlay"
+		},
+		{
+			"Id": "Plant6",
+			"Name": "Plant 6"
+		},
+		{
+			"Id": "Plant5",
+			"Name": "Plant 5"
+		},
+		{
+			"Id": "Plant4",
+			"Name": "Plant 4"
+		},
+		{
+			"Id": "Plant3",
+			"Name": "Plant 3"
+		},
+		{
+			"Id": "Plant2",
+			"Name": "Plant 2"
+		},
+		{
+			"Id": "Plant1",
+			"Name": "Plant 1"
+		},
+		{
+			"Id": "Plant0",
+			"Name": "Plant 0"
+		},
+		{
+			"Id": "Face",
+			"Name": "Face"
+		},
+		{
+			"Id": "Pot",
+			"Name": "Pot"
+		},
+		{
+			"Id": "ColorOverlay_Plant5",
+			"Name": "ColorOverlay_Plant5"
+		},
+		{
+			"Id": "ColorOverlay_Plant4",
+			"Name": "ColorOverlay_Plant4"
+		},
+		{
+			"Id": "ColorOverlay_Plant3",
+			"Name": "ColorOverlay_Plant3"
+		},
+		{
+			"Id": "ColorOverlay_Plant2",
+			"Name": "ColorOverlay_Plant2"
+		},
+		{
+			"Id": "ColorOverlay_Plant1",
+			"Name": "ColorOverlay_Plant1"
+		},
+		{
+			"Id": "ColorOverlay_Plant0",
+			"Name": "ColorOverlay_Plant0"
+		},
+		{
+			"Id": "Plant6A",
+			"Name": "Plant 6 A"
+		},
+		{
+			"Id": "ColorOverlay_Plant6",
+			"Name": "ColorOverlay_Plant6"
+		},
+		{
+			"Id": "Plant6B",
+			"Name": "Plant 6 B"
+		},
+		{
+			"Id": "Plant1C",
+			"Name": "Plant 1 C"
+		},
+		{
+			"Id": "Plant1B",
+			"Name": "Plant 1 B"
+		},
+		{
+			"Id": "Eyes",
+			"Name": "Eyes"
+		},
+		{
+			"Id": "Mouth",
+			"Name": "Mouth"
+		},
+		{
+			"Id": "Plant6Flower",
+			"Name": "Plant 6 Flower"
+		},
+		{
+			"Id": "EyeL",
+			"Name": "Eye L"
+		},
+		{
+			"Id": "EyeR",
+			"Name": "Eye R"
+		},
+		{
+			"Id": "Flower6",
+			"Name": "Flower 6"
+		},
+		{
+			"Id": "Flower5",
+			"Name": "Flower 5"
+		},
+		{
+			"Id": "Flower4",
+			"Name": "Flower 4"
+		},
+		{
+			"Id": "Flower3",
+			"Name": "Flower 3"
+		},
+		{
+			"Id": "Flower2",
+			"Name": "Flower 2"
+		},
+		{
+			"Id": "Flower1",
+			"Name": "Flower 1"
+		},
+		{
+			"Id": "Flower0",
+			"Name": "Flower 0"
+		}
+	],
+	"CombinedParameters": [
+		[
+			"IdleAnimatiobCycle3",
+			"IdleAnimatiobCycle4"
+		]
+	]
+}

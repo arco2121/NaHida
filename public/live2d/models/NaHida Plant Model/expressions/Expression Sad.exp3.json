@@ -1,0 +1,22 @@
+{
+	"Type": "Live2D Expression",
+	"FadeInTime": 0.1,
+	"FadeOutTime": 0.1,
+	"Parameters": [
+		{
+			"Id": "EyeExpression",
+			"Value": 1,
+			"Blend": "Add"
+		},
+		{
+			"Id": "MouthExpression",
+			"Value": 1,
+			"Blend": "Add"
+		},
+		{
+			"Id": "SadShadow",
+			"Value": 0.5,
+			"Blend": "Add"
+		}
+	]
+}

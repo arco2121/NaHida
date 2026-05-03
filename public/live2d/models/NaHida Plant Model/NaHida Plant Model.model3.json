@@ -1,0 +1,56 @@
+{
+  "Version": 3,
+  "FileReferences": {
+    "Moc": "NaHida Plant Model.moc3",
+    "Textures": [
+      "NaHida Plant Model.2048/texture_00.png",
+      "NaHida Plant Model.2048/texture_01.png",
+      "NaHida Plant Model.2048/texture_02.png",
+      "NaHida Plant Model.2048/texture_03.png"
+    ],
+    "Physics": "NaHida Plant Model.physics3.json",
+    "DisplayInfo": "NaHida Plant Model.cdi3.json",
+    "Expressions": [
+      { "Name": "Normal", "File": "expressions/Expression Normal.exp3.json" },
+      { "Name": "Sad",    "File": "expressions/Expression Sad.exp3.json" },
+      { "Name": "Sleep",  "File": "expressions/Expression Sleep.exp3.json" }
+    ],
+    "Motions": {
+      "Tap": [
+        { "File": "motions/Tap_0.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 },
+        { "File": "motions/Tap_1.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 },
+        { "File": "motions/Tap_2.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 },
+        { "File": "motions/Tap_3.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 },
+        { "File": "motions/Tap_4.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 }
+      ],
+      "Idle": [
+        { "File": "motions/Idle.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 }
+      ],
+      "Sleep": [
+        { "File": "motions/SleepIdle.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 }
+      ]
+    }
+  },
+  "Groups": [
+    {
+      "Target": "Parameter",
+      "Name": "EyeBlink",
+      "Ids": ["EyeOpenR", "EyeOpenL"]
+    },
+    {
+      "Target": "Parameter",
+      "Name": "LipSync",
+      "Ids": []
+    }
+  ],
+  "HitAreas": [
+    {
+			"Id": "HitAreaHead",
+			"Name": ""
+		},
+		{
+			"Id": "HitAreaBody",
+			"Name": ""
+		}
+  ]
+}

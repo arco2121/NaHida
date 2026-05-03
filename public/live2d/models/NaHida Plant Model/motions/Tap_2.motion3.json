@@ -1,0 +1,523 @@
+{
+	"Version": 3,
+	"Meta": {
+		"Duration": 1.583,
+		"Fps": 60.0,
+		"Loop": false,
+		"AreBeziersRestricted": false,
+		"CurveCount": 24,
+		"TotalSegmentCount": 51,
+		"TotalPointCount": 155,
+		"UserDataCount": 0,
+		"TotalUserDataSize": 0,
+		"FadeInTime": 0.0,
+		"FadeOutTime": 0.0
+	},
+	"Curves": [
+		{
+			"Target": "Parameter",
+			"Id": "RootX",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.528,
+				0,
+				1.056,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "RootY",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.528,
+				0,
+				1.056,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "PlantZ",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.117,
+				0,
+				0.233,
+				1.2,
+				0.35,
+				1.2,
+				1,
+				0.478,
+				1.2,
+				0.606,
+				-0.555,
+				0.733,
+				-0.923,
+				1,
+				0.867,
+				-1.307,
+				1,
+				-1.26,
+				1.133,
+				-1.26,
+				1,
+				1.272,
+				-1.26,
+				1.411,
+				0,
+				1.55,
+				0,
+				1,
+				1.561,
+				0,
+				1.572,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "PlantY",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.117,
+				0,
+				0.233,
+				3,
+				0.35,
+				3,
+				1,
+				0.422,
+				3,
+				0.494,
+				-5.798,
+				0.567,
+				-7,
+				1,
+				0.728,
+				-9.681,
+				0.889,
+				-10,
+				1.05,
+				-10,
+				1,
+				1.189,
+				-10,
+				1.328,
+				0,
+				1.467,
+				0,
+				1,
+				1.506,
+				0,
+				1.544,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "EyeOpenR",
+			"Segments": [
+				0,
+				1,
+				0,
+				0.35,
+				1,
+				1,
+				0.422,
+				1,
+				0.494,
+				0,
+				0.567,
+				0,
+				1,
+				0.728,
+				0,
+				0.889,
+				0,
+				1.05,
+				0,
+				1,
+				1.189,
+				0,
+				1.328,
+				1,
+				1.467,
+				1,
+				0,
+				1.583,
+				1
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "EyeOpenL",
+			"Segments": [
+				0,
+				1,
+				0,
+				0.35,
+				1,
+				1,
+				0.422,
+				1,
+				0.494,
+				0,
+				0.567,
+				0,
+				1,
+				0.728,
+				0,
+				0.889,
+				0,
+				1.05,
+				0,
+				1,
+				1.189,
+				0,
+				1.328,
+				1,
+				1.467,
+				1,
+				0,
+				1.583,
+				1
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "EyePositionX",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.528,
+				0,
+				1.056,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "EyePositionY",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.528,
+				0,
+				1.056,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "ClosedEyes",
+			"Segments": [
+				0,
+				1,
+				1,
+				0.528,
+				1,
+				1.056,
+				1,
+				1.583,
+				1
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "MouthOpen",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.15,
+				0,
+				0.3,
+				0,
+				0.45,
+				0,
+				1,
+				0.522,
+				0,
+				0.594,
+				0.518,
+				0.667,
+				0.7,
+				1,
+				0.778,
+				0.979,
+				0.889,
+				1,
+				1,
+				1,
+				1,
+				1.089,
+				1,
+				1.178,
+				0,
+				1.267,
+				0,
+				1,
+				1.372,
+				0,
+				1.478,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "Blush",
+			"Segments": [
+				0,
+				0.1,
+				1,
+				0.528,
+				0.1,
+				1.056,
+				0.1,
+				1.583,
+				0.1
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "ReactionToggleSad",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.133,
+				0,
+				0.267,
+				0,
+				0.4,
+				0,
+				1,
+				0.489,
+				0,
+				0.578,
+				1,
+				0.667,
+				1,
+				1,
+				0.783,
+				1,
+				0.9,
+				0,
+				1.017,
+				0,
+				1,
+				1.206,
+				0,
+				1.394,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "ReactionToggleStars",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.528,
+				0,
+				1.056,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "ReactionToggleFlowers",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.528,
+				0,
+				1.056,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "ReactionToggleSleep",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.528,
+				0,
+				1.056,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "ReactionToggleSleepHide",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.528,
+				0,
+				1.056,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "HideRactionsToggle",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.028,
+				0,
+				0.056,
+				1,
+				0.083,
+				1,
+				1,
+				0.522,
+				1,
+				0.961,
+				1,
+				1.4,
+				1,
+				1,
+				1.461,
+				1,
+				1.522,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "CartoonReactionsAnimation1",
+			"Segments": [
+				0,
+				0,
+				0,
+				0.4,
+				0,
+				0,
+				1.567,
+				10,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "CartoonReactionsAnimation2",
+			"Segments": [
+				0,
+				0,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "CartoonReactionsAnimation3",
+			"Segments": [
+				0,
+				0,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "IdleAnimatiobCycle",
+			"Segments": [
+				0,
+				0,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "IdleAnimatiobCycle2",
+			"Segments": [
+				0,
+				0,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "IdleAnimatiobCycle3",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.528,
+				0,
+				1.056,
+				0,
+				1.583,
+				0
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Id": "IdleAnimatiobCycle4",
+			"Segments": [
+				0,
+				0,
+				1,
+				0.528,
+				0,
+				1.056,
+				0,
+				1.583,
+				0
+			]
+		}
+	]
+}
