@@ -1,58 +1,79 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🌿 NaHida - Smart Plant Monitor
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Progetto IoT per il monitoraggio intelligente delle piante, sviluppato da Colombara e Grammatica.
 
-## About Laravel
+## Descrizione
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+NaHida è un sistema IoT composto da un dispositivo ESP32 con sensori ambientali e una Progressive Web App (PWA) che consente all'utente di monitorare in tempo reale lo stato delle proprie piante, ricevere notifiche sulle annaffiature e visualizzare i dati storici.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Hardware Richiesto
 
-## Learning Laravel
+- ESP32 con WiFi
+- Capacitive Soil Moisture Sensor v1.2
+- Sensore di umidità e temperatura
+- Display OLED
+- Bottone fisico per registrare le annaffiature
+- *(Opzionale)* Sensore di luminosità
+- *(Opzionale)* Speaker per avvisi
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Architettura
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+ESP32 (sensori + OLED)
+        │
+        │ MQTT (ogni minuto)
+        ▼
+    Server Backend
+        │
+        ├── Database (letture sensori, annaffiature)
+        │
+        └── PWA Frontend (dashboard, dettagli pianta, Live2D)
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+## Funzionalità
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Dispositivo ESP32
+- Lettura periodica (ogni minuto) di umidità aria, temperatura e umidità del suolo
+- Invio dati al server via MQTT
+- Display OLED con nome della pianta e stato attuale (faccina)
+- Bottone fisico da premere al momento dell'annaffiatura
+- Ricezione delle condizioni ottimali dal server
 
-## Code of Conduct
+### Web App (PWA)
+- Registrazione e login utente
+- Dashboard con panoramica delle piante e prossime annaffiature
+- Aggiunta piante con condizioni ottimali da template o personalizzate
+- Pagina dettagli pianta con:
+    - Modello Live2D interattivo (espressioni in base allo stato, reazione al tocco, modalità notte)
+    - Monitor sensori in tempo reale
+    - Storico annaffiature e letture
+    - Note personali
+    - Collegamento/scollegamento dispositivo tramite token
+- Impostazioni profilo e tema chiaro/scuro
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## Stack Tecnologico
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Componente | Tecnologia |
+|---|---|
+| Firmware | C++ (ESP32 / Arduino) |
+| Comunicazione | MQTT |
+| Backend | Laravel (PHP) |
+| Frontend | PWA + DaisyUI |
+| Modello 2D | Live2D Cubism SDK |
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Installazione
+
+> *Documentazione in corso di sviluppo.*
+
+
+---
