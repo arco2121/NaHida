@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             PlantSeeder::class,
+            DeviceSeeder::class,
             SensorReadingSeeder::class,
             WateringEventSeeder::class,
         ]);
