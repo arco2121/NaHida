@@ -21,7 +21,8 @@
         { "File": "motions/Tap_1.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 },
         { "File": "motions/Tap_2.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 },
         { "File": "motions/Tap_3.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 },
-        { "File": "motions/Tap_4.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 }
+        { "File": "motions/Tap_4.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 },
+        { "File": "motions/Tap_5.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 }
       ],
       "Idle": [
         { "File": "motions/Idle.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 }
