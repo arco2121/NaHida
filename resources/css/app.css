@@ -5,5 +5,77 @@
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
 @source "../../storage/framework/views/*.php";
 
-@plugin "../../node_modules/daisyui/index.js"; /*DaisyUI*/
+@plugin "../../node_modules/daisyui/index.js" {
+    themes: NaHida_Light, NaHida_Dark;
+}
 @plugin "@tailwindcss/forms";
+
+@plugin "daisyui/theme" {
+    name: "NaHida_Light";
+    default: true;
+    prefersdark: false;
+    color-scheme: "light";
+    --color-base-100: #F5F0E8;
+    --color-base-200: #EAE2D5;
+    --color-base-300: #DDD3C0;
+    --color-base-content: #1A1410;
+    --color-primary: #5A7A3A;
+    --color-primary-content: #F0F7E8;
+    --color-secondary: #C4703A;
+    --color-secondary-content: #FEF3EC;
+    --color-accent: #9EBB5C;
+    --color-accent-content: #2A3A14;
+    --color-neutral: #4A3728;
+    --color-neutral-content: #F5F0E8;
+    --color-info: #3A7A8A;
+    --color-info-content: #E8F5F7;
+    --color-success: #4A8A4A;
+    --color-success-content: #E8F5E8;
+    --color-warning: #C4903A;
+    --color-warning-content: #FEF6E8;
+    --color-error: #B04040;
+    --color-error-content: #FEF0F0;
+    --radius-selector: 1rem;
+    --radius-field: 1rem;
+    --radius-box: 1rem;
+    --size-selector: 0.3125rem;
+    --size-field: 0.3125rem;
+    --border: 2px;
+    --depth: 0;
+    --noise: 1;
+}
+
+@plugin "daisyui/theme" {
+    name: "NaHida_Dark";
+    default: false;
+    prefersdark: true;
+    color-scheme: "dark";
+    --color-base-100: #1C1810;
+    --color-base-200: #261F14;
+    --color-base-300: #32281A;
+    --color-base-content: #E8DFD0;
+    --color-primary: #7AAA4A;
+    --color-primary-content: #0E1A08;
+    --color-secondary: #E0935A;
+    --color-secondary-content: #1E0A00;
+    --color-accent: #C4DC88;
+    --color-accent-content: #1A2A04;
+    --color-neutral: #C8B89A;
+    --color-neutral-content: #1C1810;
+    --color-info: #5AAABB;
+    --color-info-content: #041418;
+    --color-success: #6ABB6A;
+    --color-success-content: #041804;
+    --color-warning: #E0B06A;
+    --color-warning-content: #1E0E00;
+    --color-error: #D46A6A;
+    --color-error-content: #1E0404;
+    --radius-selector: 1rem;
+    --radius-field: 1rem;
+    --radius-box: 1rem;
+    --size-selector: 0.3125rem;
+    --size-field: 0.3125rem;
+    --border: 2px;
+    --depth: 0;
+    --noise: 1;
+}
