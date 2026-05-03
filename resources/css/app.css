@@ -5,6 +5,5 @@
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
 @source "../../storage/framework/views/*.php";
 
-@plugin "daisyui";
+@plugin "../../node_modules/daisyui/index.js"; /*DaisyUI*/
 @plugin "@tailwindcss/forms";
-
