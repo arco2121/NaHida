@@ -23,7 +23,7 @@ export const fetchEnv = () => {
 };
 
 export let fromServer = fetchData();
-export let env = fetchEnv();
+export let ENV = fetchEnv();
 
 fromServer = Object.freeze(fromServer);
-env = Object.freeze(env);
+ENV = Object.freeze(ENV);
