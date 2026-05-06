@@ -13,8 +13,10 @@
         "autoprefixer": "^10.4.2",
         "concurrently": "^9.0.1",
         "daisyui": "^5.5.19",
+        "laravel-echo": "^2.3.4",
         "laravel-vite-plugin": "^3.0.0",
         "postcss": "^8.4.31",
+        "pusher-js": "^8.5.0",
         "tailwindcss": "^4.2.4",
         "vite": "^8.0.10"
     },
