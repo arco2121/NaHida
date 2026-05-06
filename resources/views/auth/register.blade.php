@@ -1,52 +1,36 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+@extends('layouts.guest')
+@section('title', $title)
+@section('content')
+    <div class="hero bg-base-200 min-h-screen">
+    <div class="hero-content flex-col lg:flex-row">
+        <!-- Contenitore del modello! -->
+        <div class="w-64 h-64 mb-[-2rem] z-10 relative">
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <!-- Skeleton di caricamento -->
+            <div id="model-skeleton" class="skeleton w-full h-full rounded-box absolute inset-0 z-20"></div>
+
+            <canvas id="live2d-canvas"
+                    class="w-full h-full pointer-events-auto opacity-0 transition-opacity duration-700 absolute inset-0 z-30"></canvas>
+
         </div>
+        <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 relative z-20">
+            <legend class="fieldset-legend">Registarti a NaHida</legend>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+            <label class="label">Nome</label>
+            <input type="text" class="input" placeholder="Nome" />
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+            <label class="label">Cognome</label>
+            <input type="text" class="input" placeholder="Cognome" />
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
+            <label class="label">Email</label>
+            <input type="email" class="input" placeholder="Email" />
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+            <label class="label">Password</label>
+            <input type="password" class="input" placeholder="Password" onfocus="PlantViewer.setPasswordMode(true)"
+                   onblur="PlantViewer.setPasswordMode(false)" />
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+            <button class="btn btn-neutral mt-4">Accedi</button>
+        </fieldset>
+    </div>
+</div>
+@endsection

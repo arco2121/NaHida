@@ -7,13 +7,14 @@
     <title>@yield('title', config('app.name', 'NaHida'))</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <meta name="params" content="{{ json_encode($params ?? ['null' => 0]) }}">
-    <meta name="env" content="{{ json_encode(collect($_ENV)->concat(getenv())->filter(fn($value,$key) => str_starts_with($key, 'VITE_'))->all()) }}">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <meta name="env"
+          content="{{ json_encode(collect($_ENV)->concat(getenv())->filter(fn($value,$key) => str_starts_with($key, 'VITE_'))->all()) }}">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet"/>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased bg-base-200 min-h-screen">
 
-    @include('layouts.sidebar')
+    @include('components.sidebar')
 
     <div class="md:ml-60 flex flex-col min-h-screen">
         <header class="navbar bg-base-100 border-b border-base-300 px-4 sticky top-0 z-30">
@@ -28,7 +29,7 @@
 
     </div>
 
-    @include('layouts.dock')
+    @include('components.dock')
 
 </body>
 </html>

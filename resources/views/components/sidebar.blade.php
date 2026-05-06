@@ -84,4 +84,6 @@
         </form>
     </div>
 
+    @include("components.theme_toggle")
+
 </aside>
