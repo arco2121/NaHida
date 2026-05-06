@@ -13,24 +13,38 @@
                     class="w-full h-full pointer-events-auto opacity-0 transition-opacity duration-700 absolute inset-0 z-30"></canvas>
 
         </div>
-        <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 relative z-20">
-            <legend class="fieldset-legend">Registarti a NaHida</legend>
 
-            <label class="label">Nome</label>
-            <input type="text" class="input" placeholder="Nome" />
+        <form method="POST" action="{{ route('register') }}">
+            <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 relative z-20">
+                <legend class="fieldset-legend">Registarti a NaHida</legend>
 
-            <label class="label">Cognome</label>
-            <input type="text" class="input" placeholder="Cognome" />
+                <label class="label">Nome</label>
+                <input type="text" class="input" placeholder="Nome" />
 
-            <label class="label">Email</label>
-            <input type="email" class="input" placeholder="Email" />
+                <label class="label">Cognome</label>
+                <input type="text" class="input" placeholder="Cognome" />
 
-            <label class="label">Password</label>
-            <input type="password" class="input" placeholder="Password" onfocus="PlantViewer.setPasswordMode(true)"
-                   onblur="PlantViewer.setPasswordMode(false)" />
+                <label class="label">Email</label>
+                <input type="email" class="input" placeholder="Email" />
 
-            <button class="btn btn-neutral mt-4">Accedi</button>
-        </fieldset>
+                <label class="label">Password</label>
+                <input type="password" class="input" id="passwordInput" placeholder="Password"/>
+
+                @if ($errors->any())
+                    <div class="p-2 text-center">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li style="color: red;">{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <button class="btn btn-neutral mt-4" type="submit">Accedi</button>
+            </fieldset>
+        </form>
     </div>
 </div>
+
+@vite(["resources/js/pages/login_register.js"])
 @endsection

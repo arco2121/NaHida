@@ -2,7 +2,7 @@
 use Illuminate\Contracts\View\View;
 
 function renderPage($page = "index", $parametri = [
-    'title' => 'IOT Project'
+    'title' => 'NaHida'
 ]) : View {
     return view($page, [
         'version' => env('VERSION', '1.0.0'),

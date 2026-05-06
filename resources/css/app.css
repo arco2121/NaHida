@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @import "tailwindcss";
 
 @source "../**/*.blade.php";
@@ -78,4 +79,18 @@
     --border: 2px;
     --depth: 0;
     --noise: 1;
+}
+
+@layer utilities {
+    .scrollbar-hide {
+        &::-webkit-scrollbar {
+            display: none;
+        }
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
+
+* {
+    font-family: 'Balsamiq Sans', sans-serif;
 }

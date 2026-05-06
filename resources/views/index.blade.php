@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(auth()->check() ? 'layouts.app' : 'layouts.guest')
 @section('title', $title)
 @section('content')
     <div class="hero bg-base-200 min-h-screen">
@@ -8,10 +8,10 @@
                 <p class="py-6">
                     Progetto IoT per il monitoraggio intelligente delle piante, sviluppato da Colombara e Grammatica.
                 </p>
-                <a href="signup.html">
+                <a href="/register">
                     <button class="btn btn-primary">Registrati</button>
                 </a>
-                <a href="login.html">
+                <a href="/login">
                     <button class="btn btn-neutral">Accedi</button>
                 </a>
             </div>
@@ -78,4 +78,5 @@
             </div>
         </div>
     </div>
+
 @endsection
