@@ -17,9 +17,19 @@
 			"Name": "Plant Z"
 		},
 		{
+			"Id": "PlantZ2",
+			"GroupId": "",
+			"Name": "Plant Z 2"
+		},
+		{
 			"Id": "PlantY",
 			"GroupId": "",
 			"Name": "Plant Y"
+		},
+		{
+			"Id": "PlantY2",
+			"GroupId": "",
+			"Name": "Plant Y 2"
 		},
 		{
 			"Id": "PlantX",

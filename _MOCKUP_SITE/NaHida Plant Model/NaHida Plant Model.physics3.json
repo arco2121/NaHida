@@ -2,7 +2,7 @@
 	"Version": 3,
 	"Meta": {
 		"PhysicsSettingCount": 4,
-		"TotalInputCount": 6,
+		"TotalInputCount": 9,
 		"TotalOutputCount": 9,
 		"VertexCount": 12,
 		"Fps": 60,
@@ -44,7 +44,7 @@
 						"Target": "Parameter",
 						"Id": "PlantZ"
 					},
-					"Weight": 100,
+					"Weight": 65,
 					"Type": "Angle",
 					"Reflect": false
 				},
@@ -52,6 +52,24 @@
 					"Source": {
 						"Target": "Parameter",
 						"Id": "RootX"
+					},
+					"Weight": 40,
+					"Type": "X",
+					"Reflect": false
+				},
+				{
+					"Source": {
+						"Target": "Parameter",
+						"Id": "PlantZ2"
+					},
+					"Weight": 35,
+					"Type": "Angle",
+					"Reflect": true
+				},
+				{
+					"Source": {
+						"Target": "Parameter",
+						"Id": "PlantX"
 					},
 					"Weight": 40,
 					"Type": "X",
@@ -166,6 +184,15 @@
 						"Id": "RootY"
 					},
 					"Weight": 10,
+					"Type": "X",
+					"Reflect": false
+				},
+				{
+					"Source": {
+						"Target": "Parameter",
+						"Id": "PlantY2"
+					},
+					"Weight": 40,
 					"Type": "X",
 					"Reflect": false
 				}

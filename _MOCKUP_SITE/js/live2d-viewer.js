@@ -17,11 +17,12 @@ const PlantViewer = (() => {
     EYE_OPEN_R:      'EyeOpenR',
     EYE_OPEN_L:      'EyeOpenL',
     CLOSED_EYES:     'ClosedEyes',
-    // Nuovi parametri custom
+
     EYE_POS_X:       'EyePositionX',
     EYE_POS_Y:       'EyePositionY',
     PLANT_X:         'PlantX',
-    PLANT_Y:         'PlantY',
+    PLANT_Y:         'PlantY2',
+    PLANT_Z:         'PlantZ2'
   };
 
   const MAX_APPEARANCE = {
@@ -274,8 +275,9 @@ const PlantViewer = (() => {
 
     _setParam(ids, vals, PARAMS.EYE_POS_X, outputX + outputX * 0.5);
     _setParam(ids, vals, PARAMS.EYE_POS_Y, outputY + outputY * 0.5);
-    _setParam(ids, vals, PARAMS.PLANT_X,   outputX);
-    _setParam(ids, vals, PARAMS.PLANT_Y,   outputY);
+    _setParam(ids, vals, PARAMS.PLANT_X,   outputX + outputX * 1.1);
+    _setParam(ids, vals, PARAMS.PLANT_Y,   outputY + outputY * 3);
+    _setParam(ids, vals, PARAMS.PLANT_Z,   outputX + outputX * 2.5);
 
     if (!_state.sleeping && !_isTapping && !_state.passwordMode) {
       _tickBlink();
