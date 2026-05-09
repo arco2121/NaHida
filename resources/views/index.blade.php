@@ -8,12 +8,19 @@
                 <p class="py-6">
                     Progetto IoT per il monitoraggio intelligente delle piante, sviluppato da Colombara e Grammatica.
                 </p>
-                <a href="/register">
-                    <button class="btn btn-primary">Registrati</button>
-                </a>
-                <a href="/login">
-                    <button class="btn btn-neutral">Accedi</button>
-                </a>
+                @auth
+                    <a href="/dashboard">
+                        <button class="btn btn-primary">Vai alla Dashboard</button>
+                    </a>
+                @endauth
+                @guest
+                    <a href="/register">
+                        <button class="btn btn-primary">Registrati</button>
+                    </a>
+                    <a href="/login">
+                        <button class="btn btn-neutral">Accedi</button>
+                    </a>
+                @endguest
             </div>
         </div>
     </div>

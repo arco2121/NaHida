@@ -15,7 +15,7 @@
 </head>
 <body class="font-sans antialiased bg-base-200 min-h-screen">
 
-    @include('components.sidebar')
+
 
     <div class="w-full p-4">
         <main class="flex-1 p-4 pb-24 md:pb-6">

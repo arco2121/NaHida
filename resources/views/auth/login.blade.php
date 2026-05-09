@@ -16,14 +16,15 @@
 
         <form method="POST" action="{{ route('login') }}">
             @csrf
+
             <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 relative z-20">
                 <legend class="fieldset-legend">Accedi a NaHida</legend>
 
                 <label class="label">Email</label>
-                <input type="email" class="input" placeholder="Email" />
+                <input type="email" name="email" class="input" placeholder="Email" />
 
                 <label class="label">Password</label>
-                <input type="password" id="passwordInput" class="input" placeholder="Password"/>
+                <input type="password" name="password" id="passwordInput" class="input" placeholder="Password"/>
 
                 @if ($errors->any())
                     <div class="p-2 text-center">

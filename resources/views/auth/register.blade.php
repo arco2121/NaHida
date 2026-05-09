@@ -15,20 +15,25 @@
         </div>
 
         <form method="POST" action="{{ route('register') }}">
+            @csrf
+
             <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 relative z-20">
                 <legend class="fieldset-legend">Registarti a NaHida</legend>
 
                 <label class="label">Nome</label>
-                <input type="text" class="input" placeholder="Nome" />
+                <input type="text" name="first_name" class="input" placeholder="Nome" />
 
                 <label class="label">Cognome</label>
-                <input type="text" class="input" placeholder="Cognome" />
+                <input type="text" name="last_name" class="input" placeholder="Cognome" />
 
                 <label class="label">Email</label>
-                <input type="email" class="input" placeholder="Email" />
+                <input type="email" name="email" class="input" placeholder="Email" />
 
                 <label class="label">Password</label>
-                <input type="password" class="input" id="passwordInput" placeholder="Password"/>
+                <input type="password" name="password" class="input" id="passwordInput" placeholder="Password"/>
+
+                <label class="label">Conferma Password</label>
+                <input type="password" name="password_confirmation" class="input" id="passwordInput" placeholder="Password"/>
 
                 @if ($errors->any())
                     <div class="p-2 text-center">
