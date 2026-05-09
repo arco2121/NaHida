@@ -24,7 +24,7 @@
 
     </div>
 
-    @include("components.dock")
+    @include("components.footer")
 
 </body>
 </html>
