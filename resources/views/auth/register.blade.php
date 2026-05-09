@@ -14,7 +14,7 @@
 
         </div>
 
-        <form method="POST" action="{{ route('register') }}">
+        <form method="POST" action="{{ route('register') }}" class="mt-5">
             @csrf
 
             <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 relative z-20">

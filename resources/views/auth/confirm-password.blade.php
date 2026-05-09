@@ -10,7 +10,7 @@
                         class="w-full h-full pointer-events-auto opacity-0 transition-opacity duration-700 absolute inset-0 z-30"></canvas>
             </div>
 
-            <form method="POST" action="{{ route('password.confirm') }}">
+            <form method="POST" action="{{ route('password.confirm') }}" class="mt-5">
                 @csrf
 
                 <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 relative z-20">

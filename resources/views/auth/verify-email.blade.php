@@ -10,7 +10,7 @@
                         class="w-full h-full pointer-events-auto opacity-0 transition-opacity duration-700 absolute inset-0 z-30"></canvas>
             </div>
 
-            <div class="relative z-20">
+            <div class="relative z-20 mt-5">
                 <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
                     <legend class="fieldset-legend">Verifica la tua email</legend>
 
