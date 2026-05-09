@@ -36,6 +36,8 @@
                     </div>
                 @endif
 
+                <a href="{{ route('password.request') }}" class="label-text-alt link link-hover">Password dimenticata?</a>
+
                 <button class="btn btn-neutral mt-4" type="submit">Accedi</button>
             </fieldset>
         </form>

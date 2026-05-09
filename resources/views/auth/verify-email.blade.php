@@ -1,31 +1,47 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-    </div>
+@extends('layouts.guest')
+@section('title', 'Verifica Email')
+@section('content')
+    <div class="hero bg-base-200 min-h-screen">
+        <div class="hero-content flex-col lg:flex-row">
 
-    @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
-        </div>
-    @endif
-
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
-            @csrf
-
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
+            <div class="w-64 h-64 mb-[-2rem] z-10 relative">
+                <div id="model-skeleton" class="skeleton w-full h-full rounded-box absolute inset-0 z-20"></div>
+                <canvas id="live2d-canvas"
+                        class="w-full h-full pointer-events-auto opacity-0 transition-opacity duration-700 absolute inset-0 z-30"></canvas>
             </div>
-        </form>
 
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
+            <div class="relative z-20">
+                <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+                    <legend class="fieldset-legend">Verifica la tua email</legend>
 
-            <button type="submit" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                {{ __('Log Out') }}
-            </button>
-        </form>
+                    <p class="text-sm text-base-content/70 mb-4">
+                        Grazie per esserti registrato! Prima di iniziare, verifica il tuo indirizzo email cliccando
+                        sul link che ti abbiamo inviato. Se non hai ricevuto l'email, te ne mandiamo un'altra.
+                    </p>
+
+                    @if (session('status') == 'verification-link-sent')
+                        <div class="alert alert-success mb-4">
+                            <span>Un nuovo link di verifica è stato inviato al tuo indirizzo email.</span>
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('verification.send') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-neutral w-full">
+                            Reinvia email di verifica
+                        </button>
+                    </form>
+
+                    <div class="divider text-xs text-base-content/40">oppure</div>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-ghost btn-sm w-full text-base-content/60">
+                            Esci dall'account
+                        </button>
+                    </form>
+                </fieldset>
+            </div>
+        </div>
     </div>
-</x-guest-layout>
+@endsection

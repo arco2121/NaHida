@@ -1,27 +1,43 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
+@extends('layouts.guest')
+@section('title', 'Conferma Password')
+@section('content')
+    <div class="hero bg-base-200 min-h-screen">
+        <div class="hero-content flex-col lg:flex-row">
+
+            <div class="w-64 h-64 mb-[-2rem] z-10 relative">
+                <div id="model-skeleton" class="skeleton w-full h-full rounded-box absolute inset-0 z-20"></div>
+                <canvas id="live2d-canvas"
+                        class="w-full h-full pointer-events-auto opacity-0 transition-opacity duration-700 absolute inset-0 z-30"></canvas>
+            </div>
+
+            <form method="POST" action="{{ route('password.confirm') }}">
+                @csrf
+
+                <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 relative z-20">
+                    <legend class="fieldset-legend">Conferma la tua password</legend>
+
+                    <p class="text-sm text-base-content/70 mb-4">
+                        Quest'area è protetta. Inserisci la tua password per continuare.
+                    </p>
+
+                    <label class="label">Password</label>
+                    <input type="password" name="password" id="passwordInput" class="input w-full" placeholder="Password" required autocomplete="current-password"/>
+
+                    @if ($errors->any())
+                        <div class="p-2 text-center">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li class="text-error text-sm">{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <button class="btn btn-neutral mt-4 w-full" type="submit">Conferma</button>
+                </fieldset>
+            </form>
+        </div>
     </div>
 
-    <form method="POST" action="{{ route('password.confirm') }}">
-        @csrf
-
-        <!-- Password -->
-        <div>
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <div class="flex justify-end mt-4">
-            <x-primary-button>
-                {{ __('Confirm') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    @vite(["resources/js/pages/login_register.js"])
+@endsection

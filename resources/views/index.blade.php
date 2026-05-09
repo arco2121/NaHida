@@ -12,6 +12,13 @@
                     <a href="/dashboard">
                         <button class="btn btn-primary">Vai alla Dashboard</button>
                     </a>
+                    <!--Temporaneo-->
+                    <a href="#">
+                        <form style="display: contents" method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button class="btn btn-primary" type="submit">Logout</button>
+                        </form>
+                    </a>
                 @endauth
                 @guest
                     <a href="/register">
