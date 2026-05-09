@@ -33,7 +33,7 @@
     </div>
 
     <div class="hero bg-base-200 pb-20">
-        <div class="hero-content text-center">
+        <div class="hero-content text-center active:scale-95">
             <div class="stats shadow">
                 <div class="stat">
                     <div class="stat-figure text-primary">
