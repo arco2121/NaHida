@@ -4,7 +4,10 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "build_app": "npm install && composer install && php artisan migrate:fresh && php artisan key:generate",
+        "dev": "vite",
+        "app": "concurrently \"npm run dev\" \"php artisan reverb:start\" \"php artisan serve\"",
+        "database": "php artisan migrate:fresh && php artisan migrate --pretend"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.11",
