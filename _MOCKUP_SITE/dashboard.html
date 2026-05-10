@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="NaHida_Light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NaHida 🌿 - Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="bg-base-200 min-h-screen pb-24">
+
+    <!-- NAVBAR -->
+    <div class="navbar bg-base-100 shadow-sm sticky top-0 z-40">
+        <div class="navbar-start">
+            <span class="text-lg font-bold text-base-content">Dashboard</span>
+        </div>
+        <div class="navbar-end">
+            <label class="swap swap-rotate text-base-content hover:opacity-70 transition-opacity mr-2">
+                <input type="checkbox" class="theme-controller" value="NaHida_Dark" />
+                <svg class="swap-off h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
+                </svg>
+                <svg class="swap-on h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
+                </svg>
+            </label>
+        </div>
+    </div>
+
+    <div class="max-w-2xl mx-auto px-4 pt-6 flex flex-col gap-6">
+
+        <!-- SALUTO -->
+        <div class="card bg-primary text-primary-content shadow">
+            <div class="card-body py-5 px-5">
+                <h2 class="text-2xl font-bold">Buongiorno, Teresa!</h2>
+                <p class="opacity-80 text-sm">Domenica, 11 maggio 2026 - hai 3 piante da monitorare</p>
+            </div>
+        </div>
+
+        <!-- ALERT: PIANTE IN CRISI -->
+        <div>
+            <h3 class="text-base font-bold text-base-content mb-2 flex items-center gap-2"><img src="assets/NaHida_Icon_Warning.png" class="w-5 h-5 object-contain" alt=""> Attenzione richiesta</h3>
+            <div class="flex flex-col gap-2">
+
+                <div class="alert bg-error/15 border border-error/30 py-3 px-4">
+                    <img src="assets/NaHida_Emoji_Sad.png" class="w-8 h-8 rounded-full object-cover" alt="triste" onerror="this.style.display='none'">
+                    <div class="flex-1">
+                        <span class="font-bold text-error">Monstera Deliciosa</span>
+                        <div class="flex gap-1 flex-wrap mt-1">
+                            <span class="badge badge-error badge-sm">Temp. alta: 32°C</span>
+                            <span class="badge badge-warning badge-sm">Umidità bassa: 28%</span>
+                        </div>
+                    </div>
+                    <a href="plant_detail.html" class="btn btn-sm btn-ghost text-error flex items-center gap-1">Vedi <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.71069 18.2929C10.1012 18.6834 10.7344 18.6834 11.1249 18.2929L16.0123 13.4006C16.7927 12.6195 16.7924 11.3537 16.0117 10.5729L11.1213 5.68254C10.7308 5.29202 10.0976 5.29202 9.70708 5.68254C9.31655 6.07307 9.31655 6.70623 9.70708 7.09676L13.8927 11.2824C14.2833 11.6729 14.2833 12.3061 13.8927 12.6966L9.71069 16.8787C9.32016 17.2692 9.32016 17.9023 9.71069 18.2929Z" fill="currentColor"/></svg></a>
+                </div>
+
+                <div class="alert bg-warning/15 border border-warning/30 py-3 px-4">
+                    <img src="assets/NaHida_Emoji_Mid.png" class="w-8 h-8 rounded-full object-cover" alt="così così" onerror="this.style.display='none'">
+                    <div class="flex-1">
+                        <span class="font-bold text-warning">Ficus Benjamina</span>
+                        <div class="flex gap-1 flex-wrap mt-1">
+                            <span class="badge badge-warning badge-sm">Suolo secco: 18%</span>
+                        </div>
+                    </div>
+                    <a href="plant_detail.html" class="btn btn-sm btn-ghost text-warning flex items-center gap-1">Vedi <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.71069 18.2929C10.1012 18.6834 10.7344 18.6834 11.1249 18.2929L16.0123 13.4006C16.7927 12.6195 16.7924 11.3537 16.0117 10.5729L11.1213 5.68254C10.7308 5.29202 10.0976 5.29202 9.70708 5.68254C9.31655 6.07307 9.31655 6.70623 9.70708 7.09676L13.8927 11.2824C14.2833 11.6729 14.2833 12.3061 13.8927 12.6966L9.71069 16.8787C9.32016 17.2692 9.32016 17.9023 9.71069 18.2929Z" fill="currentColor"/></svg></a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- PROSSIME ANNAFFIATE -->
+        <div>
+            <h3 class="text-base font-bold text-base-content mb-2 flex items-center gap-2"><img src="assets/NaHida_Icon_Water.png" class="w-5 h-5 object-contain" alt=""> Prossime annaffiate</h3>
+            <div class="flex gap-3 overflow-x-auto pb-1 snap-x">
+
+                <div class="card bg-base-100 shadow min-w-[160px] snap-start flex-shrink-0">
+                    <div class="card-body p-4 items-center text-center gap-2">
+                        <img src="assets/NaHida_Plant.png" class="w-13 h-13 object-contain" alt="" onerror="this.style.display='none'">
+                        <p class="font-bold text-sm leading-tight">Monstera<br>Deliciosa</p>
+                        <span class="badge badge-error badge-sm">tra 1 ora</span>
+                        <a href="plant_detail.html" class="btn btn-xs btn-outline btn-primary w-full">Dettagli</a>
+                    </div>
+                </div>
+
+                <div class="card bg-base-100 shadow min-w-[160px] snap-start flex-shrink-0">
+                    <div class="card-body p-4 items-center text-center gap-2">
+                        <img src="assets/NaHida_Plant.png" class="w-13 h-13 object-contain" alt="" onerror="this.style.display='none'">
+                        <p class="font-bold text-sm leading-tight">Ficus<br>Benjamina</p>
+                        <span class="badge badge-warning badge-sm">tra 3 ore</span>
+                        <a href="plant_detail.html" class="btn btn-xs btn-outline btn-primary w-full">Dettagli</a>
+                    </div>
+                </div>
+
+                <div class="card bg-base-100 shadow min-w-[160px] snap-start flex-shrink-0">
+                    <div class="card-body p-4 items-center text-center gap-2">
+                        <img src="assets/NaHida_Plant.png" class="w-13 h-13 object-contain" alt="" onerror="this.style.display='none'">
+                        <p class="font-bold text-sm leading-tight">Pothos<br>Golden</p>
+                        <span class="badge badge-success badge-sm">domani</span>
+                        <a href="plant_detail.html" class="btn btn-xs btn-outline btn-primary w-full">Dettagli</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- LE TUE PIANTE -->
+        <div>
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="text-base font-bold text-base-content flex items-center gap-2"><img src="assets/NaHida_Icon_Plant.png" class="w-5 h-5 object-contain" alt=""> Le tue piante</h3>
+                <a href="plants.html" class="text-sm text-primary font-bold flex items-center gap-1">Vedi tutte <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.71069 18.2929C10.1012 18.6834 10.7344 18.6834 11.1249 18.2929L16.0123 13.4006C16.7927 12.6195 16.7924 11.3537 16.0117 10.5729L11.1213 5.68254C10.7308 5.29202 10.0976 5.29202 9.70708 5.68254C9.31655 6.07307 9.31655 6.70623 9.70708 7.09676L13.8927 11.2824C14.2833 11.6729 14.2833 12.3061 13.8927 12.6966L9.71069 16.8787C9.32016 17.2692 9.32016 17.9023 9.71069 18.2929Z" fill="currentColor"/></svg></a>
+            </div>
+            <div class="flex flex-col gap-3">
+
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body p-4 flex-row items-center gap-4">
+                        <img src="assets/NaHida_Plant.png" class="w-14 h-14 object-contain flex-shrink-0" alt="Monstera" onerror="this.style.display='none'">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <img src="assets/NaHida_Emoji_Sad.png" class="w-5 h-5 object-contain" alt="" onerror="this.style.display='none'">
+                                <span class="font-bold text-sm truncate">Monstera Deliciosa</span>
+                            </div>
+                            <div class="flex gap-1 flex-wrap">
+                                <span class="badge badge-error badge-sm">32°C</span>
+                                <span class="badge badge-warning badge-sm">28%</span>
+                                <span class="badge badge-neutral badge-sm">55%</span>
+                            </div>
+                        </div>
+                        <a href="plant_detail.html" class="btn btn-sm btn-ghost flex-shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.71069 18.2929C10.1012 18.6834 10.7344 18.6834 11.1249 18.2929L16.0123 13.4006C16.7927 12.6195 16.7924 11.3537 16.0117 10.5729L11.1213 5.68254C10.7308 5.29202 10.0976 5.29202 9.70708 5.68254C9.31655 6.07307 9.31655 6.70623 9.70708 7.09676L13.8927 11.2824C14.2833 11.6729 14.2833 12.3061 13.8927 12.6966L9.71069 16.8787C9.32016 17.2692 9.32016 17.9023 9.71069 18.2929Z" fill="currentColor"/></svg></a>
+                    </div>
+                </div>
+
+                <!-- Pianta 2 — problema lieve -->
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body p-4 flex-row items-center gap-4">
+                        <img src="assets/NaHida_Plant.png" class="w-14 h-14 object-contain flex-shrink-0" alt="Ficus" onerror="this.style.display='none'">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <img src="assets/NaHida_Emoji_Mid.png" class="w-5 h-5 object-contain" alt="" onerror="this.style.display='none'">
+                                <span class="font-bold text-sm truncate">Ficus Benjamina</span>
+                            </div>
+                            <div class="flex gap-1 flex-wrap">
+                                <span class="badge badge-success badge-sm">23°C</span>
+                                <span class="badge badge-success badge-sm">60%</span>
+                                <span class="badge badge-warning badge-sm">18%</span>
+                            </div>
+                        </div>
+                        <a href="plant_detail.html" class="btn btn-sm btn-ghost flex-shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.71069 18.2929C10.1012 18.6834 10.7344 18.6834 11.1249 18.2929L16.0123 13.4006C16.7927 12.6195 16.7924 11.3537 16.0117 10.5729L11.1213 5.68254C10.7308 5.29202 10.0976 5.29202 9.70708 5.68254C9.31655 6.07307 9.31655 6.70623 9.70708 7.09676L13.8927 11.2824C14.2833 11.6729 14.2833 12.3061 13.8927 12.6966L9.71069 16.8787C9.32016 17.2692 9.32016 17.9023 9.71069 18.2929Z" fill="currentColor"/></svg></a>
+                    </div>
+                </div>
+
+                <!-- Pianta 3 — tutto ok -->
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body p-4 flex-row items-center gap-4">
+                        <img src="assets/NaHida_Plant.png" class="w-14 h-14 object-contain flex-shrink-0" alt="Pothos" onerror="this.style.display='none'">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <img src="assets/NaHida_Emoji_Happy.png" class="w-5 h-5 object-contain" alt="" onerror="this.style.display='none'">
+                                <span class="font-bold text-sm truncate">Pothos Golden</span>
+                            </div>
+                            <div class="flex gap-1 flex-wrap">
+                                <span class="badge badge-success badge-sm">22°C</span>
+                                <span class="badge badge-success badge-sm">65%</span>
+                                <span class="badge badge-success badge-sm">48%</span>
+                            </div>
+                        </div>
+                        <a href="plant_detail.html" class="btn btn-sm btn-ghost flex-shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.71069 18.2929C10.1012 18.6834 10.7344 18.6834 11.1249 18.2929L16.0123 13.4006C16.7927 12.6195 16.7924 11.3537 16.0117 10.5729L11.1213 5.68254C10.7308 5.29202 10.0976 5.29202 9.70708 5.68254C9.31655 6.07307 9.31655 6.70623 9.70708 7.09676L13.8927 11.2824C14.2833 11.6729 14.2833 12.3061 13.8927 12.6966L9.71069 16.8787C9.32016 17.2692 9.32016 17.9023 9.71069 18.2929Z" fill="currentColor"/></svg></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ATTIVITÀ RECENTE -->
+        <div>
+            <h3 class="text-base font-bold text-base-content mb-2 flex items-center gap-2"><img src="assets/NaHida_Icon_Clock.png" class="w-5 h-5 object-contain" alt=""> Attività recente</h3>
+            <div class="card bg-base-100 shadow">
+                <ul class="divide-y divide-base-200">
+
+                    <li class="flex items-center gap-3 px-4 py-3">
+                        <img src="assets/NaHida_Icon_Warning.png" class="w-6 h-6 object-contain flex-shrink-0" alt="">
+                        <div class="flex-1 text-sm">
+                            <span class="font-bold">Monstera Deliciosa</span> ha superato la temperatura massima
+                        </div>
+                        <span class="text-xs text-base-content/50 flex-shrink-0">2h fa</span>
+                    </li>
+
+                    <li class="flex items-center gap-3 px-4 py-3">
+                        <img src="assets/NaHida_Icon_Water.png" class="w-6 h-6 object-contain flex-shrink-0" alt="">
+                        <div class="flex-1 text-sm">
+                            Hai annaffiato <span class="font-bold">Ficus Benjamina</span>
+                        </div>
+                        <span class="text-xs text-base-content/50 flex-shrink-0">ieri</span>
+                    </li>
+
+                    <li class="flex items-center gap-3 px-4 py-3">
+                        <img src="assets/NaHida_Icon_Water.png" class="w-6 h-6 object-contain flex-shrink-0" alt="">
+                        <div class="flex-1 text-sm">
+                            Hai annaffiato <span class="font-bold">Pothos Golden</span>
+                        </div>
+                        <span class="text-xs text-base-content/50 flex-shrink-0">2 giorni fa</span>
+                    </li>
+
+                    <li class="flex items-center gap-3 px-4 py-3">
+                        <img src="assets/NaHida_Icon_Plant.png" class="w-6 h-6 object-contain flex-shrink-0" alt="">
+                        <div class="flex-1 text-sm">
+                            Hai aggiunto <span class="font-bold">Monstera Deliciosa</span>
+                        </div>
+                        <span class="text-xs text-base-content/50 flex-shrink-0">5 giorni fa</span>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- DOCK -->
+    <div class="dock">
+        <a href="plants.html">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 80 80" class="h-6 w-6 stroke-current">
+                <path d="M35.9995 45.001V69.001" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9998 54.0006C16.9541 54.0006 7.99987 45.0462 7.99987 34.0005V32.0019C7.99987 29.9112 8.32068 27.8953 8.91576 26.001C12.9713 26.1704 16.9935 27.2058 20.6091 29.048C25.8776 31.7325 30.2676 36.1225 32.952 41.3911C34.7943 45.0068 35.8297 49.0291 35.999 53.0847C34.1047 53.6798 32.089 54.0006 29.9983 54.0006H27.9998Z" fill="currentColor" />
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M46.2846 46.0005C60.4865 46.0005 71.9995 34.4874 71.9995 20.2853V17.7157C71.9995 15.0277 71.5871 12.436 70.822 10.0005C65.6076 10.2183 60.436 11.5495 55.7872 13.9182C49.0132 17.3698 43.3687 23.0143 39.9172 29.7884C37.5486 34.4371 36.2173 39.6086 35.9995 44.823C38.4351 45.588 41.0269 46.0005 43.715 46.0005H46.2846Z" fill="currentColor" />
+            </svg>
+            <span class="dock-label">Piante</span>
+        </a>
+
+        <a href="dashboard.html" class="dock-active">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
+            <span class="dock-label">Home</span>
+        </a>
+
+        <a href="settings.html">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+            <span class="dock-label">Impostazioni</span>
+        </a>
+    </div>
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body {
+            font-family: 'Balsamiq Sans', sans-serif;
+        }
+
+        :root {
+            color-scheme: light;
+            --color-base-100: #F5F0E8;
+            --color-base-200: #EAE2D5;
+            --color-base-300: #DDD3C0;
+            --color-base-content: #1A1410;
+            --color-primary: #5A7A3A;
+            --color-primary-content: #F0F7E8;
+            --color-secondary: #C4703A;
+            --color-secondary-content: #FEF3EC;
+            --color-accent: #9EBB5C;
+            --color-accent-content: #2A3A14;
+            --color-neutral: #4A3728;
+            --color-neutral-content: #F5F0E8;
+            --color-info: #3A7A8A;
+            --color-info-content: #E8F5F7;
+            --color-success: #4A8A4A;
+            --color-success-content: #E8F5E8;
+            --color-warning: #C4903A;
+            --color-warning-content: #FEF6E8;
+            --color-error: #B04040;
+            --color-error-content: #FEF0F0;
+            --radius-selector: 1rem;
+            --radius-field: 1rem;
+            --radius-box: 1rem;
+            --size-selector: 0.3125rem;
+            --size-field: 0.3125rem;
+            --border: 2px;
+            --depth: 0;
+            --noise: 1;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                color-scheme: dark;
+                --color-base-100: #1C1810;
+                --color-base-200: #261F14;
+                --color-base-300: #32281A;
+                --color-base-content: #E8DFD0;
+                --color-primary: #7AAA4A;
+                --color-primary-content: #0E1A08;
+                --color-secondary: #E0935A;
+                --color-secondary-content: #1E0A00;
+                --color-accent: #C4DC88;
+                --color-accent-content: #1A2A04;
+                --color-neutral: #C8B89A;
+                --color-neutral-content: #1C1810;
+                --color-info: #5AAABB;
+                --color-info-content: #041418;
+                --color-success: #6ABB6A;
+                --color-success-content: #041804;
+                --color-warning: #E0B06A;
+                --color-warning-content: #1E0E00;
+                --color-error: #D46A6A;
+                --color-error-content: #1E0404;
+                --radius-selector: 1rem;
+                --radius-field: 1rem;
+                --radius-box: 1rem;
+                --size-selector: 0.3125rem;
+                --size-field: 0.3125rem;
+                --border: 2px;
+                --depth: 0;
+                --noise: 1;
+            }
+        }
+
+        :root:has(input.theme-controller[value="NaHida_Light"]:checked),
+        [data-theme="NaHida_Light"] {
+            color-scheme: light;
+            --color-base-100: #F5F0E8;
+            --color-base-200: #EAE2D5;
+            --color-base-300: #DDD3C0;
+            --color-base-content: #1A1410;
+            --color-primary: #5A7A3A;
+            --color-primary-content: #F0F7E8;
+            --color-secondary: #C4703A;
+            --color-secondary-content: #FEF3EC;
+            --color-accent: #9EBB5C;
+            --color-accent-content: #2A3A14;
+            --color-neutral: #4A3728;
+            --color-neutral-content: #F5F0E8;
+            --color-info: #3A7A8A;
+            --color-info-content: #E8F5F7;
+            --color-success: #4A8A4A;
+            --color-success-content: #E8F5E8;
+            --color-warning: #C4903A;
+            --color-warning-content: #FEF6E8;
+            --color-error: #B04040;
+            --color-error-content: #FEF0F0;
+        }
+
+        :root:has(input.theme-controller[value="NaHida_Dark"]:checked),
+        [data-theme="NaHida_Dark"] {
+            color-scheme: dark;
+            --color-base-100: #1C1810;
+            --color-base-200: #261F14;
+            --color-base-300: #32281A;
+            --color-base-content: #E8DFD0;
+            --color-primary: #7AAA4A;
+            --color-primary-content: #0E1A08;
+            --color-secondary: #E0935A;
+            --color-secondary-content: #1E0A00;
+            --color-accent: #C4DC88;
+            --color-accent-content: #1A2A04;
+            --color-neutral: #C8B89A;
+            --color-neutral-content: #1C1810;
+            --color-info: #5AAABB;
+            --color-info-content: #041418;
+            --color-success: #6ABB6A;
+            --color-success-content: #041804;
+            --color-warning: #E0B06A;
+            --color-warning-content: #1E0E00;
+            --color-error: #D46A6A;
+            --color-error-content: #1E0404;
+        }
+    </style>
+</body>
+
+</html>
