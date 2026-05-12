@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class SensorReading extends Model
 {
     protected $primaryKey = 'reading_id';
-
-    // La tabella ha recorded_at invece di created_at/updated_at
     public $timestamps = false;
 
     protected $fillable = [
@@ -29,7 +27,6 @@ class SensorReading extends Model
         'recorded_at'   => 'datetime',
     ];
 
-    // Imposta recorded_at automaticamente al momento del salvataggio
     protected static function booted(): void
     {
         static::creating(function (SensorReading $reading) {
