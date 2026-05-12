@@ -15,8 +15,8 @@
 </head>
 <body class="font-sans antialiased bg-base-200 min-h-screen">
 
-    <div class="w-full p-4">
-        <main class="flex-1 p-4 pb-24 md:pb-6">
+    <div class="w-full">
+        <main class="flex-1 pb-24 md:pb-6">
             @yield('content')
         </main>
 
