@@ -13,13 +13,12 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('components.live2d_import')
 </head>
-<body class="font-sans antialiased min-h-screen bg-base-200">
+<body class="font-sans antialiased min-h-screen bg-base-200 pb-24">
 
     @include('components.navbar')
+    @include('components.dock')
 
     @yield('content')
-
-    @include('components.dock')
 
 </body>
 </html>
