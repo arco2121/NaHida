@@ -1,5 +1,5 @@
-@extends(auth()->check() ? 'layouts.app' : 'layouts.guest')
-
+@extends('layouts.guest')
+@section('title', $title)
 @section('content')
     <div style="max-width:600px; margin:40px auto; font-family:monospace; padding:0 16px;">
 

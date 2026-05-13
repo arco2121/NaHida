@@ -1,4 +1,4 @@
-@extends(auth()->check() ? 'layouts.app' : 'layouts.guest')
+@extends('layouts.guest')
 @section('title', $title)
 @section('content')
     <div class="hero bg-base-200 min-h-screen">
