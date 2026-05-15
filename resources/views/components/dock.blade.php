@@ -1,4 +1,4 @@
-<div class="dock fixed bottom-0 left-0 right-0 z-50">
+<div class="dock sticky z-40">
     <a href="/plants">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 80 80" class="h-6 w-6 stroke-current">
             <path d="M35.9995 45.001V69.001" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />

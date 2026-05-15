@@ -1,4 +1,4 @@
-<div class="navbar-end">
+<div class="absolute top-4 right-4 z-50">
     <label class="swap swap-rotate text-base-content hover:opacity-70 transition-opacity">
         <input type="checkbox" class="theme-controller" hidden value="NaHida_Dark" />
 

@@ -13,7 +13,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('components.live2d_import')
 </head>
-<body class="font-sans antialiased bg-base-200 min-h-screen flex-col flex items-center justify-center">
+<body class="font-sans antialiased bg-base-200 min-h-screen">
 
     @include('components.theme_toggle')
 
