@@ -4,11 +4,13 @@ include_once 'functions.php';
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeviceController;
+use App\Http\Controllers\PlantsController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn() => renderPage());
 Route::get('/dashboard', [DashboardController::class, 'show'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/plants', [PlantsController::class, 'show'])->middleware(['auth', 'verified'])->name('plants.show');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -18,13 +20,13 @@ Route::middleware('auth')->group(function () {
 
 // --- Device / MQTT ---
 // Toggle del led
-Route::post('/device/toggle-led',  [DeviceController::class, 'toggleLed']);
+Route::post('/device/toggle-led', [DeviceController::class, 'toggleLed']);
 
 //Invio configurazioni in json
 Route::post('/device/send-config', [DeviceController::class, 'sendConfig']);
 
 // Controlla se il dispositivo è online
-Route::get('/device/status',       [DeviceController::class, 'getStatus']);
+Route::get('/device/status', [DeviceController::class, 'getStatus']);
 
 // TEST
 Route::get('/test', fn() => renderPage("test"));
