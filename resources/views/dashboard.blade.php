@@ -3,7 +3,7 @@
 
     $now = Carbon::now();
 
-    if($now->hour >= 20) $message = ["Buonasera", 'Buonanotte', "Notte notte"][random_int(0, 2)];
+    if($now->hour >= 20) $message = ["Buonasera", 'Buonanotte', "Notte"][random_int(0, 2)];
     else $message = ["Buongiorno", "Giorno", "Buonagiornata", "Ciao"][random_int(0, 3)];
 
 @endphp

@@ -18,7 +18,7 @@
     @include('components.theme_toggle')
 
     <div class="w-full">
-        <main class="flex-1 pb-24 md:pb-6">
+        <main class="flex-1">
             @yield('content')
         </main>
 
