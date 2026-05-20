@@ -113,7 +113,7 @@
 
 html {
     opacity: 0;
-    transform-origin: top center;
+    transform-origin: top;
     animation: fade 0.4s ease-in-out forwards;
 }
 
