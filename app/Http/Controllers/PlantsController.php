@@ -21,7 +21,7 @@ class PlantsController extends Controller
             ->orderBy('plant_name')
             ->get();
 
-        return renderPage('plants', [
+        return renderPage('plants.index', [
             'title'  => 'Piante',
             'user'   => $user,
             'plants' => $plants,
