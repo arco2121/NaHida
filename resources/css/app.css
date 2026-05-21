@@ -107,13 +107,13 @@
 
 * {
     font-family: 'Balsamiq Sans', sans-serif;
-    transition: all 0.3s ease-in-out;
     scroll-behavior: smooth;
 }
 
 html {
     opacity: 0;
     transform-origin: top;
+    transition: all 0.3s ease-in-out;
     animation: fade 0.4s ease-in-out forwards;
 }
 

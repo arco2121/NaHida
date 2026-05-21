@@ -5,7 +5,7 @@
 
 export const PlantViewer = (() => {
 
-    const MODEL_PATH = 'live2d/models/NaHida Plant Model/NaHida Plant Model.model3.json';
+    const MODEL_PATH = '/live2d/models/NaHida Plant Model/NaHida Plant Model.model3.json';
 
     const PARAMS = {
         POT_COLOR: 'Pot_Color',
@@ -68,6 +68,7 @@ export const PlantViewer = (() => {
     // ----------------------------------------------------------
 
     async function init(canvasId = 'live2d-canvas') {
+        console.log('[PlantViewer] Inizializzazione Live2D...');
         const Live2DModel = window.PIXI?.live2d?.Live2DModel;
         _MotionPriority = window.PIXI.live2d?.MotionPriority;
 

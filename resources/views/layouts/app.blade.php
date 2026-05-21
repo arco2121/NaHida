@@ -22,6 +22,7 @@
     </div>
 
     @include('components.dock')
+    @include('components.modals')
 
 </body>
 </html>

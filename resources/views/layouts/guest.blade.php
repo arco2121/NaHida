@@ -25,6 +25,7 @@
     </div>
 
     @include("components.footer")
+    @include('components.modals')
 
 </body>
 </html>
