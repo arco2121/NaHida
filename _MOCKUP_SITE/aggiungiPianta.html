@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="NaHida_Light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NaHida 🌿 — Aggiungi pianta</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.2/dist/browser/pixi.min.js"></script>
+    <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js"></script>
+</head>
+
+<body class="bg-base-200 min-h-screen pb-10">
+
+    <!-- NAVBAR -->
+    <div class="navbar bg-base-100 shadow-sm sticky top-0 z-40">
+        <div class="navbar-start">
+            <a href="plants.html" class="btn btn-ghost btn-sm btn-square">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M14.2893 5.70708C13.8988 5.31655 13.2657 5.31655 12.8751 5.70708L7.98768 10.5993C7.20729 11.3805 7.20758 12.6463 7.98828 13.4271L12.8787 18.3175C13.2692 18.708 13.9024 18.708 14.2929 18.3175C14.6834 17.927 14.6834 17.2938 14.2929 16.9033L10.1073 12.7176C9.71677 12.3271 9.71677 11.6939 10.1073 11.3034L14.2893 7.12129C14.6798 6.73077 14.6798 6.0976 14.2893 5.70708Z" fill="currentColor"/>
+                </svg>
+            </a>
+        </div>
+        <div class="navbar-center">
+            <span class="text-lg font-bold">Aggiungi pianta</span>
+        </div>
+        <div class="navbar-end">
+            <label class="swap swap-rotate text-base-content hover:opacity-70 transition-opacity mr-2">
+                <input type="checkbox" class="theme-controller" value="NaHida_Dark" />
+                <svg class="swap-off h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/></svg>
+                <svg class="swap-on h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/></svg>
+            </label>
+        </div>
+    </div>
+
+    <!-- LAYOUT: mobile colonna / desktop bento 2 colonne -->
+    <div class="max-w-5xl mx-auto px-4 pt-6 flex flex-col gap-4 lg:grid lg:grid-cols-[1fr_1.2fr] lg:items-start lg:gap-6">
+
+        <!-- ===== COLONNA SINISTRA: preview modello + personalizzazione ===== -->
+        <div class="flex flex-col gap-4 lg:sticky lg:top-20">
+
+            <!-- Preview modello -->
+            <div class="relative overflow-hidden bg-base-100 rounded-2xl shadow">
+                <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 90%, color-mix(in srgb, var(--color-primary) 20%, transparent), transparent 65%), radial-gradient(ellipse at 85% 15%, color-mix(in srgb, var(--color-accent) 14%, transparent), transparent 55%);"></div>
+                <p class="relative text-xs font-bold text-base-content/50 uppercase tracking-wider px-5 pt-5 pb-1">Anteprima</p>
+                <div class="relative flex justify-center px-6 pt-2 pb-4">
+                    <div class="relative w-full max-w-xs" style="aspect-ratio:1;">
+                        <div id="model-skeleton" class="skeleton w-full h-full rounded-box absolute inset-0 z-20"></div>
+                        <canvas id="live2d-canvas" class="w-full h-full pointer-events-auto opacity-0 transition-opacity duration-700 absolute inset-0 z-30"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personalizzazione modello -->
+            <div class="card bg-base-100 shadow">
+                <div class="card-body p-5 gap-5">
+                    <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider -mb-2">Personalizzazione</p>
+
+                    <!-- Variante pianta: 0-6 -->
+                    <div>
+                        <div class="flex justify-between items-baseline mb-1">
+                            <label class="text-sm font-bold">Variante pianta</label>
+                            <span id="lbl_variant" class="text-sm font-bold text-primary">0</span>
+                        </div>
+                        <input type="range" id="range_variant" min="0" max="6" value="0" step="1"
+                            class="range range-primary range-sm"
+                            oninput="document.getElementById('lbl_variant').textContent=this.value; updateModel()"/>
+                    </div>
+
+                    <!-- Colore pianta: 0-5 -->
+                    <div>
+                        <div class="flex justify-between items-baseline mb-1">
+                            <label class="text-sm font-bold">Colore pianta</label>
+                            <span id="lbl_plant_color" class="text-sm font-bold text-accent">0</span>
+                        </div>
+                        <input type="range" id="range_plant_color" min="0" max="5" value="0" step="1"
+                            class="range range-accent range-sm"
+                            oninput="document.getElementById('lbl_plant_color').textContent=this.value; updateModel()"/>
+                    </div>
+
+                    <!-- Colore fiore: 0-6 -->
+                    <div>
+                        <div class="flex justify-between items-baseline mb-1">
+                            <label class="text-sm font-bold">Colore fiore</label>
+                            <span id="lbl_flower" class="text-sm font-bold text-secondary">0</span>
+                        </div>
+                        <input type="range" id="range_flower" min="0" max="6" value="0" step="1"
+                            class="range range-secondary range-sm"
+                            oninput="document.getElementById('lbl_flower').textContent=this.value; updateModel()"/>
+                    </div>
+
+                    <!-- Colore vaso: 0-2 -->
+                    <div>
+                        <div class="flex justify-between items-baseline mb-1">
+                            <label class="text-sm font-bold">Colore vaso</label>
+                            <span id="lbl_pot" class="text-sm font-bold">0</span>
+                        </div>
+                        <input type="range" id="range_pot" min="0" max="2" value="0" step="1"
+                            class="range range-sm"
+                            oninput="document.getElementById('lbl_pot').textContent=this.value; updateModel()"/>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ===== COLONNA DESTRA: form ===== -->
+        <div class="flex flex-col gap-4">
+
+            <!-- Nome pianta -->
+            <div class="card bg-base-100 shadow">
+                <div class="card-body p-5 gap-3">
+                    <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider">Nome pianta</p>
+                    <input id="plant_name" type="text" class="input w-full" placeholder="es. Monstera Deliciosa" />
+                </div>
+            </div>
+
+            <!-- Condizioni ottimali -->
+            <div class="card bg-base-100 shadow">
+                <div class="card-body p-5 gap-4">
+                    <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider">Condizioni ottimali</p>
+
+                    <!-- Template selezionati -->
+                    <div class="grid grid-cols-2 gap-2" id="template_grid">
+
+                        <button onclick="selectTemplate(this, 'tropicale')"
+                            class="template-btn flex items-center gap-3 p-3 rounded-box border-2 border-base-200 bg-base-200 hover:border-primary/40 transition-all text-left">
+                            <span class="text-2xl">🌴</span>
+                            <div>
+                                <p class="text-sm font-bold leading-tight">Tropicale</p>
+                                <p class="text-xs text-base-content/50">Caldo e umido</p>
+                            </div>
+                        </button>
+
+                        <button onclick="selectTemplate(this, 'mediterraneo')"
+                            class="template-btn flex items-center gap-3 p-3 rounded-box border-2 border-base-200 bg-base-200 hover:border-primary/40 transition-all text-left">
+                            <span class="text-2xl">🌿</span>
+                            <div>
+                                <p class="text-sm font-bold leading-tight">Mediterraneo</p>
+                                <p class="text-xs text-base-content/50">Temperato e secco</p>
+                            </div>
+                        </button>
+
+                        <button onclick="selectTemplate(this, 'succulente')"
+                            class="template-btn flex items-center gap-3 p-3 rounded-box border-2 border-base-200 bg-base-200 hover:border-primary/40 transition-all text-left">
+                            <span class="text-2xl">🌵</span>
+                            <div>
+                                <p class="text-sm font-bold leading-tight">Succulente</p>
+                                <p class="text-xs text-base-content/50">Arido e soleggiato</p>
+                            </div>
+                        </button>
+
+                        <button onclick="selectTemplate(this, 'custom')"
+                            class="template-btn flex items-center gap-3 p-3 rounded-box border-2 border-base-200 bg-base-200 hover:border-primary/40 transition-all text-left">
+                            <span class="text-2xl">✏️</span>
+                            <div>
+                                <p class="text-sm font-bold leading-tight">Custom</p>
+                                <p class="text-xs text-base-content/50">Imposta tu i valori</p>
+                            </div>
+                        </button>
+
+                    </div>
+
+                    <div class="divider my-0 text-xs text-base-content/40">Parametri</div>
+
+                    <!-- Input condizioni -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-bold text-base-content/50 uppercase tracking-wide block mb-1">Umidità aria min (%)</label>
+                            <input id="hum_min" type="number" class="input input-sm w-full" placeholder="es. 50" />
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-base-content/50 uppercase tracking-wide block mb-1">Umidità aria max (%)</label>
+                            <input id="hum_max" type="number" class="input input-sm w-full" placeholder="es. 80" />
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-base-content/50 uppercase tracking-wide block mb-1">Temperatura min (°C)</label>
+                            <input id="temp_min" type="number" class="input input-sm w-full" placeholder="es. 18" />
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-base-content/50 uppercase tracking-wide block mb-1">Temperatura max (°C)</label>
+                            <input id="temp_max" type="number" class="input input-sm w-full" placeholder="es. 28" />
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-base-content/50 uppercase tracking-wide block mb-1">Suolo min (%)</label>
+                            <input id="soil_min" type="number" class="input input-sm w-full" placeholder="es. 40" />
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-base-content/50 uppercase tracking-wide block mb-1">Suolo max (%)</label>
+                            <input id="soil_max" type="number" class="input input-sm w-full" placeholder="es. 70" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Frequenza annaffiatura -->
+            <div class="card bg-base-100 shadow">
+                <div class="card-body p-5 gap-3">
+                    <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider">Frequenza annaffiatura</p>
+                    <div class="flex items-center gap-3">
+                        <input id="water_interval" type="number" class="input flex-1" placeholder="es. 3" min="1" />
+                        <div class="flex rounded-box overflow-hidden border-2 border-base-200">
+                            <button id="btn_ore" onclick="setUnit('ore')"
+                                class="px-4 py-2 text-sm font-bold bg-primary text-primary-content transition-all">
+                                Ore
+                            </button>
+                            <button id="btn_giorni" onclick="setUnit('giorni')"
+                                class="px-4 py-2 text-sm font-bold bg-base-200 text-base-content transition-all">
+                                Giorni
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-xs text-base-content/40" id="water_preview">Verrà annaffiata ogni — ore</p>
+                </div>
+            </div>
+
+            <!-- Tasto conferma -->
+            <button class="btn btn-primary w-full btn-lg gap-2 shadow"
+                onclick="document.getElementById('modal_confirm').showModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Aggiungi pianta
+            </button>
+
+        </div>
+    </div>
+
+    <!-- ===== MODALE CONFERMA ===== -->
+    <dialog id="modal_confirm" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <h3 class="text-lg font-bold mb-1">Conferma nuova pianta</h3>
+            <p class="text-sm text-base-content/60 mb-4">Stai per aggiungere la pianta con le impostazioni scelte. Potrai modificarle in qualsiasi momento dai dettagli.</p>
+            <div class="bg-base-200 rounded-box p-4 mb-4 flex flex-col gap-1 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-base-content/50">Nome</span>
+                    <span class="font-bold" id="summary_name">—</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-base-content/50">Condizioni</span>
+                    <span class="font-bold" id="summary_template">Custom</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-base-content/50">Annaffiatura</span>
+                    <span class="font-bold" id="summary_water">—</span>
+                </div>
+            </div>
+            <div class="modal-action gap-2">
+                <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
+                <a href="../../../../../../../Downloads/plant_detail.html" class="btn btn-primary">Conferma</a>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
+    </dialog>
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="./js/live2d-viewer.js"></script>
+
+    <script>
+        // ---- Live2D ----
+        window.addEventListener('DOMContentLoaded', () => {
+            PlantViewer.init('live2d-canvas');
+        });
+
+        function updateModel() {
+            PlantViewer.setAppearance({
+                plant_variant: parseInt(document.getElementById('range_variant').value),
+                plant_color:   parseInt(document.getElementById('range_plant_color').value),
+                flower_color:  parseInt(document.getElementById('range_flower').value),
+                pot_color:     parseInt(document.getElementById('range_pot').value),
+            });
+        }
+
+        // ---- Template condizioni ----
+        const TEMPLATES = {
+            tropicale:    { hum_min: 60, hum_max: 90, temp_min: 20, temp_max: 35, soil_min: 50, soil_max: 80 },
+            mediterraneo: { hum_min: 40, hum_max: 70, temp_min: 15, temp_max: 28, soil_min: 35, soil_max: 65 },
+            succulente:   { hum_min: 10, hum_max: 40, temp_min: 15, temp_max: 38, soil_min: 10, soil_max: 35 },
+            custom:       null,
+        };
+
+        let _selectedTemplate = null;
+
+        function selectTemplate(btn, key) {
+            // Reset tutti
+            document.querySelectorAll('.template-btn').forEach(b => {
+                b.classList.remove('border-primary', 'bg-primary/10');
+                b.classList.add('border-base-200', 'bg-base-200');
+            });
+            // Attiva questo
+            btn.classList.add('border-primary', 'bg-primary/10');
+            btn.classList.remove('border-base-200', 'bg-base-200');
+
+            _selectedTemplate = key;
+            document.getElementById('summary_template').textContent = btn.querySelector('p.font-bold').textContent;
+
+            const tpl = TEMPLATES[key];
+            if (tpl) {
+                document.getElementById('hum_min').value  = tpl.hum_min;
+                document.getElementById('hum_max').value  = tpl.hum_max;
+                document.getElementById('temp_min').value = tpl.temp_min;
+                document.getElementById('temp_max').value = tpl.temp_max;
+                document.getElementById('soil_min').value = tpl.soil_min;
+                document.getElementById('soil_max').value = tpl.soil_max;
+                // Readonly se non custom
+                document.querySelectorAll('#hum_min,#hum_max,#temp_min,#temp_max,#soil_min,#soil_max').forEach(i => {
+                    i.readOnly = true;
+                    i.classList.add('opacity-60');
+                });
+            } else {
+                // Custom: libera gli input
+                document.querySelectorAll('#hum_min,#hum_max,#temp_min,#temp_max,#soil_min,#soil_max').forEach(i => {
+                    i.readOnly = false;
+                    i.classList.remove('opacity-60');
+                });
+            }
+        }
+
+        // ---- Unità annaffiatura ----
+        let _unit = 'ore';
+
+        function setUnit(unit) {
+            _unit = unit;
+            const btnOre    = document.getElementById('btn_ore');
+            const btnGiorni = document.getElementById('btn_giorni');
+            if (unit === 'ore') {
+                btnOre.classList.add('bg-primary', 'text-primary-content');
+                btnOre.classList.remove('bg-base-200', 'text-base-content');
+                btnGiorni.classList.add('bg-base-200', 'text-base-content');
+                btnGiorni.classList.remove('bg-primary', 'text-primary-content');
+            } else {
+                btnGiorni.classList.add('bg-primary', 'text-primary-content');
+                btnGiorni.classList.remove('bg-base-200', 'text-base-content');
+                btnOre.classList.add('bg-base-200', 'text-base-content');
+                btnOre.classList.remove('bg-primary', 'text-primary-content');
+            }
+            updateWaterPreview();
+        }
+
+        function updateWaterPreview() {
+            const val = document.getElementById('water_interval').value;
+            const preview = document.getElementById('water_preview');
+            const summary = document.getElementById('summary_water');
+            if (val) {
+                const txt = `Verrà annaffiata ogni ${val} ${_unit}`;
+                preview.textContent = txt;
+                summary.textContent = `ogni ${val} ${_unit}`;
+            } else {
+                preview.textContent = `Verrà annaffiata ogni — ${_unit}`;
+                summary.textContent = '—';
+            }
+        }
+
+        document.getElementById('water_interval').addEventListener('input', updateWaterPreview);
+
+        // ---- Modale conferma: aggiorna riepilogo ----
+        document.querySelector('[onclick="document.getElementById(\'modal_confirm\').showModal()"]').addEventListener('click', () => {
+            const name = document.getElementById('plant_name').value || '—';
+            document.getElementById('summary_name').textContent = name;
+            if (!document.getElementById('summary_water').textContent || document.getElementById('summary_water').textContent === '—') {
+                updateWaterPreview();
+            }
+        });
+    </script>
+
+    <style>
+        body { font-family: 'Balsamiq Sans', sans-serif; }
+
+        :root {
+            color-scheme: light;
+            --color-base-100: #F5F0E8; --color-base-200: #EAE2D5; --color-base-300: #DDD3C0;
+            --color-base-content: #1A1410; --color-primary: #5A7A3A; --color-primary-content: #F0F7E8;
+            --color-secondary: #C4703A; --color-secondary-content: #FEF3EC;
+            --color-accent: #9EBB5C; --color-accent-content: #2A3A14;
+            --color-neutral: #4A3728; --color-neutral-content: #F5F0E8;
+            --color-info: #3A7A8A; --color-info-content: #E8F5F7;
+            --color-success: #4A8A4A; --color-success-content: #E8F5E8;
+            --color-warning: #C4903A; --color-warning-content: #FEF6E8;
+            --color-error: #B04040; --color-error-content: #FEF0F0;
+            --radius-selector: 1rem; --radius-field: 1rem; --radius-box: 1rem;
+            --size-selector: 0.3125rem; --size-field: 0.3125rem; --border: 2px; --depth: 0; --noise: 1;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                color-scheme: dark;
+                --color-base-100: #1C1810; --color-base-200: #261F14; --color-base-300: #32281A;
+                --color-base-content: #E8DFD0; --color-primary: #7AAA4A; --color-primary-content: #0E1A08;
+                --color-secondary: #E0935A; --color-secondary-content: #1E0A00;
+                --color-accent: #C4DC88; --color-accent-content: #1A2A04;
+                --color-neutral: #C8B89A; --color-neutral-content: #1C1810;
+                --color-info: #5AAABB; --color-info-content: #041418;
+                --color-success: #6ABB6A; --color-success-content: #041804;
+                --color-warning: #E0B06A; --color-warning-content: #1E0E00;
+                --color-error: #D46A6A; --color-error-content: #1E0404;
+                --radius-selector: 1rem; --radius-field: 1rem; --radius-box: 1rem;
+                --size-selector: 0.3125rem; --size-field: 0.3125rem; --border: 2px; --depth: 0; --noise: 1;
+            }
+        }
+        :root:has(input.theme-controller[value="NaHida_Light"]:checked), [data-theme="NaHida_Light"] {
+            color-scheme: light;
+            --color-base-100: #F5F0E8; --color-base-200: #EAE2D5; --color-base-300: #DDD3C0;
+            --color-base-content: #1A1410; --color-primary: #5A7A3A; --color-primary-content: #F0F7E8;
+            --color-secondary: #C4703A; --color-secondary-content: #FEF3EC;
+            --color-accent: #9EBB5C; --color-accent-content: #2A3A14;
+            --color-neutral: #4A3728; --color-neutral-content: #F5F0E8;
+            --color-info: #3A7A8A; --color-info-content: #E8F5F7;
+            --color-success: #4A8A4A; --color-success-content: #E8F5E8;
+            --color-warning: #C4903A; --color-warning-content: #FEF6E8;
+            --color-error: #B04040; --color-error-content: #FEF0F0;
+        }
+        :root:has(input.theme-controller[value="NaHida_Dark"]:checked), [data-theme="NaHida_Dark"] {
+            color-scheme: dark;
+            --color-base-100: #1C1810; --color-base-200: #261F14; --color-base-300: #32281A;
+            --color-base-content: #E8DFD0; --color-primary: #7AAA4A; --color-primary-content: #0E1A08;
+            --color-secondary: #E0935A; --color-secondary-content: #1E0A00;
+            --color-accent: #C4DC88; --color-accent-content: #1A2A04;
+            --color-neutral: #C8B89A; --color-neutral-content: #1C1810;
+            --color-info: #5AAABB; --color-info-content: #041418;
+            --color-success: #6ABB6A; --color-success-content: #041804;
+            --color-warning: #E0B06A; --color-warning-content: #1E0E00;
+            --color-error: #D46A6A; --color-error-content: #1E0404;
+        }
+    </style>
+</body>
+</html>
