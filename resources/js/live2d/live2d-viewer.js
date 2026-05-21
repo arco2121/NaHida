@@ -311,6 +311,72 @@ export const PlantViewer = (() => {
         _model.anchor.set(0.5, 0.5);
     }
 
-    return {init, setAppearance, randomizeAppearance, setHealth, setSleeping, tap, setPasswordMode};
+    async function capturePreview(plantId, appearance = null) {
+        // Applica l'aspetto se passato, altrimenti usa quello corrente
+        if (appearance) setAppearance(appearance);
+
+        // Crea un canvas offscreen temporaneo
+        const offCanvas = document.createElement('canvas');
+        offCanvas.width = 512;
+        offCanvas.height = 512;
+
+        const offApp = new window.PIXI.Application({
+            view: offCanvas,
+            width: 512,
+            height: 512,
+            transparent: true,
+            antialias: true,
+            preserveDrawingBuffer: true,
+        });
+
+        try {
+            const Live2DModel = window.PIXI.live2d.Live2DModel;
+            const offModel = await Live2DModel.from(MODEL_PATH);
+            offApp.stage.addChild(offModel);
+
+            // Applica stessa scala del modello principale
+            const scale = Math.min(512 / offModel.internalModel.originalWidth,
+                512 / offModel.internalModel.originalHeight) * 0.85;
+            offModel.scale.set(scale);
+            offModel.x = 256;
+            offModel.y = 256;
+            offModel.anchor.set(0.5, 0.5);
+
+            // Applica i parametri di aspetto
+            const core = offModel.internalModel.coreModel;
+            const ids  = core._parameterIds;
+            const vals = core._parameterValues;
+
+            const s = _state.appearance;
+            _setParam(ids, vals, PARAMS.POT_COLOR,     s.pot_color);
+            _setParam(ids, vals, PARAMS.PLANT_VARIANT,  s.plant_variant);
+            _setParam(ids, vals, PARAMS.PLANT_COLOR,    s.plant_color);
+            _setParam(ids, vals, PARAMS.FLOWER_COLOR,   s.flower_color);
+
+            // Aspetta 3 frame che il renderer applichi tutto
+            await new Promise(r => setTimeout(r, 100));
+
+            const dataURL = offCanvas.toDataURL('image/png');
+
+            // Manda a Laravel
+            const response = await fetch(`/api/plants/${plantId}/preview`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+                },
+                body: JSON.stringify({ image: dataURL }),
+            });
+
+            const data = await response.json();
+            console.log('[PlantViewer] Preview salvata:', data.url);
+            return data.url;
+
+        } finally {
+            offApp.destroy(true);
+        }
+    }
+
+    return { init, setAppearance, randomizeAppearance, setHealth, setSleeping, tap, setPasswordMode, capturePreview };
 
 })();

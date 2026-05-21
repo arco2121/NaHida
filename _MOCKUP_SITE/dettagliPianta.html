@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="NaHida_Light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NaHida 🌿 — Monstera Deliciosa</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.2/dist/browser/pixi.min.js"></script>
+    <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js"></script>
+</head>
+
+<body class="bg-base-200 min-h-screen pb-24 lg:pb-0">
+
+    <!-- NAVBAR -->
+    <div class="navbar bg-base-100 shadow-sm sticky top-0 z-40">
+        <div class="navbar-start">
+            <a href="dashboard.html" class="btn btn-ghost btn-sm btn-square">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.2893 5.70708C13.8988 5.31655 13.2657 5.31655 12.8751 5.70708L7.98768 10.5993C7.20729 11.3805 7.20758 12.6463 7.98828 13.4271L12.8787 18.3175C13.2692 18.708 13.9024 18.708 14.2929 18.3175C14.6834 17.927 14.6834 17.2938 14.2929 16.9033L10.1073 12.7176C9.71677 12.3271 9.71677 11.6939 10.1073 11.3034L14.2893 7.12129C14.6798 6.73077 14.6798 6.0976 14.2893 5.70708Z" fill="currentColor"/>
+                </svg>
+            </a>
+        </div>
+        <div class="navbar-center">
+            <span class="text-lg font-bold text-base-content">Dettagli Pianta</span>
+        </div>
+        <div class="navbar-end">
+            <label class="swap swap-rotate text-base-content hover:opacity-70 transition-opacity mr-2">
+                <input type="checkbox" class="theme-controller" value="NaHida_Dark" />
+                <svg class="swap-off h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
+                </svg>
+                <svg class="swap-on h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
+                </svg>
+            </label>
+        </div>
+    </div>
+
+    <!-- LAYOUT PRINCIPALE: mobile scroll / desktop bento 2 colonne -->
+    <div class="lg:max-w-5xl lg:mx-auto lg:px-6 lg:pt-6 lg:grid lg:grid-cols-[1fr_1.1fr] lg:gap-6 lg:items-start">
+
+        <!-- ===== COLONNA SINISTRA: MODELLO ===== -->
+        <div class="lg:sticky lg:top-20 flex flex-col gap-4">
+
+            <!-- Card modello -->
+            <div class="relative overflow-hidden bg-base-100 lg:rounded-2xl lg:shadow-md">
+
+                <!-- Sfondo decorativo sfumato -->
+                <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 90%, color-mix(in srgb, var(--color-primary) 20%, transparent), transparent 65%), radial-gradient(ellipse at 85% 15%, color-mix(in srgb, var(--color-accent) 14%, transparent), transparent 55%);"></div>
+
+                <!-- Header: nome + tasto modifica -->
+                <div class="relative flex items-center justify-between px-5 pt-5 pb-1">
+                    <div class="flex items-center gap-2">
+                        <img src="assets/NaHida_Icon_Heart.png" class="w-5 h-5 object-contain" alt="" onerror="this.style.display='none'">
+                        <h1 class="text-lg font-bold text-base-content">Monstera Deliciosa</h1>
+                    </div>
+                    <button class="btn btn-ghost btn-sm gap-1" onclick="document.getElementById('modal_edit_plant').showModal()">
+                        <img src="assets/NaHida_Icon_Edit.png" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
+                        <span class="text-xs">Modifica</span>
+                    </button>
+                </div>
+
+                <!-- Canvas Live2D -->
+                <div class="relative flex justify-center px-6 pt-2 pb-4">
+                    <div class="relative w-full max-w-xs" style="aspect-ratio: 1;">
+                        <div id="model-skeleton" class="skeleton w-full h-full rounded-box absolute inset-0 z-20"></div>
+                        <canvas id="live2d-canvas" class="w-full h-full pointer-events-auto opacity-0 transition-opacity duration-700 absolute inset-0 z-30"></canvas>
+                    </div>
+                </div>
+
+                <!-- Badge stato -->
+                <div class="relative flex justify-center pb-5">
+                    <div class="flex items-center gap-2 bg-error/12 border border-error/25 rounded-full px-4 py-1.5">
+                        <img src="assets/NaHida_Emoji_Sad.png" class="w-5 h-5 object-contain" alt="" onerror="this.style.display='none'">
+                        <span class="text-sm font-bold text-error">Condizioni pessime</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Prossima annaffiata — sotto il modello su desktop, nella colonna destra su mobile -->
+            <div class="hidden lg:block">
+                <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2 px-1">Prossima annaffiata</p>
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body p-4 flex-row items-center gap-4">
+                        <img src="assets/NaHida_Icon_Clock.png" class="w-12 h-12 object-contain flex-shrink-0" alt="" onerror="this.style.display='none'">
+                        <div class="flex-1">
+                            <p class="font-bold text-base-content">Mercoledì 14 maggio</p>
+                            <p class="text-sm text-base-content/60">alle 09:00 — tra 3 giorni</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm flex-shrink-0" onclick="document.getElementById('modal_watered').showModal()">
+                            Annaffiato!
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ===== COLONNA DESTRA: CARDS ===== -->
+        <div class="flex flex-col gap-5 px-4 pt-5 lg:px-0 lg:pt-0 pb-6">
+
+            <!-- STATO SENSORI -->
+            <div>
+                <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2">Stato sensori</p>
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body p-4 gap-3">
+                        <div class="grid grid-cols-2 gap-3">
+
+                            <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
+                                <div class="flex items-center gap-1.5">
+                                    <img src="assets/NaHida_Icon_Temp.png" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
+                                    <span class="text-xs text-base-content/50 font-bold uppercase tracking-wide">Temperatura</span>
+                                </div>
+                                <p class="text-2xl font-bold text-error">32°C</p>
+                                <p class="text-xs text-base-content/40">Ottimale: 18 — 26°C</p>
+                            </div>
+
+                            <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
+                                <div class="flex items-center gap-1.5">
+                                    <img src="assets/NaHida_Icon_Humidity.png" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
+                                    <span class="text-xs text-base-content/50 font-bold uppercase tracking-wide">Umidità aria</span>
+                                </div>
+                                <p class="text-2xl font-bold text-warning">28%</p>
+                                <p class="text-xs text-base-content/40">Ottimale: 50 — 80%</p>
+                            </div>
+
+                            <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
+                                <div class="flex items-center gap-1.5">
+                                    <img src="assets/NaHida_Icon_Soil.png" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
+                                    <span class="text-xs text-base-content/50 font-bold uppercase tracking-wide">Umidità suolo</span>
+                                </div>
+                                <p class="text-2xl font-bold text-success">55%</p>
+                                <p class="text-xs text-base-content/40">Ottimale: 40 — 70%</p>
+                            </div>
+
+                            <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
+                                <div class="flex items-center gap-1.5">
+                                    <img src="assets/NaHida_Icon_Light.png" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
+                                    <span class="text-xs text-base-content/50 font-bold uppercase tracking-wide">Luminosità</span>
+                                </div>
+                                <p class="text-2xl font-bold text-success">620 lx</p>
+                                <p class="text-xs text-base-content/40">Ottimale: 400 — 800 lx</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROSSIMA ANNAFFIATA — solo mobile -->
+            <div class="lg:hidden">
+                <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2">Prossima annaffiata</p>
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body p-4 flex-row items-center gap-4">
+                        <img src="assets/NaHida_Icon_Clock.png" class="w-12 h-12 object-contain flex-shrink-0" alt="" onerror="this.style.display='none'">
+                        <div class="flex-1">
+                            <p class="font-bold text-base-content">Mercoledì 14 maggio</p>
+                            <p class="text-sm text-base-content/60">alle 09:00 — tra 3 giorni</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm flex-shrink-0" onclick="document.getElementById('modal_watered').showModal()">
+                            Annaffiato!
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AZIONI (bento 2 colonne) -->
+            <div>
+                <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2">Azioni</p>
+                <div class="grid grid-cols-2 gap-3">
+
+                    <button class="card bg-base-100 shadow hover:shadow-md active:scale-95 transition-all cursor-pointer"
+                        onclick="document.getElementById('modal_history').showModal()">
+                        <div class="card-body p-4 items-center text-center gap-2">
+                            <img src="assets/NaHida_Icon_Clock.png" class="w-9 h-9 object-contain" alt="" onerror="this.style.display='none'">
+                            <span class="text-sm font-bold text-base-content">Storico</span>
+                        </div>
+                    </button>
+
+                    <button class="card bg-base-100 shadow hover:shadow-md active:scale-95 transition-all cursor-pointer"
+                        onclick="document.getElementById('modal_device').showModal()">
+                        <div class="card-body p-4 items-center text-center gap-2">
+                            <img src="assets/NaHida_Icon_Device.png" class="w-9 h-9 object-contain" alt="" onerror="this.style.display='none'">
+                            <span class="text-sm font-bold text-base-content">Collega dispositivo</span>
+                        </div>
+                    </button>
+
+                    <button class="card bg-base-100 shadow hover:shadow-md active:scale-95 transition-all cursor-pointer"
+                        onclick="document.getElementById('modal_music').showModal()">
+                        <div class="card-body p-4 items-center text-center gap-2">
+                            <img src="assets/NaHida_Icon_Music.png" class="w-9 h-9 object-contain" alt="" onerror="this.style.display='none'">
+                            <span class="text-sm font-bold text-base-content">Musica</span>
+                        </div>
+                    </button>
+
+                    <button class="card bg-base-100 shadow hover:shadow-md active:scale-95 transition-all cursor-pointer"
+                        onclick="document.getElementById('modal_conditions').showModal()">
+                        <div class="card-body p-4 items-center text-center gap-2">
+                            <img src="assets/NaHida_Icon_Settings.png" class="w-9 h-9 object-contain" alt="" onerror="this.style.display='none'">
+                            <span class="text-sm font-bold text-base-content">Condizioni ottimali</span>
+                        </div>
+                    </button>
+
+                    <!-- Note: tutta la larghezza, layout orizzontale -->
+                    <button class="card bg-base-100 shadow hover:shadow-md active:scale-95 transition-all cursor-pointer col-span-2"
+                        onclick="document.getElementById('modal_notes').showModal()">
+                        <div class="card-body p-4 flex-row items-center gap-3">
+                            <img src="assets/NaHida_Icon_Notes.png" class="w-9 h-9 object-contain flex-shrink-0" alt="" onerror="this.style.display='none'">
+                            <div class="text-left flex-1">
+                                <span class="text-sm font-bold text-base-content block">Note</span>
+                                <span class="text-xs text-base-content/50">Pianta comprata il 3 marzo...</span>
+                            </div>
+                            <svg class="w-4 h-4 text-base-content/30 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+                                <path d="M9.71069 18.2929C10.1012 18.6834 10.7344 18.6834 11.1249 18.2929L16.0123 13.4006C16.7927 12.6195 16.7924 11.3537 16.0117 10.5729L11.1213 5.68254C10.7308 5.29202 10.0976 5.29202 9.70708 5.68254C9.31655 6.07307 9.31655 6.70623 9.70708 7.09676L13.8927 11.2824C14.2833 11.6729 14.2833 12.3061 13.8927 12.6966L9.71069 16.8787C9.32016 17.2692 9.32016 17.9023 9.71069 18.2929Z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- DOCK (solo mobile) -->
+    <div class="dock lg:hidden">
+        <a href="plants.html">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 80 80" class="h-6 w-6 stroke-current">
+                <path d="M35.9995 45.001V69.001" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9998 54.0006C16.9541 54.0006 7.99987 45.0462 7.99987 34.0005V32.0019C7.99987 29.9112 8.32068 27.8953 8.91576 26.001C12.9713 26.1704 16.9935 27.2058 20.6091 29.048C25.8776 31.7325 30.2676 36.1225 32.952 41.3911C34.7943 45.0068 35.8297 49.0291 35.999 53.0847C34.1047 53.6798 32.089 54.0006 29.9983 54.0006H27.9998Z" fill="currentColor" />
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M46.2846 46.0005C60.4865 46.0005 71.9995 34.4874 71.9995 20.2853V17.7157C71.9995 15.0277 71.5871 12.436 70.822 10.0005C65.6076 10.2183 60.436 11.5495 55.7872 13.9182C49.0132 17.3698 43.3687 23.0143 39.9172 29.7884C37.5486 34.4371 36.2173 39.6086 35.9995 44.823C38.4351 45.588 41.0269 46.0005 43.715 46.0005H46.2846Z" fill="currentColor" />
+            </svg>
+            <span class="dock-label">Piante</span>
+        </a>
+        <a href="dashboard.html">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
+            <span class="dock-label">Home</span>
+        </a>
+        <a href="settings.html">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+            <span class="dock-label">Impostazioni</span>
+        </a>
+    </div>
+
+    <!-- ===== MODALI ===== -->
+
+    <!-- Modale: Conferma annaffiatura -->
+    <dialog id="modal_watered" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <h3 class="text-lg font-bold mb-1">Hai annaffiato la pianta?</h3>
+            <p class="text-sm text-base-content/60 mb-4">Verrà registrata una nuova annaffiatura e il timer verrà resettato.</p>
+            <div class="modal-action gap-2">
+                <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
+                <button class="btn btn-primary">Sì, confermo</button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
+    </dialog>
+
+    <!-- Modale: Storico -->
+    <dialog id="modal_history" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="text-lg font-bold mb-4">Storico</h3>
+            <ul class="divide-y divide-base-200">
+                <li class="flex items-center gap-3 py-3">
+                    <img src="assets/NaHida_Icon_Water.png" class="w-5 h-5 object-contain flex-shrink-0" alt="" onerror="this.style.display='none'">
+                    <div class="flex-1 text-sm">Annaffiatura</div>
+                    <span class="text-xs text-base-content/50">11 mag 09:14</span>
+                </li>
+                <li class="flex items-center gap-3 py-3">
+                    <img src="assets/NaHida_Icon_Warning.png" class="w-5 h-5 object-contain flex-shrink-0" alt="" onerror="this.style.display='none'">
+                    <div class="flex-1 text-sm">Temperatura alta (32°C)</div>
+                    <span class="text-xs text-base-content/50">11 mag 07:02</span>
+                </li>
+                <li class="flex items-center gap-3 py-3">
+                    <img src="assets/NaHida_Icon_Water.png" class="w-5 h-5 object-contain flex-shrink-0" alt="" onerror="this.style.display='none'">
+                    <div class="flex-1 text-sm">Annaffiatura</div>
+                    <span class="text-xs text-base-content/50">8 mag 10:30</span>
+                </li>
+                <li class="flex items-center gap-3 py-3">
+                    <img src="assets/NaHida_Icon_Water.png" class="w-5 h-5 object-contain flex-shrink-0" alt="" onerror="this.style.display='none'">
+                    <div class="flex-1 text-sm">Annaffiatura</div>
+                    <span class="text-xs text-base-content/50">5 mag 08:45</span>
+                </li>
+            </ul>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
+    </dialog>
+
+    <!-- Modale: Collega dispositivo -->
+    <dialog id="modal_device" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="text-lg font-bold mb-1">Collega dispositivo</h3>
+            <p class="text-sm text-base-content/60 mb-4">Inserisci il token del tuo dispositivo ESP32.</p>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="badge badge-success gap-1">
+                    <img src="assets/NaHida_Icon_Device.png" class="w-3 h-3 object-contain" alt="" onerror="this.style.display='none'">
+                    Online
+                </span>
+                <span class="text-sm text-base-content/60">esp32-nahida-a3f2</span>
+            </div>
+            <label class="label text-sm font-bold mb-1">Token dispositivo</label>
+            <input type="text" class="input w-full mb-4" placeholder="es. a3f2b1c9d..." value="a3f2b1c9d84e" />
+            <div class="modal-action gap-2">
+                <button class="btn btn-ghost btn-sm text-error">Scollega</button>
+                <button class="btn btn-primary">Salva</button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
+    </dialog>
+
+    <!-- Modale: Musica -->
+    <dialog id="modal_music" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="text-lg font-bold mb-4">Musica di sottofondo</h3>
+            <div class="flex flex-col gap-2">
+                <label class="flex items-center gap-3 p-3 bg-base-200 rounded-box cursor-pointer">
+                    <input type="radio" name="music" class="radio radio-primary" checked />
+                    <span class="text-sm font-bold">Nessuna</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 bg-base-200 rounded-box cursor-pointer">
+                    <input type="radio" name="music" class="radio radio-primary" />
+                    <span class="text-sm font-bold">Pioggia leggera</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 bg-base-200 rounded-box cursor-pointer">
+                    <input type="radio" name="music" class="radio radio-primary" />
+                    <span class="text-sm font-bold">Foresta</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 bg-base-200 rounded-box cursor-pointer">
+                    <input type="radio" name="music" class="radio radio-primary" />
+                    <span class="text-sm font-bold">Lo-fi chill</span>
+                </label>
+            </div>
+            <div class="modal-action">
+                <form method="dialog"><button class="btn btn-primary">Conferma</button></form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
+    </dialog>
+
+    <!-- Modale: Condizioni ottimali -->
+    <dialog id="modal_conditions" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="text-lg font-bold mb-4">Condizioni ottimali</h3>
+            <div class="flex flex-col gap-3">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="label text-xs font-bold">Temp. min (°C)</label>
+                        <input type="number" class="input input-sm w-full" value="18" />
+                    </div>
+                    <div>
+                        <label class="label text-xs font-bold">Temp. max (°C)</label>
+                        <input type="number" class="input input-sm w-full" value="26" />
+                    </div>
+                    <div>
+                        <label class="label text-xs font-bold">Umidità aria min (%)</label>
+                        <input type="number" class="input input-sm w-full" value="50" />
+                    </div>
+                    <div>
+                        <label class="label text-xs font-bold">Umidità aria max (%)</label>
+                        <input type="number" class="input input-sm w-full" value="80" />
+                    </div>
+                    <div>
+                        <label class="label text-xs font-bold">Suolo min (%)</label>
+                        <input type="number" class="input input-sm w-full" value="40" />
+                    </div>
+                    <div>
+                        <label class="label text-xs font-bold">Suolo max (%)</label>
+                        <input type="number" class="input input-sm w-full" value="70" />
+                    </div>
+                </div>
+                <div>
+                    <label class="label text-xs font-bold">Ogni quanto va annaffiata (ore)</label>
+                    <input type="number" class="input input-sm w-full" value="72" />
+                </div>
+            </div>
+            <div class="modal-action">
+                <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
+                <button class="btn btn-primary">Salva</button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
+    </dialog>
+
+    <!-- Modale: Note -->
+    <dialog id="modal_notes" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="text-lg font-bold mb-4">Note</h3>
+            <textarea class="textarea w-full h-36" placeholder="Scrivi qualcosa sulla tua pianta...">Pianta comprata il 3 marzo. Va bene in penombra, attenzione al sole diretto in estate.</textarea>
+            <div class="modal-action">
+                <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
+                <button class="btn btn-primary">Salva</button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
+    </dialog>
+
+    <!-- Modale: Modifica pianta -->
+    <!-- Parametri da PlantViewer JS:
+         plant_variant: 0-6  (6 varianti)
+         pot_color:     0-2  (3 colori vaso)
+         plant_color:   0-5  (6 colori pianta)
+         flower_color:  0-6  (7 colori fiore)
+    -->
+    <dialog id="modal_edit_plant" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="text-lg font-bold mb-4">Modifica pianta</h3>
+            <div class="flex flex-col gap-5">
+
+                <!-- Nome -->
+                <div>
+                    <label class="label text-sm font-bold">Nome</label>
+                    <input type="text" class="input w-full" value="Monstera Deliciosa" />
+                </div>
+
+                <div class="divider my-0 text-xs text-base-content/40">Aspetto del modello</div>
+
+                <!-- Variante pianta: 0-6 -->
+                <div>
+                    <div class="flex justify-between items-baseline mb-1">
+                        <label class="label text-sm font-bold p-0">Variante pianta</label>
+                        <span id="lbl_variant" class="text-sm font-bold text-primary">2</span>
+                    </div>
+                    <input type="range" id="range_variant" min="0" max="6" value="2" step="1"
+                        class="range range-primary range-sm"
+                        oninput="document.getElementById('lbl_variant').textContent = this.value" />
+                    <div class="flex justify-between text-xs text-base-content/40 px-0.5 mt-0.5">
+                        <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+                    </div>
+                </div>
+
+                <!-- Colore vaso: 0-2 -->
+                <div>
+                    <div class="flex justify-between items-baseline mb-1">
+                        <label class="label text-sm font-bold p-0">Colore vaso</label>
+                        <span id="lbl_pot" class="text-sm font-bold text-secondary">0</span>
+                    </div>
+                    <input type="range" id="range_pot" min="0" max="2" value="0" step="1"
+                        class="range range-secondary range-sm"
+                        oninput="document.getElementById('lbl_pot').textContent = this.value" />
+                    <div class="flex justify-between text-xs text-base-content/40 px-0.5 mt-0.5">
+                        <span>0</span><span>1</span><span>2</span>
+                    </div>
+                </div>
+
+                <!-- Colore pianta: 0-5 -->
+                <div>
+                    <div class="flex justify-between items-baseline mb-1">
+                        <label class="label text-sm font-bold p-0">Colore pianta</label>
+                        <span id="lbl_plant_color" class="text-sm font-bold text-accent">0</span>
+                    </div>
+                    <input type="range" id="range_plant_color" min="0" max="5" value="0" step="1"
+                        class="range range-accent range-sm"
+                        oninput="document.getElementById('lbl_plant_color').textContent = this.value" />
+                    <div class="flex justify-between text-xs text-base-content/40 px-0.5 mt-0.5">
+                        <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                    </div>
+                </div>
+
+                <!-- Colore fiore: 0-6 -->
+                <div>
+                    <div class="flex justify-between items-baseline mb-1">
+                        <label class="label text-sm font-bold p-0">Colore fiore</label>
+                        <span id="lbl_flower" class="text-sm font-bold">3</span>
+                    </div>
+                    <input type="range" id="range_flower" min="0" max="6" value="3" step="1"
+                        class="range range-sm"
+                        oninput="document.getElementById('lbl_flower').textContent = this.value" />
+                    <div class="flex justify-between text-xs text-base-content/40 px-0.5 mt-0.5">
+                        <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-action">
+                <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
+                <button class="btn btn-primary" onclick="applyAppearance()">Salva</button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
+    </dialog>
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="./js/live2d-viewer.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            PlantViewer.init('live2d-canvas');
+            // Esempio dati reali:
+            // PlantViewer.setHealth({ soil_humidity: 55, air_humidity: 28, temperature: 32 });
+        });
+
+        function applyAppearance() {
+            const variant    = parseInt(document.getElementById('range_variant').value);
+            const pot        = parseInt(document.getElementById('range_pot').value);
+            const plantColor = parseInt(document.getElementById('range_plant_color').value);
+            const flower     = parseInt(document.getElementById('range_flower').value);
+            PlantViewer.setAppearance({ pot_color: pot, plant_variant: variant, plant_color: plantColor, flower_color: flower });
+            document.getElementById('modal_edit_plant').close();
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Balsamiq Sans', sans-serif; }
+
+        :root {
+            color-scheme: light;
+            --color-base-100: #F5F0E8; --color-base-200: #EAE2D5; --color-base-300: #DDD3C0;
+            --color-base-content: #1A1410; --color-primary: #5A7A3A; --color-primary-content: #F0F7E8;
+            --color-secondary: #C4703A; --color-secondary-content: #FEF3EC;
+            --color-accent: #9EBB5C; --color-accent-content: #2A3A14;
+            --color-neutral: #4A3728; --color-neutral-content: #F5F0E8;
+            --color-info: #3A7A8A; --color-info-content: #E8F5F7;
+            --color-success: #4A8A4A; --color-success-content: #E8F5E8;
+            --color-warning: #C4903A; --color-warning-content: #FEF6E8;
+            --color-error: #B04040; --color-error-content: #FEF0F0;
+            --radius-selector: 1rem; --radius-field: 1rem; --radius-box: 1rem;
+            --size-selector: 0.3125rem; --size-field: 0.3125rem; --border: 2px; --depth: 0; --noise: 1;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                color-scheme: dark;
+                --color-base-100: #1C1810; --color-base-200: #261F14; --color-base-300: #32281A;
+                --color-base-content: #E8DFD0; --color-primary: #7AAA4A; --color-primary-content: #0E1A08;
+                --color-secondary: #E0935A; --color-secondary-content: #1E0A00;
+                --color-accent: #C4DC88; --color-accent-content: #1A2A04;
+                --color-neutral: #C8B89A; --color-neutral-content: #1C1810;
+                --color-info: #5AAABB; --color-info-content: #041418;
+                --color-success: #6ABB6A; --color-success-content: #041804;
+                --color-warning: #E0B06A; --color-warning-content: #1E0E00;
+                --color-error: #D46A6A; --color-error-content: #1E0404;
+                --radius-selector: 1rem; --radius-field: 1rem; --radius-box: 1rem;
+                --size-selector: 0.3125rem; --size-field: 0.3125rem; --border: 2px; --depth: 0; --noise: 1;
+            }
+        }
+        :root:has(input.theme-controller[value="NaHida_Light"]:checked), [data-theme="NaHida_Light"] {
+            color-scheme: light;
+            --color-base-100: #F5F0E8; --color-base-200: #EAE2D5; --color-base-300: #DDD3C0;
+            --color-base-content: #1A1410; --color-primary: #5A7A3A; --color-primary-content: #F0F7E8;
+            --color-secondary: #C4703A; --color-secondary-content: #FEF3EC;
+            --color-accent: #9EBB5C; --color-accent-content: #2A3A14;
+            --color-neutral: #4A3728; --color-neutral-content: #F5F0E8;
+            --color-info: #3A7A8A; --color-info-content: #E8F5F7;
+            --color-success: #4A8A4A; --color-success-content: #E8F5E8;
+            --color-warning: #C4903A; --color-warning-content: #FEF6E8;
+            --color-error: #B04040; --color-error-content: #FEF0F0;
+        }
+        :root:has(input.theme-controller[value="NaHida_Dark"]:checked), [data-theme="NaHida_Dark"] {
+            color-scheme: dark;
+            --color-base-100: #1C1810; --color-base-200: #261F14; --color-base-300: #32281A;
+            --color-base-content: #E8DFD0; --color-primary: #7AAA4A; --color-primary-content: #0E1A08;
+            --color-secondary: #E0935A; --color-secondary-content: #1E0A00;
+            --color-accent: #C4DC88; --color-accent-content: #1A2A04;
+            --color-neutral: #C8B89A; --color-neutral-content: #1C1810;
+            --color-info: #5AAABB; --color-info-content: #041418;
+            --color-success: #6ABB6A; --color-success-content: #041804;
+            --color-warning: #E0B06A; --color-warning-content: #1E0E00;
+            --color-error: #D46A6A; --color-error-content: #1E0404;
+        }
+    </style>
+</body>
+</html>
