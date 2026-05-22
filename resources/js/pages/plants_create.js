@@ -1,3 +1,5 @@
+import { PlantViewer } from "../live2d/live2d-viewer.js";
+
 const TEMPLATES = {
     tropicale:    { hum_min: 60, hum_max: 90, temp_min: 20, temp_max: 35, soil_min: 50, soil_max: 80 },
     mediterraneo: { hum_min: 40, hum_max: 70, temp_min: 15, temp_max: 28, soil_min: 35, soil_max: 65 },
