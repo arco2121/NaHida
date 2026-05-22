@@ -22,7 +22,7 @@ class PlantsController extends Controller
             ->get();
 
         return renderPage('plants.index', [
-            'title'  => 'Piante',
+            'title'  => 'Le mie piante',
             'user'   => $user,
             'plants' => $plants,
         ]);

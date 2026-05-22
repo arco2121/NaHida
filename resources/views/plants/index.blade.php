@@ -6,7 +6,7 @@
 
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-xl font-bold text-base-content">Le tue piante</h2>
+                <h2 class="text-xl font-bold text-base-content">{{$title}}</h2>
                 <p class="text-sm text-base-content/50 mt-0.5">
                     {{ $params['plants']->count() }} {{ $params['plants']->count() === 1 ? 'pianta registrata' : 'piante registrate' }}
                 </p>
