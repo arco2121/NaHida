@@ -1,3 +1,12 @@
+const TEMPLATES = {
+    tropicale:    { hum_min: 60, hum_max: 90, temp_min: 20, temp_max: 35, soil_min: 50, soil_max: 80 },
+    mediterraneo: { hum_min: 40, hum_max: 70, temp_min: 15, temp_max: 28, soil_min: 35, soil_max: 65 },
+    succulente:   { hum_min: 10, hum_max: 40, temp_min: 15, temp_max: 38, soil_min: 10, soil_max: 35 },
+    custom:       null,
+};
+
+let _unit = 'ore';
+
 function updateModel() {
     PlantViewer.setAppearance({
         plant_variant: parseInt(document.getElementById('range_variant').value),
@@ -7,93 +16,94 @@ function updateModel() {
     });
 }
 
-// ---- Template condizioni ----
-const TEMPLATES = {
-    tropicale:    { hum_min: 60, hum_max: 90, temp_min: 20, temp_max: 35, soil_min: 50, soil_max: 80 },
-    mediterraneo: { hum_min: 40, hum_max: 70, temp_min: 15, temp_max: 28, soil_min: 35, soil_max: 65 },
-    succulente:   { hum_min: 10, hum_max: 40, temp_min: 15, temp_max: 38, soil_min: 10, soil_max: 35 },
-    custom:       null,
-};
+function selectTemplate(btn) {
+    const key = btn.dataset.template;
 
-let _selectedTemplate = null;
-
-function selectTemplate(btn, key) {
-    // Reset tutti
     document.querySelectorAll('.template-btn').forEach(b => {
         b.classList.remove('border-primary', 'bg-primary/10');
         b.classList.add('border-base-200', 'bg-base-200');
     });
-    // Attiva questo
     btn.classList.add('border-primary', 'bg-primary/10');
     btn.classList.remove('border-base-200', 'bg-base-200');
 
-    _selectedTemplate = key;
     document.getElementById('summary_template').textContent = btn.querySelector('p.font-bold').textContent;
 
     const tpl = TEMPLATES[key];
+    const fields = ['hum_min', 'hum_max', 'temp_min', 'temp_max', 'soil_min', 'soil_max'];
+
     if (tpl) {
-        document.getElementById('hum_min').value  = tpl.hum_min;
-        document.getElementById('hum_max').value  = tpl.hum_max;
-        document.getElementById('temp_min').value = tpl.temp_min;
-        document.getElementById('temp_max').value = tpl.temp_max;
-        document.getElementById('soil_min').value = tpl.soil_min;
-        document.getElementById('soil_max').value = tpl.soil_max;
-        // Readonly se non custom
-        document.querySelectorAll('#hum_min,#hum_max,#temp_min,#temp_max,#soil_min,#soil_max').forEach(i => {
-            i.readOnly = true;
-            i.classList.add('opacity-60');
+        fields.forEach(id => {
+            const el = document.getElementById(id);
+            el.value    = tpl[id];
+            el.readOnly = true;
+            el.classList.add('opacity-60');
         });
     } else {
-        // Custom: libera gli input
-        document.querySelectorAll('#hum_min,#hum_max,#temp_min,#temp_max,#soil_min,#soil_max').forEach(i => {
-            i.readOnly = false;
-            i.classList.remove('opacity-60');
+        fields.forEach(id => {
+            const el = document.getElementById(id);
+            el.readOnly = false;
+            el.classList.remove('opacity-60');
         });
     }
 }
 
-// ---- Unità annaffiatura ----
-let _unit = 'ore';
-
 function setUnit(unit) {
     _unit = unit;
-    const btnOre    = document.getElementById('btn_ore');
-    const btnGiorni = document.getElementById('btn_giorni');
-    if (unit === 'ore') {
-        btnOre.classList.add('bg-primary', 'text-primary-content');
-        btnOre.classList.remove('bg-base-200', 'text-base-content');
-        btnGiorni.classList.add('bg-base-200', 'text-base-content');
-        btnGiorni.classList.remove('bg-primary', 'text-primary-content');
-    } else {
-        btnGiorni.classList.add('bg-primary', 'text-primary-content');
-        btnGiorni.classList.remove('bg-base-200', 'text-base-content');
-        btnOre.classList.add('bg-base-200', 'text-base-content');
-        btnOre.classList.remove('bg-primary', 'text-primary-content');
-    }
+
+    document.getElementById('btn_ore').classList.toggle('bg-primary',          unit === 'ore');
+    document.getElementById('btn_ore').classList.toggle('text-primary-content', unit === 'ore');
+    document.getElementById('btn_ore').classList.toggle('bg-base-200',          unit !== 'ore');
+    document.getElementById('btn_ore').classList.toggle('text-base-content',    unit !== 'ore');
+
+    document.getElementById('btn_giorni').classList.toggle('bg-primary',          unit === 'giorni');
+    document.getElementById('btn_giorni').classList.toggle('text-primary-content', unit === 'giorni');
+    document.getElementById('btn_giorni').classList.toggle('bg-base-200',          unit !== 'giorni');
+    document.getElementById('btn_giorni').classList.toggle('text-base-content',    unit !== 'giorni');
+
     updateWaterPreview();
 }
 
 function updateWaterPreview() {
     const val = document.getElementById('water_interval').value;
-    const preview = document.getElementById('water_preview');
+    const txt = val ? `Verrà annaffiata ogni ${val} ${_unit}` : `Verrà annaffiata ogni — ${_unit}`;
+    document.getElementById('water_preview').textContent = txt;
+
     const summary = document.getElementById('summary_water');
-    if (val) {
-        const txt = `Verrà annaffiata ogni ${val} ${_unit}`;
-        preview.textContent = txt;
-        summary.textContent = `ogni ${val} ${_unit}`;
-    } else {
-        preview.textContent = `Verrà annaffiata ogni — ${_unit}`;
-        summary.textContent = '—';
-    }
+    if (summary) summary.textContent = val ? `ogni ${val} ${_unit}` : '—';
 }
 
-document.getElementById('water_interval').addEventListener('input', updateWaterPreview);
-
-// ---- Modale conferma: aggiorna riepilogo ----
-document.querySelector('[onclick="document.getElementById(\'modal_confirm\').showModal()"]').addEventListener('click', () => {
+function openConfirmModal() {
     const name = document.getElementById('plant_name').value || '—';
-    document.getElementById('summary_name').textContent = name;
-    if (!document.getElementById('summary_water').textContent || document.getElementById('summary_water').textContent === '—') {
-        updateWaterPreview();
-    }
+    const summaryName = document.getElementById('summary_name');
+    if (summaryName) summaryName.textContent = name;
+    updateWaterPreview();
+    document.getElementById('modal_confirm').showModal();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.template-btn').forEach(btn => {
+        btn.addEventListener('click', () => selectTemplate(btn));
+    });
+
+    document.querySelectorAll('.unit-btn').forEach(btn => {
+        btn.addEventListener('click', () => setUnit(btn.dataset.unit));
+    });
+
+    document.getElementById('water_interval').addEventListener('input', updateWaterPreview);
+
+    document.getElementById('btn_confirm').addEventListener('click', openConfirmModal);
+
+    const ranges = [
+        { range: 'range_variant',    label: 'lbl_variant' },
+        { range: 'range_plant_color', label: 'lbl_plant_color' },
+        { range: 'range_flower',     label: 'lbl_flower' },
+        { range: 'range_pot',        label: 'lbl_pot' },
+    ];
+
+    ranges.forEach(({ range, label }) => {
+        document.getElementById(range).addEventListener('input', function () {
+            document.getElementById(label).textContent = this.value;
+            updateModel();
+        });
+    });
 });
