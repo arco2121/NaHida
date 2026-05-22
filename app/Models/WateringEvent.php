@@ -19,7 +19,6 @@ class WateringEvent extends Model
 
     protected $casts = [
         'watered_at' => 'datetime',
-        'source'     => 'string',
     ];
 
     protected static function booted(): void

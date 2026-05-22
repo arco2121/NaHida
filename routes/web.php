@@ -12,12 +12,13 @@ Route::get('/', fn() => renderPage());
 Route::get('/dashboard', [DashboardController::class, 'show'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/plants',          [PlantsController::class, 'index'])->name('plants.index');
-    Route::get('/plants/create',   [PlantsController::class, 'create'])->name('plants.create');
-    Route::get('/plants/{id}',     [PlantsController::class, 'show'])->name('plants.show');
-    Route::post('/plants/store',   [PlantsController::class, 'store'])->name('plants.store');
-    Route::patch('/plants/{id}',   [PlantsController::class, 'update'])->name('plants.update');
-    Route::post('/plants/{id}/water', [PlantsController::class, 'water'])->name('plants.water');
+    Route::get('/plants',               [PlantsController::class, 'index'])->name('plants.index');
+    Route::get('/plants/create',        [PlantsController::class, 'create'])->name('plants.create');
+    Route::get('/plants/{id}',          [PlantsController::class, 'show'])->name('plants.show');
+    Route::post('/plants/store',        [PlantsController::class, 'store'])->name('plants.store');
+    Route::patch('/plants/{id}',        [PlantsController::class, 'update'])->name('plants.update');
+    Route::post('/plants/{id}/water',   [PlantsController::class, 'water'])->name('plants.water');
+    Route::get('/plants/{id}/history',  [PlantsController::class, 'history'])->name('plants.history');
 
     // Device management
     Route::post('/plants/{id}/device',   [DeviceController::class, 'linkDevice'])->name('plants.device.link');

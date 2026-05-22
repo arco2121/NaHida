@@ -30,13 +30,17 @@ class Plant extends Model
     ];
 
     protected $casts = [
-        'hum_min'       => 'float',
-        'hum_max'       => 'float',
-        'temp_min'      => 'float',
-        'temp_max'      => 'float',
-        'soil_hum_min'  => 'float',
-        'soil_hum_max'  => 'float',
+        'hum_min'        => 'float',
+        'hum_max'        => 'float',
+        'temp_min'       => 'float',
+        'temp_max'       => 'float',
+        'soil_hum_min'   => 'float',
+        'soil_hum_max'   => 'float',
         'watering_cycle' => 'integer',
+        'plant_variant'  => 'integer',
+        'plant_color'    => 'integer',
+        'flower_color'   => 'integer',
+        'pot_color'      => 'integer',
     ];
 
     public function user(): BelongsTo
