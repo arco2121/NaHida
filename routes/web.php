@@ -10,10 +10,19 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn() => renderPage());
 Route::get('/dashboard', [DashboardController::class, 'show'])->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/plants',       [PlantsController::class, 'index'])->middleware(['auth', 'verified'])->name('plants.index');
-Route::get('/plants/create',  [PlantsController::class, 'create'])->middleware(['auth', 'verified'])->name('plants.create');
-Route::get('/plants/{id}',    [PlantsController::class, 'show'])->middleware(['auth', 'verified'])->name('plants.show');
-Route::post('/plants/store',    [PlantsController::class, 'store'])->middleware(['auth', 'verified'])->name('plants.store');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/plants',          [PlantsController::class, 'index'])->name('plants.index');
+    Route::get('/plants/create',   [PlantsController::class, 'create'])->name('plants.create');
+    Route::get('/plants/{id}',     [PlantsController::class, 'show'])->name('plants.show');
+    Route::post('/plants/store',   [PlantsController::class, 'store'])->name('plants.store');
+    Route::patch('/plants/{id}',   [PlantsController::class, 'update'])->name('plants.update');
+    Route::post('/plants/{id}/water', [PlantsController::class, 'water'])->name('plants.water');
+
+    // Device management
+    Route::post('/plants/{id}/device',   [DeviceController::class, 'linkDevice'])->name('plants.device.link');
+    Route::delete('/plants/{id}/device', [DeviceController::class, 'unlinkDevice'])->name('plants.device.unlink');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -22,14 +31,9 @@ Route::middleware('auth')->group(function () {
 });
 
 // --- Device / MQTT ---
-// Toggle del led
-Route::post('/device/toggle-led', [DeviceController::class, 'toggleLed']);
-
-//Invio configurazioni in json
+Route::post('/device/toggle-led',  [DeviceController::class, 'toggleLed']);
 Route::post('/device/send-config', [DeviceController::class, 'sendConfig']);
-
-// Controlla se il dispositivo è online
-Route::get('/device/status', [DeviceController::class, 'getStatus']);
+Route::get('/device/status',       [DeviceController::class, 'getStatus']);
 
 // TEST
 Route::get('/test', fn() => renderPage("test"));

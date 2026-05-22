@@ -12,7 +12,7 @@ use PhpMqtt\Client\Facades\MQTT;
 class DeviceController extends Controller
 {
     /**
-     * Invia un comando ON/OFF al LED dell'ESP via MQTT
+     * Invia un comando ON/OFF al LED dell'ESP via MQTT.
      */
     public function toggleLed(Request $request): JsonResponse
     {
@@ -69,7 +69,6 @@ class DeviceController extends Controller
 
     /**
      * Ritorna lo stato online/offline di un dispositivo.
-     * Online = last_seen_at aggiornato negli ultimi 60 secondi.
      */
     public function getStatus(Request $request): JsonResponse
     {
@@ -84,5 +83,49 @@ class DeviceController extends Controller
             'online'       => $isOnline,
             'last_seen_at' => $device->last_seen_at?->toDateTimeString(),
         ]);
+    }
+
+    /**
+     * Collega un dispositivo a una pianta dell'utente.
+     */
+    public function linkDevice(Request $request, int $plantId): JsonResponse
+    {
+        $request->validate([
+            'device_token' => 'required|string|max:255',
+        ]);
+
+        $plant = Plant::where('user_id', $request->user()->user_id)->findOrFail($plantId);
+
+        // Rimuove il vecchio dispositivo collegato a questa pianta
+        Device::where('plant_id', $plantId)->delete();
+
+        // Se il token era usato da un'altra pianta, lo rimuove (un token = un dispositivo)
+        Device::where('device_token', $request->device_token)->delete();
+
+        $device = Device::create([
+            'plant_id'     => $plant->plant_id,
+            'device_token' => $request->device_token,
+        ]);
+
+        Log::info("Dispositivo {$request->device_token} collegato alla pianta #{$plantId}");
+
+        return response()->json([
+            'status'       => 'ok',
+            'device_token' => $device->device_token,
+        ]);
+    }
+
+    /**
+     * Scollega il dispositivo da una pianta.
+     */
+    public function unlinkDevice(Request $request, int $plantId): JsonResponse
+    {
+        Plant::where('user_id', $request->user()->user_id)->findOrFail($plantId);
+
+        Device::where('plant_id', $plantId)->delete();
+
+        Log::info("Dispositivo scollegato dalla pianta #{$plantId}");
+
+        return response()->json(['status' => 'ok']);
     }
 }

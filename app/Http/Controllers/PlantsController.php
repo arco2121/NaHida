@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePlantRequest;
 use App\Models\Plant;
+use App\Models\WateringEvent;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -66,5 +68,48 @@ class PlantsController extends Controller
 
         return redirect()->route('plants.show', $plant->plant_id)
             ->with('success', "'{$plant->plant_name}' aggiunta con successo!");
+    }
+
+    /**
+     * Aggiorna i dati di una pianta via PATCH (chiamata JSON dal frontend).
+     */
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $plant = Plant::where('user_id', $request->user()->user_id)->findOrFail($id);
+
+        $validated = $request->validate([
+            'plant_name'     => ['sometimes', 'string', 'max:100'],
+            'notes'          => ['sometimes', 'nullable', 'string', 'max:500'],
+            'hum_min'        => ['sometimes', 'numeric', 'min:0', 'max:100'],
+            'hum_max'        => ['sometimes', 'numeric', 'min:0', 'max:100', 'gte:hum_min'],
+            'temp_min'       => ['sometimes', 'numeric', 'min:-10', 'max:60'],
+            'temp_max'       => ['sometimes', 'numeric', 'min:-10', 'max:60', 'gte:temp_min'],
+            'soil_hum_min'   => ['sometimes', 'numeric', 'min:0', 'max:100'],
+            'soil_hum_max'   => ['sometimes', 'numeric', 'min:0', 'max:100', 'gte:soil_hum_min'],
+            'watering_cycle' => ['sometimes', 'integer', 'min:1'],
+            'plant_variant'  => ['sometimes', 'nullable', 'string', 'max:50'],
+            'plant_color'    => ['sometimes', 'nullable', 'string', 'max:20'],
+            'flower_color'   => ['sometimes', 'nullable', 'string', 'max:20'],
+            'pot_color'      => ['sometimes', 'nullable', 'string', 'max:20'],
+        ]);
+
+        $plant->update($validated);
+
+        return response()->json(['status' => 'ok', 'plant' => $plant->fresh()]);
+    }
+
+    /**
+     * Registra un'annaffiatura manuale.
+     */
+    public function water(Request $request, int $id): JsonResponse
+    {
+        $plant = Plant::where('user_id', $request->user()->user_id)->findOrFail($id);
+
+        WateringEvent::create([
+            'plant_id' => $plant->plant_id,
+            'source'   => 'manual',
+        ]);
+
+        return response()->json(['status' => 'ok', 'watered_at' => now()->toDateTimeString()]);
     }
 }

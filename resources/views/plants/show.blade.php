@@ -53,6 +53,40 @@
             && $device->last_seen_at->diffInSeconds(now()) < 60;
     @endphp
 
+    {{-- ✅ Passa al JS l'aspetto salvato e i dati della pianta --}}
+    <script>
+        window.PLANT_ID = {{ $plant->plant_id }};
+
+        window.PLANT_APPEARANCE = {
+            pot_color:     {{ (int)($plant->pot_color     ?? 0) }},
+            plant_variant: {{ (int)($plant->plant_variant ?? 0) }},
+            plant_color:   {{ (int)($plant->plant_color   ?? 0) }},
+            flower_color:  {{ (int)($plant->flower_color  ?? 0) }},
+        };
+
+        window.PLANT_DATA = {
+            notes:          {!! json_encode($plant->notes) !!},
+            temp_min:       {{ $plant->temp_min }},
+            temp_max:       {{ $plant->temp_max }},
+            hum_min:        {{ $plant->hum_min }},
+            hum_max:        {{ $plant->hum_max }},
+            soil_hum_min:   {{ $plant->soil_hum_min }},
+            soil_hum_max:   {{ $plant->soil_hum_max }},
+            watering_cycle: {{ $plant->watering_cycle }},
+            device_token:   {!! json_encode($device?->device_token) !!},
+            has_device:     {{ $device ? 'true' : 'false' }},
+        };
+    </script>
+
+    {{-- Flash messages --}}
+    @if(session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                window.showToast && showToast({!! json_encode(session('success')) !!}, 'success');
+            });
+        </script>
+    @endif
+
     <div class="lg:px-6 lg:pt-6 lg:grid lg:grid-cols-[1fr_1.1fr] lg:gap-6 lg:items-start pb-24">
 
         <div class="lg:sticky lg:top-20 flex flex-col gap-4">
@@ -62,11 +96,10 @@
                 <div class="absolute inset-0 pointer-events-none"
                      style="background: radial-gradient(ellipse at 50% 90%, color-mix(in srgb, var(--color-primary) 20%, transparent), transparent 65%), radial-gradient(ellipse at 85% 15%, color-mix(in srgb, var(--color-accent) 14%, transparent), transparent 55%);"></div>
 
-                {{-- Header: nome + tasto modifica --}}
                 <div class="relative flex items-center justify-between px-5 pt-5 pb-1">
                     <div class="flex items-center gap-2">
                         <img src="{{ asset('assets/NaHida_Icon_Heart.png') }}" class="w-5 h-5 object-contain" alt="" onerror="this.style.display='none'">
-                        <h1 class="text-lg font-bold text-base-content">{{ $plant->plant_name }}</h1>
+                        <h1 id="plant_name_display" class="text-lg font-bold text-base-content">{{ $plant->plant_name }}</h1>
                     </div>
                     <button class="btn btn-ghost btn-sm gap-1" onclick="document.getElementById('modal_edit_plant').showModal()">
                         <img src="{{ asset('assets/NaHida_Icon_Edit.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
@@ -241,8 +274,8 @@
                                 <span class="text-sm font-bold text-base-content block">Dispositivo</span>
                                 @if($device)
                                     <span class="text-xs {{ $isOnline ? 'text-success' : 'text-base-content/40' }}">
-                                    {{ $isOnline ? 'Online' : 'Offline' }}
-                                </span>
+                                        {{ $isOnline ? 'Online' : 'Offline' }}
+                                    </span>
                                 @else
                                     <span class="text-xs text-base-content/40">Non collegato</span>
                                 @endif
@@ -272,9 +305,9 @@
                             <img src="{{ asset('assets/NaHida_Icon_Notes.png') }}" class="w-9 h-9 object-contain flex-shrink-0" alt="" onerror="this.style.display='none'">
                             <div class="text-left flex-1">
                                 <span class="text-sm font-bold text-base-content block">Note</span>
-                                <span class="text-xs text-base-content/50">
-                                {{ $plant->notes ? Str::limit($plant->notes, 50) : 'Nessuna nota' }}
-                            </span>
+                                <span id="notes_preview" class="text-xs text-base-content/50">
+                                    {{ $plant->notes ? Str::limit($plant->notes, 50) : 'Nessuna nota' }}
+                                </span>
                             </div>
                             <svg class="w-4 h-4 text-base-content/30 flex-shrink-0" viewBox="0 0 24 24" fill="none">
                                 <path d="M9.71069 18.2929C10.1012 18.6834 10.7344 18.6834 11.1249 18.2929L16.0123 13.4006C16.7927 12.6195 16.7924 11.3537 16.0117 10.5729L11.1213 5.68254C10.7308 5.29202 10.0976 5.29202 9.70708 5.68254C9.31655 6.07307 9.31655 6.70623 9.70708 7.09676L13.8927 11.2824C14.2833 11.6729 14.2833 12.3061 13.8927 12.6966L9.71069 16.8787C9.32016 17.2692 9.32016 17.9023 9.71069 18.2929Z" fill="currentColor"/>
@@ -292,9 +325,9 @@
                         <ul class="divide-y divide-base-200">
                             @foreach($plant->sensorReadings->skip(1)->take(6) as $reading)
                                 <li class="flex items-center gap-3 px-4 py-3">
-                            <span class="text-xs text-base-content/40 flex-shrink-0 w-20">
-                                {{ Carbon::parse($reading->recorded_at)->locale('it')->diffForHumans(null, false, true) }}
-                            </span>
+                                    <span class="text-xs text-base-content/40 flex-shrink-0 w-20">
+                                        {{ Carbon::parse($reading->recorded_at)->locale('it')->diffForHumans(null, false, true) }}
+                                    </span>
                                     <div class="flex gap-1 flex-wrap flex-1">
                                         <span class="badge badge-ghost badge-sm">{{ round($reading->temperature, 1) }}°C</span>
                                         <span class="badge badge-ghost badge-sm">{{ round($reading->humidity) }}% aria</span>
