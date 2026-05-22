@@ -151,7 +151,7 @@
                 <div class="card-body p-5 gap-3">
                     <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider">Frequenza annaffiatura</p>
                     <div class="flex items-center gap-3">
-                        <input id="water_interval" type="number" class="input flex-1" placeholder="es. 3" min="1" />
+                        <input id="water_interval" type="number" class="input flex-1" placeholder="es. 3" min="1" oninput="this.value = this.value !== '' ? Math.max(1, Math.abs(this.value)) : ''" />
                         <div class="flex rounded-box overflow-hidden border-2 border-base-200">
                             <button id="btn_ore" data-unit="ore"
                                     class="unit-btn px-4 py-2 text-sm font-bold bg-primary text-primary-content transition-all">

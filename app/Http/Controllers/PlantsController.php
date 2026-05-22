@@ -38,7 +38,7 @@ class PlantsController extends Controller
             ->findOrFail($id);
 
         return renderPage('plants.show', [
-            'title' => $plant->plant_name,
+            'title' => "La mia pianta",
             'user'  => $request->user(),
             'plant' => $plant,
         ]);
