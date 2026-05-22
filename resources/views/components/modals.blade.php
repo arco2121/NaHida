@@ -253,3 +253,29 @@
     </div>
     <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
 </dialog>
+
+<dialog id="modal_confirm" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box">
+        <h3 class="text-lg font-bold mb-1">Conferma nuova pianta</h3>
+        <p class="text-sm text-base-content/60 mb-4">Stai per aggiungere la pianta con le impostazioni scelte. Potrai modificarle in qualsiasi momento dai dettagli.</p>
+        <div class="bg-base-200 rounded-box p-4 mb-4 flex flex-col gap-1 text-sm">
+            <div class="flex justify-between">
+                <span class="text-base-content/50">Nome</span>
+                <span class="font-bold" id="summary_name">—</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-base-content/50">Condizioni</span>
+                <span class="font-bold" id="summary_template">Custom</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-base-content/50">Annaffiatura</span>
+                <span class="font-bold" id="summary_water">—</span>
+            </div>
+        </div>
+        <div class="modal-action gap-2">
+            <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
+            <a href="../../../../../../../Downloads/plant_detail.html" class="btn btn-primary">Conferma</a>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
+</dialog>

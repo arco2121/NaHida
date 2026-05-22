@@ -10,9 +10,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn() => renderPage());
 Route::get('/dashboard', [DashboardController::class, 'show'])->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/plants',       [PlantsController::class, 'index'])->middleware(['auth', 'verified'])->name('plants');
-Route::get('/plants/{id}',  [PlantsController::class, 'show'])->middleware(['auth', 'verified'])->name('plants.show');
+Route::get('/plants',       [PlantsController::class, 'index'])->middleware(['auth', 'verified'])->name('plants.index');
 Route::get('/plants/create',  [PlantsController::class, 'create'])->middleware(['auth', 'verified'])->name('plants.create');
+Route::get('/plants/{id}',    [PlantsController::class, 'show'])->middleware(['auth', 'verified'])->name('plants.show');
+Route::post('/plants/store',    [PlantsController::class, 'store'])->middleware(['auth', 'verified'])->name('plants.store');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
