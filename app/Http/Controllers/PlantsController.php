@@ -114,22 +114,72 @@ class PlantsController extends Controller
     }
 
     /**
-     * Storico annaffiature di una pianta (JSON).
+     * Storico misto: annaffiature + letture anomale, in ordine cronologico.
      */
     public function history(Request $request, int $id): JsonResponse
     {
         $plant = Plant::where('user_id', $request->user()->user_id)->findOrFail($id);
 
-        $events = $plant->wateringEvents()
+        // Annaffiature
+        $waterings = $plant->wateringEvents()
             ->latest('watered_at')
             ->take(30)
             ->get()
             ->map(fn($ev) => [
-                'source'           => $ev->source,
-                'watered_at_human' => $ev->watered_at->locale('it')->diffForHumans(),
-                'watered_at_date'  => $ev->watered_at->format('d/m/Y H:i'),
+                'type'       => 'watering',
+                'label'      => match($ev->source) {
+                    'button'     => 'Annaffiatura (bottone ESP)',
+                    'manual_app' => 'Annaffiatura manuale',
+                    'scheduled'  => 'Annaffiatura automatica',
+                    default      => 'Annaffiatura',
+                },
+                'detail'     => null,
+                'date'       => $ev->watered_at,
+                'date_human' => $ev->watered_at->locale('it')->diffForHumans(),
+                'date_str'   => $ev->watered_at->format('d/m/Y H:i'),
             ]);
+
+        // Letture anomale
+        $warnings = $plant->sensorReadings()
+            ->latest('recorded_at')
+            ->take(60)
+            ->get()
+            ->filter(function ($r) use ($plant) {
+                return ($r->temperature !== null && ($r->temperature < $plant->temp_min || $r->temperature > $plant->temp_max))
+                    || ($r->humidity !== null && ($r->humidity < $plant->hum_min || $r->humidity > $plant->hum_max))
+                    || ($r->soil_humidity !== null && ($r->soil_humidity < $plant->soil_hum_min || $r->soil_humidity > $plant->soil_hum_max));
+            })
+            ->map(function ($r) use ($plant) {
+                $issues = [];
+                if ($r->temperature !== null) {
+                    if ($r->temperature > $plant->temp_max) $issues[] = 'Temp. alta: ' . round($r->temperature, 1) . '°C';
+                    elseif ($r->temperature < $plant->temp_min) $issues[] = 'Temp. bassa: ' . round($r->temperature, 1) . '°C';
+                }
+                if ($r->humidity !== null) {
+                    if ($r->humidity > $plant->hum_max) $issues[] = 'Umidità alta: ' . round($r->humidity) . '%';
+                    elseif ($r->humidity < $plant->hum_min) $issues[] = 'Umidità bassa: ' . round($r->humidity) . '%';
+                }
+                if ($r->soil_humidity !== null) {
+                    if ($r->soil_humidity > $plant->soil_hum_max) $issues[] = 'Suolo umido: ' . round($r->soil_humidity) . '%';
+                    elseif ($r->soil_humidity < $plant->soil_hum_min) $issues[] = 'Suolo secco: ' . round($r->soil_humidity) . '%';
+                }
+                return [
+                    'type'       => 'warning',
+                    'label'      => 'Parametri fuori range',
+                    'detail'     => implode(', ', $issues),
+                    'date'       => $r->recorded_at,
+                    'date_human' => $r->recorded_at->locale('it')->diffForHumans(),
+                    'date_str'   => $r->recorded_at->format('d/m/Y H:i'),
+                ];
+            });
+
+        $events = $waterings->concat($warnings)
+            ->sortByDesc('date')
+            ->take(30)
+            ->values()
+            ->map(fn($ev) => collect($ev)->except('date')->all());
 
         return response()->json(['events' => $events]);
     }
+
 }

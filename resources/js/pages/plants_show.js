@@ -117,14 +117,10 @@ async function loadHistory() {
     list.innerHTML = '<li class="py-6 text-center text-sm text-base-content/50">Caricamento...</li>';
 
     try {
-        // Usa i dati già in pagina dalle sensor_readings + watering_events
-        // Facciamo una chiamata AJAX alla stessa rotta per ottenere dati freschi
         const res  = await fetch(`/plants/${PLANT_ID}`, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         });
 
-        // Non possiamo parsare Blade via AJAX facilmente,
-        // quindi usiamo un endpoint dedicato per lo storico watering
         const data = await apiRequest(`/plants/${PLANT_ID}/history`);
 
         if (data && data.events && data.events.length > 0) {
@@ -147,9 +143,6 @@ async function loadHistory() {
     }
 }
 
-// -----------------------------------------------------------
-//  3. DISPOSITIVO (collega/scollega)
-// -----------------------------------------------------------
 function initDevice() {
     const modal        = document.getElementById('modal_device');
     const input        = document.getElementById('device_token_input');
@@ -161,7 +154,6 @@ function initDevice() {
 
     if (!modal || !input) return;
 
-    // Precompila con il token corrente se presente
     const currentToken = PLANT_DATA.device_token;
     if (currentToken) {
         input.value = currentToken;
