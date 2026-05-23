@@ -159,6 +159,11 @@
         <h3 class="text-lg font-bold mb-4">Modifica aspetto</h3>
         <div class="flex flex-col gap-5">
 
+            <div>
+                <label class="label text-sm font-bold">Nome</label>
+                <input type="text" class="input w-full" value="{{ $params["plant"]->plant_name }}" />
+            </div>
+
             <div class="divider my-0 text-xs text-base-content/40">Aspetto del modello</div>
 
             <!-- Variante pianta: 0-6 -->

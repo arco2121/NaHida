@@ -108,7 +108,7 @@ async function loadHistory() {
 
         if (data?.events?.length > 0) {
             list.innerHTML = data.events.map(ev => {
-                const icon = ev.type === 'watering' ? './assets/NaHida_Icon_Water.png' : './assets/NaHida_Icon_Warning.png';
+                const icon = ev.type === 'watering' ? '../assets/NaHida_Icon_Water.png' : '../assets/NaHida_Icon_Warning.png';
                 const detail = ev.detail
                     ? `<p class="text-xs text-base-content/50 mt-0.5">${ev.detail}</p>`
                     : '';
