@@ -6,10 +6,12 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\PlantsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn() => renderPage());
 Route::get('/dashboard', [DashboardController::class, 'show'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/plants',               [PlantsController::class, 'index'])->name('plants');

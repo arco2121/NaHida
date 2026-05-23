@@ -13,13 +13,13 @@
     <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
 </dialog>
 
-<!-- Modale: Storico -->
+<!-- Modale: Storico (annaffiature + anomalie) -->
 <dialog id="modal_history" class="modal modal-bottom sm:modal-middle">
     <div class="modal-box">
         <form method="dialog">
             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
         </form>
-        <h3 class="text-lg font-bold mb-4">Storico annaffiature</h3>
+        <h3 class="text-lg font-bold mb-4">Storico</h3>
         <ul id="history_list" class="divide-y divide-base-200">
             <li class="py-6 text-center text-sm text-base-content/50">Caricamento...</li>
         </ul>
@@ -247,12 +247,89 @@
         </div>
         <div class="modal-action gap-2">
             <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
-            {{-- id="btn_submit_plant" intercettato da plants_create.js --}}
             <button type="button" id="btn_submit_plant" class="btn btn-primary">Conferma</button>
         </div>
     </div>
     <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
 </dialog>
 
-<!-- Toast container per notifiche -->
+<!-- Toast container -->
 <div id="toast-container" class="toast toast-bottom toast-center z-[999] pointer-events-none"></div>
+
+<!-- Modale: Cambio password -->
+<dialog id="modal_password" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+        </form>
+        <h3 class="text-lg font-bold mb-4">Cambia password</h3>
+        <div class="flex flex-col gap-3">
+            <div>
+                <label class="label text-sm font-bold">Password attuale</label>
+                <input type="password" class="input w-full" placeholder="••••••••" />
+            </div>
+            <div>
+                <label class="label text-sm font-bold">Nuova password</label>
+                <input type="password" class="input w-full" placeholder="••••••••" />
+            </div>
+            <div>
+                <label class="label text-sm font-bold">Conferma nuova password</label>
+                <input type="password" class="input w-full" placeholder="••••••••" />
+            </div>
+        </div>
+        <div class="modal-action">
+            <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
+            <button class="btn btn-primary">Salva</button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
+</dialog>
+
+<!-- Modale: Logout -->
+<dialog id="modal_logout" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box">
+        <h3 class="text-lg font-bold mb-1">Vuoi uscire?</h3>
+        <p class="text-sm text-base-content/60 mb-4">Verrai reindirizzato alla pagina di login.</p>
+        <div class="modal-action gap-2">
+            <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
+            <a href="login.html" class="btn btn-neutral">Logout</a>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
+</dialog>
+
+<!-- Modale: Elimina account — step 1 -->
+<dialog id="modal_delete" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+        </form>
+        <h3 class="text-lg font-bold text-error mb-1">Elimina account</h3>
+        <p class="text-sm text-base-content/60 mb-4">Questa azione è <strong>irreversibile</strong>. Tutti i tuoi dati, piante e storici verranno eliminati definitivamente.</p>
+        <div class="modal-action gap-2">
+            <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
+            <button class="btn btn-error"
+                    onclick="document.getElementById('modal_delete').close(); document.getElementById('modal_delete_confirm').showModal()">
+                Continua
+            </button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
+</dialog>
+
+<!-- Modale: Elimina account — step 2 doppia conferma -->
+<dialog id="modal_delete_confirm" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box">
+        <h3 class="text-lg font-bold text-error mb-1">Sei sicuro?</h3>
+        <p class="text-sm text-base-content/60 mb-3">Scrivi <strong class="text-base-content">ELIMINA</strong> per confermare.</p>
+        <input type="text" id="delete_confirm_input" class="input w-full" placeholder="ELIMINA" />
+        <div class="modal-action gap-2">
+            <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
+            <button class="btn btn-error" id="btn_delete_final" disabled
+                    onclick="alert('Account eliminato (mockup)')">
+                Elimina definitivamente
+            </button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
+</dialog>

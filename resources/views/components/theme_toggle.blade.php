@@ -1,6 +1,6 @@
 <div class="absolute top-4 right-4 z-50">
     <label class="swap swap-rotate text-base-content hover:opacity-70 transition-opacity">
-        <input type="checkbox" class="theme-controller" hidden value="NaHida_Dark" />
+        <input id="theme_controller" type="checkbox" class="theme-controller" onclick="setTheme(this.checked)" hidden value="NaHida_Dark" />
 
         <!-- sun icon -->
         <svg

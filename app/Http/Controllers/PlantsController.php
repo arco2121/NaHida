@@ -40,7 +40,7 @@ class PlantsController extends Controller
             ->findOrFail($id);
 
         return renderPage('plants.show', [
-            'title' => "La mia pianta",
+            'title' => $plant->plant_name,
             'user'  => $request->user(),
             'plant' => $plant,
         ]);
@@ -135,8 +135,9 @@ class PlantsController extends Controller
                 },
                 'detail'     => null,
                 'date'       => $ev->watered_at,
+                // ✅ formato "11 mag 09:14"
+                'date_str'   => $ev->watered_at->locale('it')->isoFormat('D MMM HH:mm'),
                 'date_human' => $ev->watered_at->locale('it')->diffForHumans(),
-                'date_str'   => $ev->watered_at->format('d/m/Y H:i'),
             ]);
 
         // Letture anomale
@@ -152,24 +153,24 @@ class PlantsController extends Controller
             ->map(function ($r) use ($plant) {
                 $issues = [];
                 if ($r->temperature !== null) {
-                    if ($r->temperature > $plant->temp_max) $issues[] = 'Temp. alta: ' . round($r->temperature, 1) . '°C';
-                    elseif ($r->temperature < $plant->temp_min) $issues[] = 'Temp. bassa: ' . round($r->temperature, 1) . '°C';
+                    if ($r->temperature > $plant->temp_max)      $issues[] = 'Temperatura alta: ' . round($r->temperature, 1) . '°C';
+                    elseif ($r->temperature < $plant->temp_min)  $issues[] = 'Temperatura bassa: ' . round($r->temperature, 1) . '°C';
                 }
                 if ($r->humidity !== null) {
-                    if ($r->humidity > $plant->hum_max) $issues[] = 'Umidità alta: ' . round($r->humidity) . '%';
-                    elseif ($r->humidity < $plant->hum_min) $issues[] = 'Umidità bassa: ' . round($r->humidity) . '%';
+                    if ($r->humidity > $plant->hum_max)          $issues[] = 'Umidità alta: ' . round($r->humidity) . '%';
+                    elseif ($r->humidity < $plant->hum_min)      $issues[] = 'Umidità bassa: ' . round($r->humidity) . '%';
                 }
                 if ($r->soil_humidity !== null) {
-                    if ($r->soil_humidity > $plant->soil_hum_max) $issues[] = 'Suolo umido: ' . round($r->soil_humidity) . '%';
+                    if ($r->soil_humidity > $plant->soil_hum_max)   $issues[] = 'Suolo umido: ' . round($r->soil_humidity) . '%';
                     elseif ($r->soil_humidity < $plant->soil_hum_min) $issues[] = 'Suolo secco: ' . round($r->soil_humidity) . '%';
                 }
                 return [
                     'type'       => 'warning',
-                    'label'      => 'Parametri fuori range',
-                    'detail'     => implode(', ', $issues),
+                    'label'      => count($issues) === 1 ? $issues[0] : 'Parametri fuori range',
+                    'detail'     => count($issues) > 1 ? implode(', ', $issues) : null,
                     'date'       => $r->recorded_at,
+                    'date_str'   => $r->recorded_at->locale('it')->isoFormat('D MMM HH:mm'),
                     'date_human' => $r->recorded_at->locale('it')->diffForHumans(),
-                    'date_str'   => $r->recorded_at->format('d/m/Y H:i'),
                 ];
             });
 
@@ -181,5 +182,4 @@ class PlantsController extends Controller
 
         return response()->json(['events' => $events]);
     }
-
 }

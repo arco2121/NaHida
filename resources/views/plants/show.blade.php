@@ -30,30 +30,30 @@
         $healthEmoji = match(true) {
             $errorCount === 0 => 'NaHida_Emoji_Happy.png',
             $errorCount === 1 => 'NaHida_Emoji_Mid.png',
-            default => 'NaHida_Emoji_Sad.png',
+            default           => 'NaHida_Emoji_Sad.png',
         };
         $healthLabel = match(true) {
             $errorCount === 0 => 'Condizioni ottimali',
             $errorCount === 1 => 'Attenzione richiesta',
-            default => 'Condizioni pessime',
+            default           => 'Condizioni pessime',
         };
         $healthColor = match(true) {
             $errorCount === 0 => 'success',
             $errorCount === 1 => 'warning',
-            default => 'error',
+            default           => 'error',
         };
 
         $lastWatering = $plant->wateringEvents()->latest('watered_at')->first();
-        $baseDate = $lastWatering ? $lastWatering->watered_at : $plant->created_at;
+        $baseDate     = $lastWatering ? $lastWatering->watered_at : $plant->created_at;
         $nextWatering = Carbon::parse($baseDate)->addHours($plant->watering_cycle);
-        $isOverdue = $nextWatering->isPast();
+        $isOverdue    = $nextWatering->isPast();
 
         $isOnline = $device
             && $device->last_seen_at
             && $device->last_seen_at->diffInSeconds(now()) < 60;
     @endphp
 
-    {{-- ✅ Passa al JS l'aspetto salvato e i dati della pianta --}}
+    {{-- Dati per JS --}}
     <script>
         window.PLANT_ID = {{ $plant->plant_id }};
 
@@ -78,7 +78,6 @@
         };
     </script>
 
-    {{-- Flash messages --}}
     @if(session('success'))
         <script>
             document.addEventListener('DOMContentLoaded', () => {
@@ -89,17 +88,18 @@
 
     <div class="lg:px-6 lg:pt-6 lg:grid lg:grid-cols-[1fr_1.1fr] lg:gap-6 lg:items-start pb-24">
 
+        {{-- ===== COLONNA SINISTRA (Live2D + sidebar info) ===== --}}
         <div class="lg:sticky lg:top-20 flex flex-col gap-4">
 
+            {{-- Card modello Live2D --}}
             <div class="relative overflow-hidden bg-base-100 lg:rounded-2xl lg:shadow-md">
-
                 <div class="absolute inset-0 pointer-events-none"
                      style="background: radial-gradient(ellipse at 50% 90%, color-mix(in srgb, var(--color-primary) 20%, transparent), transparent 65%), radial-gradient(ellipse at 85% 15%, color-mix(in srgb, var(--color-accent) 14%, transparent), transparent 55%);"></div>
 
                 <div class="relative flex items-center justify-between px-5 pt-5 pb-1">
                     <div class="flex items-center gap-2">
                         <img src="{{ asset('assets/NaHida_Icon_Heart.png') }}" class="w-5 h-5 object-contain" alt="" onerror="this.style.display='none'">
-                        <h1 id="plant_name_display" class="text-lg font-bold text-base-content">{{ $plant->plant_name }}</h1>
+                        <h1 class="text-lg font-bold text-base-content">{{ $plant->plant_name }}</h1>
                     </div>
                     <button class="btn btn-ghost btn-sm gap-1" onclick="document.getElementById('modal_edit_plant').showModal()">
                         <img src="{{ asset('assets/NaHida_Icon_Edit.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
@@ -120,9 +120,9 @@
                         <span class="text-sm font-bold text-{{ $healthColor }}">{{ $healthLabel }}</span>
                     </div>
                 </div>
-
             </div>
 
+            {{-- Prossima annaffiata (solo desktop) --}}
             <div class="hidden lg:block">
                 <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2 px-1">Prossima annaffiata</p>
                 <div class="card bg-base-100 shadow">
@@ -145,17 +145,21 @@
                 </div>
             </div>
 
+            {{-- Dispositivo collegato (solo desktop) --}}
             @if($device)
                 <div class="hidden lg:block">
                     <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2 px-1">Dispositivo collegato</p>
                     <div class="card bg-base-100 shadow">
                         <div class="card-body p-4 flex-row items-center gap-3">
-                            <span class="w-3 h-3 rounded-full flex-shrink-0 {{ $isOnline ? 'bg-success' : 'bg-base-300' }}"></span>
+                            {{-- data-device-dot → aggiornato da JS --}}
+                            <span data-device-dot
+                                  class="w-3 h-3 rounded-full flex-shrink-0 {{ $isOnline ? 'bg-success' : 'bg-base-300' }}"></span>
                             <div class="flex-1">
                                 <p class="font-bold text-sm text-base-content">{{ $device->device_token }}</p>
-                                <p class="text-xs text-base-content/50">
+                                {{-- data-device-text → aggiornato da JS --}}
+                                <p id="device_sidebar_text" class="text-xs text-base-content/50">
                                     {{ $isOnline ? 'Online' : 'Offline' }}
-                                    @if($device->last_seen_at)
+                                    @if($device->last_seen_at && !$isOnline)
                                         · visto {{ $device->last_seen_at->locale('it')->diffForHumans() }}
                                     @endif
                                 </p>
@@ -167,71 +171,90 @@
 
         </div>
 
+        {{-- ===== COLONNA DESTRA ===== --}}
         <div class="flex flex-col gap-5 px-4 pt-5 lg:px-0 lg:pt-0">
 
+            {{-- Stato sensori --}}
             <div>
                 <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2">Stato sensori</p>
                 <div class="card bg-base-100 shadow">
                     <div class="card-body p-4 gap-3">
                         @if($latest)
-                            <p class="text-xs text-base-content/40 -mb-1">
+                            <p id="sensor_updated_at" class="text-xs text-base-content/40 -mb-1">
                                 Aggiornato {{ Carbon::parse($latest->recorded_at)->locale('it')->diffForHumans() }}
                             </p>
                             <div class="grid grid-cols-2 gap-3">
 
+                                {{-- Temperatura --}}
                                 <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
                                     <div class="flex items-center gap-1.5">
                                         <img src="{{ asset('assets/NaHida_Icon_Temp.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
                                         <span class="text-xs text-base-content/50 font-bold uppercase tracking-wide">Temperatura</span>
                                     </div>
-                                    <p class="text-2xl font-bold text-{{ $tempColor }}">{{ round($latest->temperature, 1) }}°C</p>
-                                    <p class="text-xs text-base-content/40">Ottimale: {{ $plant->temp_min }} — {{ $plant->temp_max }}°C</p>
+                                    {{-- id="val_temp" usato da JS per aggiornamenti real-time --}}
+                                    <p id="val_temp" class="text-2xl font-bold text-{{ $tempColor }}">{{ round($latest->temperature, 1) }}°C</p>
+                                    <p id="lbl_range_temp" class="text-xs text-base-content/40">Ottimale: {{ $plant->temp_min }} — {{ $plant->temp_max }}°C</p>
                                 </div>
 
+                                {{-- Umidità aria --}}
                                 <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
                                     <div class="flex items-center gap-1.5">
                                         <img src="{{ asset('assets/NaHida_Icon_Humidity.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
                                         <span class="text-xs text-base-content/50 font-bold uppercase tracking-wide">Umidità aria</span>
                                     </div>
-                                    <p class="text-2xl font-bold text-{{ $humColor }}">{{ round($latest->humidity) }}%</p>
-                                    <p class="text-xs text-base-content/40">Ottimale: {{ $plant->hum_min }} — {{ $plant->hum_max }}%</p>
+                                    <p id="val_hum" class="text-2xl font-bold text-{{ $humColor }}">{{ round($latest->humidity) }}%</p>
+                                    <p id="lbl_range_hum" class="text-xs text-base-content/40">Ottimale: {{ $plant->hum_min }} — {{ $plant->hum_max }}%</p>
                                 </div>
 
+                                {{-- Umidità suolo --}}
                                 <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
                                     <div class="flex items-center gap-1.5">
                                         <img src="{{ asset('assets/NaHida_Icon_Soil.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
                                         <span class="text-xs text-base-content/50 font-bold uppercase tracking-wide">Umidità suolo</span>
                                     </div>
-                                    <p class="text-2xl font-bold text-{{ $soilColor }}">{{ round($latest->soil_humidity) }}%</p>
-                                    <p class="text-xs text-base-content/40">Ottimale: {{ $plant->soil_hum_min }} — {{ $plant->soil_hum_max }}%</p>
+                                    <p id="val_soil" class="text-2xl font-bold text-{{ $soilColor }}">{{ round($latest->soil_humidity) }}%</p>
+                                    <p id="lbl_range_soil" class="text-xs text-base-content/40">Ottimale: {{ $plant->soil_hum_min }} — {{ $plant->soil_hum_max }}%</p>
                                 </div>
 
+                                {{-- Luminosità --}}
                                 <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
                                     <div class="flex items-center gap-1.5">
                                         <img src="{{ asset('assets/NaHida_Icon_Light.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
                                         <span class="text-xs text-base-content/50 font-bold uppercase tracking-wide">Luminosità</span>
                                     </div>
                                     @if($latest->luminosity !== null)
-                                        <p class="text-2xl font-bold text-{{ $lumColor }}">{{ round($latest->luminosity) }} lx</p>
-                                        @if($plant->lum_preference)
-                                            <p class="text-xs text-base-content/40">Preferenza: {{ $plant->lum_preference }}</p>
-                                        @endif
+                                        <p id="val_lum" class="text-2xl font-bold text-{{ $lumColor }}">{{ round($latest->luminosity) }} lx</p>
                                     @else
-                                        <p class="text-2xl font-bold text-base-content/30">—</p>
-                                        <p class="text-xs text-base-content/40">Nessun dato</p>
+                                        <p id="val_lum" class="text-2xl font-bold text-base-content/30">—</p>
                                     @endif
+                                    <p class="text-xs text-base-content/40">
+                                        @if($latest->luminosity !== null && $plant->lum_preference)
+                                            Preferenza: {{ $plant->lum_preference }}
+                                        @else
+                                            Ottimale: 400 — 800 lx
+                                        @endif
+                                    </p>
                                 </div>
 
                             </div>
                         @else
+                            {{-- Nessun dato: predisponi comunque i target per i real-time --}}
                             <div class="py-6 text-center text-sm text-base-content/50">
-                                Nessuna lettura sensori disponibile.
+                                Nessuna lettura sensori disponibile. In attesa di dati dal dispositivo…
+                            </div>
+                            <div class="hidden">
+                                <span id="val_temp"></span>
+                                <span id="val_hum"></span>
+                                <span id="val_soil"></span>
+                                <span id="val_lum"></span>
+                                <span id="sensor_updated_at"></span>
                             </div>
                         @endif
                     </div>
                 </div>
             </div>
 
+            {{-- Prossima annaffiata (mobile) --}}
             <div class="lg:hidden">
                 <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2">Prossima annaffiata</p>
                 <div class="card bg-base-100 shadow">
@@ -254,6 +277,7 @@
                 </div>
             </div>
 
+            {{-- Azioni --}}
             <div>
                 <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2">Azioni</p>
                 <div class="grid grid-cols-2 gap-3">
@@ -273,9 +297,15 @@
                             <div>
                                 <span class="text-sm font-bold text-base-content block">Dispositivo</span>
                                 @if($device)
-                                    <span class="text-xs {{ $isOnline ? 'text-success' : 'text-base-content/40' }}">
-                                        {{ $isOnline ? 'Online' : 'Offline' }}
-                                    </span>
+                                    {{-- data-device-dot e id="device_action_text" aggiornati da JS --}}
+                                    <div class="flex items-center justify-center gap-1 mt-0.5">
+                                        <span data-device-dot
+                                              class="w-2 h-2 rounded-full {{ $isOnline ? 'bg-success' : 'bg-base-300' }} flex-shrink-0"></span>
+                                        <span id="device_action_text"
+                                              class="text-xs {{ $isOnline ? 'text-success' : 'text-base-content/40' }}">
+                                            {{ $isOnline ? 'Online' : 'Offline' }}
+                                        </span>
+                                    </div>
                                 @else
                                     <span class="text-xs text-base-content/40">Non collegato</span>
                                 @endif
@@ -318,6 +348,7 @@
                 </div>
             </div>
 
+            {{-- Ultime letture (storico rapido) --}}
             @if($plant->sensorReadings->count() > 1)
                 <div>
                     <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2">Ultime letture</p>

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Events\ButtonPressed;
+use App\Events\SensorUpdated;
 use App\Models\Device;
 use App\Models\SensorReading;
 use App\Models\WateringEvent;
@@ -70,14 +71,25 @@ class MqttListener extends Command
     {
         switch ($data['type']) {
             case 'sensor_data':
-                SensorReading::create([
+                $reading = SensorReading::create([
                     'plant_id'      => $plantId,
                     'humidity'      => $data['humidity']      ?? null,
                     'temperature'   => $data['temperature']   ?? null,
-                    'soil_humidity' => $data['soil_humidity']  ?? null,
+                    'soil_humidity' => $data['soil_humidity'] ?? null,
                     'luminosity'    => $data['luminosity']    ?? null,
                 ]);
-                $this->info("[{$token}] 📊 Lettura salvata per pianta #{$plantId}");
+
+                // Broadcast real-time al browser
+                event(new SensorUpdated(
+                    plantId:      $plantId,
+                    humidity:     $reading->humidity,
+                    temperature:  $reading->temperature,
+                    soil_humidity: $reading->soil_humidity,
+                    luminosity:   $reading->luminosity,
+                    recordedAt:   $reading->recorded_at->toDateTimeString(),
+                ));
+
+                $this->info("[{$token}] 📊 Lettura salvata e broadcast per pianta #{$plantId}");
                 break;
 
             default:
