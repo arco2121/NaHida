@@ -168,7 +168,7 @@
                     <span id="lbl_variant" class="text-sm font-bold text-primary">0</span>
                 </div>
                 <input type="range" id="range_variant" min="0" max="6" value="0" step="1"
-                       class="range range-primary range-sm"
+                       class="range w-full range-primary range-sm"
                        oninput="document.getElementById('lbl_variant').textContent = this.value" />
                 <div class="flex justify-between text-xs text-base-content/40 px-0.5 mt-0.5">
                     <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
@@ -182,7 +182,7 @@
                     <span id="lbl_pot" class="text-sm font-bold text-secondary">0</span>
                 </div>
                 <input type="range" id="range_pot" min="0" max="2" value="0" step="1"
-                       class="range range-secondary range-sm"
+                       class="range w-full range-secondary range-sm"
                        oninput="document.getElementById('lbl_pot').textContent = this.value" />
                 <div class="flex justify-between text-xs text-base-content/40 px-0.5 mt-0.5">
                     <span>0</span><span>1</span><span>2</span>
@@ -196,7 +196,7 @@
                     <span id="lbl_plant_color" class="text-sm font-bold text-accent">0</span>
                 </div>
                 <input type="range" id="range_plant_color" min="0" max="5" value="0" step="1"
-                       class="range range-accent range-sm"
+                       class="range w-full range-accent range-sm"
                        oninput="document.getElementById('lbl_plant_color').textContent = this.value" />
                 <div class="flex justify-between text-xs text-base-content/40 px-0.5 mt-0.5">
                     <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
@@ -210,7 +210,7 @@
                     <span id="lbl_flower" class="text-sm font-bold">0</span>
                 </div>
                 <input type="range" id="range_flower" min="0" max="6" value="0" step="1"
-                       class="range range-sm"
+                       class="range w-full range-sm"
                        oninput="document.getElementById('lbl_flower').textContent = this.value" />
                 <div class="flex justify-between text-xs text-base-content/40 px-0.5 mt-0.5">
                     <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>

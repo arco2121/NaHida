@@ -12,7 +12,7 @@ Route::get('/', fn() => renderPage());
 Route::get('/dashboard', [DashboardController::class, 'show'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/plants',               [PlantsController::class, 'index'])->name('plants.index');
+    Route::get('/plants',               [PlantsController::class, 'index'])->name('plants');
     Route::get('/plants/create',        [PlantsController::class, 'create'])->name('plants.create');
     Route::get('/plants/{id}',          [PlantsController::class, 'show'])->name('plants.show');
     Route::post('/plants/store',        [PlantsController::class, 'store'])->name('plants.store');
