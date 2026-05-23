@@ -80,7 +80,7 @@
     --depth: 0;
     --noise: 1;
 }
-
+/*
 @layer utilities {
     .scrollbar-hide {
         &::-webkit-scrollbar {
@@ -107,7 +107,7 @@
 
 * {
     font-family: 'Balsamiq Sans', sans-serif;
-    scroll-behavior: smooth;
+    /*scroll-behavior: smooth;
 }
 
 html {
@@ -123,3 +123,4 @@ button {
 button:active {
     scale: 0.95;
 }
+*/
