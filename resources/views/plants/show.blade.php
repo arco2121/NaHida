@@ -65,6 +65,7 @@
         };
 
         window.PLANT_DATA = {
+            plant_name:     {!! json_encode($plant->plant_name) !!},
             notes:          {!! json_encode($plant->notes) !!},
             temp_min:       {{ $plant->temp_min }},
             temp_max:       {{ $plant->temp_max }},
@@ -99,7 +100,7 @@
                 <div class="relative flex items-center justify-between px-5 pt-5 pb-1">
                     <div class="flex items-center gap-2">
                         <img src="{{ asset('assets/NaHida_Icon_Heart.png') }}" class="w-5 h-5 object-contain" alt="" onerror="this.style.display='none'">
-                        <h1 class="text-lg font-bold text-base-content">{{ $plant->plant_name }}</h1>
+                        <h1 id="plant_name_display" class="text-lg font-bold text-base-content">{{ $plant->plant_name }}</h1>
                     </div>
                     <button class="btn btn-ghost btn-sm gap-1" onclick="document.getElementById('modal_edit_plant').showModal()">
                         <img src="{{ asset('assets/NaHida_Icon_Edit.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
@@ -353,7 +354,7 @@
                 <div>
                     <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2">Ultime letture</p>
                     <div class="card bg-base-100 shadow">
-                        <ul class="divide-y divide-base-200">
+                        <ul id="latest_readings_list" class="divide-y divide-base-200">
                             @foreach($plant->sensorReadings->skip(1)->take(6) as $reading)
                                 <li class="flex items-center gap-3 px-4 py-3">
                                     <span class="text-xs text-base-content/40 flex-shrink-0 w-20">

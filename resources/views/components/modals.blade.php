@@ -161,7 +161,10 @@
 
             <div>
                 <label class="label text-sm font-bold">Nome</label>
-                <input type="text" class="input w-full" value="{{ $params["plant"]->plant_name }}" />
+                <input id="edit_plant_name" type="text" class="input w-full"
+                       maxlength="100"
+                       value="{{ $params["plant"]->plant_name ?? '' }}" />
+                <p id="edit_plant_name_error" class="text-error text-xs mt-1 hidden"></p>
             </div>
 
             <div class="divider my-0 text-xs text-base-content/40">Aspetto del modello</div>
