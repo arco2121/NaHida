@@ -292,7 +292,7 @@
         <p class="text-sm text-base-content/60 mb-4">Verrai reindirizzato alla pagina di login.</p>
         <div class="modal-action gap-2">
             <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
-            <a href="login.html" class="btn btn-neutral">Logout</a>
+            <form method="post" action="{{ route("logout") }}"><button type="submit" class="btn btn-neutral">Logout</button></form>
         </div>
     </div>
     <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>

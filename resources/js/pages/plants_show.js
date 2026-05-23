@@ -108,13 +108,13 @@ async function loadHistory() {
 
         if (data?.events?.length > 0) {
             list.innerHTML = data.events.map(ev => {
-                const icon = ev.type === 'watering' ? '💧' : '⚠️';
+                const icon = ev.type === 'watering' ? 'assets/NaHida_Icon_Water.png' : 'assets/NaHida_Icon_Warning.png';
                 const detail = ev.detail
                     ? `<p class="text-xs text-base-content/50 mt-0.5">${ev.detail}</p>`
                     : '';
                 return `
                     <li class="flex items-center gap-3 px-1 py-3 border-b border-base-200 last:border-0">
-                        <span class="text-xl flex-shrink-0">${icon}</span>
+                        <img src="${icon}" class="w-5 h-5 object-contain flex-shrink-0" alt="" onerror="this.style.display='none'">
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-bold leading-snug">${ev.label}</p>
                             ${detail}
