@@ -67,6 +67,7 @@
         window.PLANT_DATA = {
             plant_name:     {!! json_encode($plant->plant_name) !!},
             notes:          {!! json_encode($plant->notes) !!},
+            id: {{ $plant->plant_id }},
             temp_min:       {{ $plant->temp_min }},
             temp_max:       {{ $plant->temp_max }},
             hum_min:        {{ $plant->hum_min }},
