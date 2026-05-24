@@ -25,6 +25,11 @@
             if ($latest->soil_humidity < $plant->soil_hum_min || $latest->soil_humidity > $plant->soil_hum_max) {
                 $soilColor = 'error'; $errorCount++;
             }
+            if ($latest->luminosity !== null && ($plant->lux_min ?? 0) > 0) {
+                if ($latest->luminosity < $plant->lux_min || $latest->luminosity > ($plant->lux_max ?? 100000)) {
+                    $lumColor = 'error'; $errorCount++;
+                }
+            }
         }
 
         $healthEmoji = match(true) {
@@ -50,7 +55,16 @@
 
         $isOnline = $device
             && $device->last_seen_at
-            && $device->last_seen_at->diffInSeconds(now()) < 60;
+            && $device->last_seen_at->diffInSeconds(now()) < 90;
+
+        // Etichetta leggibile per la preferenza luce
+        $luxMin = $plant->lux_min ?? 0;
+        $luxMax = $plant->lux_max ?? 100000;
+        $luxLabel = match(true) {
+            $luxMax <= 500   => 'Poca luce',
+            $luxMax <= 2000  => 'Media luce',
+            default          => 'Tanta luce',
+        };
     @endphp
 
     {{-- Dati per JS --}}
@@ -67,13 +81,15 @@
         window.PLANT_DATA = {
             plant_name:     {!! json_encode($plant->plant_name) !!},
             notes:          {!! json_encode($plant->notes) !!},
-            id: {{ $plant->plant_id }},
+            id:             {{ $plant->plant_id }},
             temp_min:       {{ $plant->temp_min }},
             temp_max:       {{ $plant->temp_max }},
             hum_min:        {{ $plant->hum_min }},
             hum_max:        {{ $plant->hum_max }},
             soil_hum_min:   {{ $plant->soil_hum_min }},
             soil_hum_max:   {{ $plant->soil_hum_max }},
+            lux_min:        {{ $plant->lux_min ?? 0 }},
+            lux_max:        {{ $plant->lux_max ?? 100000 }},
             watering_cycle: {{ $plant->watering_cycle }},
             device_token:   {!! json_encode($device?->device_token) !!},
             has_device:     {{ $device ? 'true' : 'false' }},
@@ -153,12 +169,10 @@
                     <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2 px-1">Dispositivo collegato</p>
                     <div class="card bg-base-100 shadow">
                         <div class="card-body p-4 flex-row items-center gap-3">
-                            {{-- data-device-dot → aggiornato da JS --}}
                             <span data-device-dot
                                   class="w-3 h-3 rounded-full flex-shrink-0 {{ $isOnline ? 'bg-success' : 'bg-base-300' }}"></span>
                             <div class="flex-1">
                                 <p class="font-bold text-sm text-base-content">{{ $device->device_token }}</p>
-                                {{-- data-device-text → aggiornato da JS --}}
                                 <p id="device_sidebar_text" class="text-xs text-base-content/50">
                                     {{ $isOnline ? 'Online' : 'Offline' }}
                                     @if($device->last_seen_at && !$isOnline)
@@ -193,7 +207,6 @@
                                         <img src="{{ asset('assets/NaHida_Icon_Temp.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
                                         <span class="text-xs text-base-content/50 font-bold uppercase tracking-wide">Temperatura</span>
                                     </div>
-                                    {{-- id="val_temp" usato da JS per aggiornamenti real-time --}}
                                     <p id="val_temp" class="text-2xl font-bold text-{{ $tempColor }}">{{ round($latest->temperature, 1) }}°C</p>
                                     <p id="lbl_range_temp" class="text-xs text-base-content/40">Ottimale: {{ $plant->temp_min }} — {{ $plant->temp_max }}°C</p>
                                 </div>
@@ -229,18 +242,11 @@
                                     @else
                                         <p id="val_lum" class="text-2xl font-bold text-base-content/30">—</p>
                                     @endif
-                                    <p class="text-xs text-base-content/40">
-                                        @if($latest->luminosity !== null && $plant->lum_preference)
-                                            Preferenza: {{ $plant->lum_preference }}
-                                        @else
-                                            Ottimale: 400 — 800 lx
-                                        @endif
-                                    </p>
+                                    <p class="text-xs text-base-content/40">{{ $luxLabel }}: {{ $luxMin }} — {{ number_format($luxMax, 0, ',', '.') }} lx</p>
                                 </div>
 
                             </div>
                         @else
-                            {{-- Nessun dato: predisponi comunque i target per i real-time --}}
                             <div class="py-6 text-center text-sm text-base-content/50">
                                 Nessuna lettura sensori disponibile. In attesa di dati dal dispositivo…
                             </div>
@@ -299,7 +305,6 @@
                             <div>
                                 <span class="text-sm font-bold text-base-content block">Dispositivo</span>
                                 @if($device)
-                                    {{-- data-device-dot e id="device_action_text" aggiornati da JS --}}
                                     <div class="flex items-center justify-center gap-1 mt-0.5">
                                         <span data-device-dot
                                               class="w-2 h-2 rounded-full {{ $isOnline ? 'bg-success' : 'bg-base-300' }} flex-shrink-0"></span>

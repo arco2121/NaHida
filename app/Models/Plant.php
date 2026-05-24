@@ -21,6 +21,8 @@ class Plant extends Model
         'temp_max',
         'soil_hum_min',
         'soil_hum_max',
+        'lux_min' => 'float',
+        'lux_max' => 'float',
         'lum_preference',
         'watering_cycle',
         'plant_variant',

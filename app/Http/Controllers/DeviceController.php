@@ -55,6 +55,8 @@ class DeviceController extends Controller
             'temp_max'     => $plant->temp_max,
             'soil_hum_min' => $plant->soil_hum_min,
             'soil_hum_max' => $plant->soil_hum_max,
+            'lux_min'      => $plant->lux_min ?? 0.0,
+            'lux_max'      => $plant->lux_max ?? 100000.0,
         ]);
 
         try {
@@ -77,7 +79,7 @@ class DeviceController extends Controller
         ]);
 
         $device   = Device::where('device_token', $request->input('device_token'))->firstOrFail();
-        $isOnline = $device->last_seen_at && $device->last_seen_at->diffInSeconds(now()) < 60;
+        $isOnline = $device->last_seen_at && $device->last_seen_at->diffInSeconds(now()) < 90;
 
         return response()->json([
             'online'       => $isOnline,

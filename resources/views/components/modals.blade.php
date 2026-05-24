@@ -124,6 +124,16 @@
                 <label class="label text-xs font-bold">Ogni quanto va annaffiata (ore)</label>
                 <input id="cond_watering" type="number" class="input input-sm w-full" min="1" />
             </div>
+            <div>
+                <label class="label text-xs font-bold">Esigenza di luce</label>
+                <select id="cond_lux_preset" class="select select-sm w-full">
+                    <option value="low">Poca luce (0 – 500 lx)</option>
+                    <option value="medium">Media luce (500 – 2000 lx)</option>
+                    <option value="high">Tanta luce (2000 – 100 000 lx)</option>
+                </select>
+                <input type="hidden" id="cond_lux_min" value="0" />
+                <input type="hidden" id="cond_lux_max" value="500" />
+            </div>
         </div>
         <div class="modal-action">
             <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>

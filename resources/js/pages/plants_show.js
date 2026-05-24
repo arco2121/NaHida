@@ -59,7 +59,7 @@ async function apiRequest(url, method = 'GET', body = null) {
 
 // -----------------------------------------------------------
 //  Helper: invia configurazione ottimale all'ESP via MQTT
-//  Chiamato dopo ogni aggiornamento condizioni o link device
+//  Chiamato dopo ogni aggiornamento condizioni, nome, o link device
 // -----------------------------------------------------------
 async function sendDeviceConfig() {
     const token = PLANT_DATA.device_token;
@@ -241,7 +241,7 @@ async function fetchDeviceStatus(token, statusRow, statusBadge, statusToken) {
         if (statusRow) {
             statusRow.classList.remove('hidden');
             if (statusBadge) {
-                statusBadge.className  = `badge ${isOnline ? 'badge-success' : 'badge-ghost'} gap-1`;
+                statusBadge.className   = `badge ${isOnline ? 'badge-success' : 'badge-ghost'} gap-1`;
                 statusBadge.textContent = isOnline ? 'Online' : 'Offline';
             }
             if (statusToken) {
@@ -262,8 +262,8 @@ function setPageDeviceStatus(isOnline, lastSeenAt) {
         el.className = `w-2 h-2 rounded-full flex-shrink-0 ${isOnline ? 'bg-success' : 'bg-base-300'}`;
     });
     document.querySelectorAll('[data-device-text]').forEach(el => {
-        el.textContent  = isOnline ? 'Online' : 'Offline';
-        el.className    = `text-xs ${isOnline ? 'text-success' : 'text-base-content/40'}`;
+        el.textContent = isOnline ? 'Online' : 'Offline';
+        el.className   = `text-xs ${isOnline ? 'text-success' : 'text-base-content/40'}`;
     });
     const sidebarText = document.getElementById('device_sidebar_text');
     if (sidebarText) {
@@ -283,11 +283,28 @@ function setPageDeviceStatus(isOnline, lastSeenAt) {
 // -----------------------------------------------------------
 //  4. CONDIZIONI OTTIMALI — salva + invia config MQTT
 // -----------------------------------------------------------
+
+// Mappa preset luce → [min, max] in lux
+const LUX_PRESETS = {
+    low:    [0,    500],
+    medium: [500,  2000],
+    high:   [2000, 100000],
+};
+
+function updateLuxHidden(preset) {
+    const [min, max] = LUX_PRESETS[preset] ?? [0, 100000];
+    const minEl = document.getElementById('cond_lux_min');
+    const maxEl = document.getElementById('cond_lux_max');
+    if (minEl) minEl.value = min;
+    if (maxEl) maxEl.value = max;
+}
+
 function initConditions() {
     const modal   = document.getElementById('modal_conditions');
     const btnSave = document.getElementById('btn_save_conditions');
     if (!modal || !btnSave) return;
 
+    // Preselect valori quando si apre il modal
     document.querySelectorAll('[onclick*="modal_conditions"]').forEach(btn => {
         btn.addEventListener('click', () => {
             setValue('cond_temp_min',  PLANT_DATA.temp_min);
@@ -297,7 +314,22 @@ function initConditions() {
             setValue('cond_soil_min',  PLANT_DATA.soil_hum_min);
             setValue('cond_soil_max',  PLANT_DATA.soil_hum_max);
             setValue('cond_watering',  PLANT_DATA.watering_cycle);
+
+            // Preselect preset luminosità in base ai valori salvati
+            const luxMax = PLANT_DATA.lux_max ?? 100000;
+            const sel = document.getElementById('cond_lux_preset');
+            if (sel) {
+                if (luxMax <= 500)       sel.value = 'low';
+                else if (luxMax <= 2000) sel.value = 'medium';
+                else                     sel.value = 'high';
+                updateLuxHidden(sel.value);
+            }
         });
+    });
+
+    // Aggiorna hidden inputs quando cambia il select
+    document.getElementById('cond_lux_preset')?.addEventListener('change', function () {
+        updateLuxHidden(this.value);
     });
 
     btnSave.addEventListener('click', async () => {
@@ -309,11 +341,13 @@ function initConditions() {
             soil_hum_min:   parseFloat(document.getElementById('cond_soil_min')?.value),
             soil_hum_max:   parseFloat(document.getElementById('cond_soil_max')?.value),
             watering_cycle: parseInt(document.getElementById('cond_watering')?.value),
+            lux_min:        parseFloat(document.getElementById('cond_lux_min')?.value ?? 0),
+            lux_max:        parseFloat(document.getElementById('cond_lux_max')?.value ?? 100000),
         };
 
-        if (payload.temp_max   < payload.temp_min)       { showToast('Temp. max deve essere ≥ min.', 'warning');  return; }
-        if (payload.hum_max    < payload.hum_min)        { showToast('Umidità max deve essere ≥ min.', 'warning'); return; }
-        if (payload.soil_hum_max < payload.soil_hum_min) { showToast('Suolo max deve essere ≥ min.', 'warning');   return; }
+        if (payload.temp_max     < payload.temp_min)     { showToast('Temp. max deve essere >= min.', 'warning');  return; }
+        if (payload.hum_max      < payload.hum_min)      { showToast('Umidità max deve essere >= min.', 'warning'); return; }
+        if (payload.soil_hum_max < payload.soil_hum_min) { showToast('Suolo max deve essere >= min.', 'warning');   return; }
         if (!payload.watering_cycle || payload.watering_cycle < 1) { showToast('Ciclo non valido.', 'warning'); return; }
 
         btnSave.disabled = true;
@@ -403,12 +437,10 @@ function initAppearance() {
     // Pre-popola slider e nome quando si apre il modal
     document.querySelectorAll('[onclick*="modal_edit_plant"]').forEach(btn => {
         btn.addEventListener('click', () => {
-            // Nome
             const nameInput = document.getElementById('edit_plant_name');
             if (nameInput) nameInput.value = PLANT_DATA.plant_name ?? '';
             hideNameError();
 
-            // Slider aspetto
             if (!window.PLANT_APPEARANCE) return;
             setSlider('range_variant',     'lbl_variant',     PLANT_APPEARANCE.plant_variant ?? 0);
             setSlider('range_pot',         'lbl_pot',         PLANT_APPEARANCE.pot_color     ?? 0);
@@ -436,7 +468,6 @@ function initAppearance() {
         const nameInput = document.getElementById('edit_plant_name');
         const plantName = nameInput?.value.trim() ?? '';
 
-        // Validazione nome
         if (!plantName) {
             showNameError('Il nome non può essere vuoto.');
             return;
@@ -461,7 +492,6 @@ function initAppearance() {
             const data = await apiRequest(`/plants/${PLANT_ID}`, 'PATCH', appearance);
 
             if (data.status === 'ok') {
-                // Aggiorna stato locale
                 Object.assign(PLANT_DATA, appearance);
                 window.PLANT_APPEARANCE = { ...window.PLANT_APPEARANCE, ...appearance };
                 PlantViewer?.setAppearance(appearance);
@@ -473,8 +503,10 @@ function initAppearance() {
                 const nameDisplay = document.getElementById('plant_name_display');
                 if (nameDisplay) nameDisplay.textContent = plantName;
                 document.title = plantName;
+
+                // Propaga il nuovo nome all'ESP via MQTT
+                await sendDeviceConfig();
             } else {
-                // Mostra eventuali errori di validazione lato server
                 const serverError = data.errors?.plant_name?.[0];
                 if (serverError) {
                     showNameError(serverError);
@@ -492,16 +524,16 @@ function initAppearance() {
 }
 
 function showNameError(msg) {
-    const el = document.getElementById('edit_plant_name_error');
+    const el    = document.getElementById('edit_plant_name_error');
     const input = document.getElementById('edit_plant_name');
-    if (el) { el.textContent = msg; el.classList.remove('hidden'); }
+    if (el)    { el.textContent = msg; el.classList.remove('hidden'); }
     if (input) input.classList.add('input-error');
 }
 
 function hideNameError() {
-    const el = document.getElementById('edit_plant_name_error');
+    const el    = document.getElementById('edit_plant_name_error');
     const input = document.getElementById('edit_plant_name');
-    if (el) el.classList.add('hidden');
+    if (el)    el.classList.add('hidden');
     if (input) input.classList.remove('input-error');
 }
 
@@ -523,7 +555,7 @@ function initEcho() {
 
 /**
  * Aggiorna i valori dei sensori nel DOM senza ricaricare la pagina,
- * e prepend una nuova riga alla lista "Ultime letture".
+ * e aggiorna last_seen_at del dispositivo.
  */
 function updateSensorDisplay(reading) {
     const pd = PLANT_DATA;
@@ -559,12 +591,19 @@ function updateSensorDisplay(reading) {
     const lumEl = document.getElementById('val_lum');
     if (lumEl && reading.luminosity !== null) {
         lumEl.textContent = `${Math.round(reading.luminosity)} lx`;
-        lumEl.className   = 'text-2xl font-bold text-base-content';
+        // Controlla range solo se è stato impostato un lux_min > 0
+        const luxColor = (pd.lux_min > 0)
+            ? colorClass(reading.luminosity, pd.lux_min, pd.lux_max)
+            : 'text-base-content';
+        lumEl.className = `text-2xl font-bold ${luxColor}`;
     }
 
     // Timestamp aggiornamento
     const updEl = document.getElementById('sensor_updated_at');
     if (updEl) updEl.textContent = 'Aggiornato adesso';
+
+    // Aggiorna il badge online dato che abbiamo appena ricevuto dati
+    setPageDeviceStatus(true, new Date().toISOString());
 
     // Prepend nuova riga nella lista "Ultime letture"
     prependReadingRow(reading);
@@ -574,13 +613,10 @@ function updateSensorDisplay(reading) {
 
 /**
  * Inserisce una nuova lettura in cima alla lista #latest_readings_list.
- * Se la lista non esiste (sezione non renderizzata per mancanza di letture
- * precedenti), la crea insieme al wrapper card.
  */
 function prependReadingRow(reading) {
     let list = document.getElementById('latest_readings_list');
 
-    // Se la sezione non esiste ancora, la costruiamo dinamicamente
     if (!list) {
         const rightCol = document.querySelector('.lg\\:px-0.lg\\:pt-0');
         if (!rightCol) return;
@@ -597,10 +633,10 @@ function prependReadingRow(reading) {
     }
 
     const badges = [
-        reading.temperature  !== null ? `<span class="badge badge-ghost badge-sm">${parseFloat(reading.temperature).toFixed(1)}°C</span>`   : '',
-        reading.humidity     !== null ? `<span class="badge badge-ghost badge-sm">${Math.round(reading.humidity)}% aria</span>`              : '',
+        reading.temperature   !== null ? `<span class="badge badge-ghost badge-sm">${parseFloat(reading.temperature).toFixed(1)}°C</span>`  : '',
+        reading.humidity      !== null ? `<span class="badge badge-ghost badge-sm">${Math.round(reading.humidity)}% aria</span>`             : '',
         reading.soil_humidity !== null ? `<span class="badge badge-ghost badge-sm">${Math.round(reading.soil_humidity)}% suolo</span>`       : '',
-        reading.luminosity   !== null ? `<span class="badge badge-ghost badge-sm">${Math.round(reading.luminosity)} lx</span>`               : '',
+        reading.luminosity    !== null ? `<span class="badge badge-ghost badge-sm">${Math.round(reading.luminosity)} lx</span>`              : '',
     ].join('');
 
     const li = document.createElement('li');
@@ -612,7 +648,6 @@ function prependReadingRow(reading) {
 
     list.insertBefore(li, list.firstChild);
 
-    // Mantieni al massimo 6 righe
     while (list.children.length > 6) {
         list.removeChild(list.lastChild);
     }
@@ -660,6 +695,7 @@ window.applyAppearance = function () {
     };
     PlantViewer?.setAppearance(appearance);
     document.getElementById('modal_edit_plant')?.close();
+    PlantViewer?.capturePreview(PLANT_DATA.id);
 };
 
 // -----------------------------------------------------------
