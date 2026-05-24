@@ -235,10 +235,6 @@
 	"ParameterGroups": [],
 	"Parts": [
 		{
-			"Id": "Part",
-			"Name": "NaHida Plant Model4_20260505235441.png"
-		},
-		{
 			"Id": "CartoonReactionsPart",
 			"Name": "CartoonReactions"
 		},
@@ -279,6 +275,10 @@
 			"Name": "ColorOverlay"
 		},
 		{
+			"Id": "Plant7Part",
+			"Name": "Plant 7"
+		},
+		{
 			"Id": "Plant6",
 			"Name": "Plant 6"
 		},
@@ -313,6 +313,10 @@
 		{
 			"Id": "Pot",
 			"Name": "Pot"
+		},
+		{
+			"Id": "ColorOverlay_Plant7",
+			"Name": "ColorOverlay_Plant7"
 		},
 		{
 			"Id": "ColorOverlay_Plant5",

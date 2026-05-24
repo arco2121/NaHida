@@ -538,7 +538,42 @@ function hideNameError() {
 }
 
 // -----------------------------------------------------------
-//  7. REAL-TIME via Echo (ButtonPressed + SensorUpdated)
+//  7. STATO EMOTIVO PIANTA
+// -----------------------------------------------------------
+/**
+ * Calcola lo stato emotivo in base ai dati sensore.
+ * Priorità: sleep (lux < 150) > sad (2+ anomalie) > mid (1 anomalia) > normal
+ * @param {object} reading
+ * @returns {'normal'|'mid'|'sad'|'sleep'}
+ */
+function calcPlantState(reading) {
+    if (!reading) return 'normal';
+
+    const pd = PLANT_DATA;
+
+    if (reading.luminosity !== null && reading.luminosity < 150) {
+        return 'sleep';
+    }
+
+    let anomalies = 0;
+
+    if (reading.temperature !== null) {
+        if (reading.temperature < pd.temp_min || reading.temperature > pd.temp_max) anomalies++;
+    }
+    if (reading.humidity !== null) {
+        if (reading.humidity < pd.hum_min || reading.humidity > pd.hum_max) anomalies++;
+    }
+    if (reading.soil_humidity !== null) {
+        if (reading.soil_humidity < pd.soil_hum_min || reading.soil_humidity > pd.soil_hum_max) anomalies++;
+    }
+
+    if (anomalies >= 2) return 'sad';
+    if (anomalies === 1) return 'mid';
+    return 'normal';
+}
+
+// -----------------------------------------------------------
+//  8. REAL-TIME via Echo (ButtonPressed + SensorUpdated)
 // -----------------------------------------------------------
 function initEcho() {
     if (!window.Echo || !PLANT_ID) return;
@@ -550,6 +585,10 @@ function initEcho() {
         })
         .listen('.SensorUpdated', (e) => {
             updateSensorDisplay(e);
+            if (window.PlantViewer) {
+                const state = calcPlantState(e);
+                PlantViewer.setState(state);
+            }
         });
 }
 
@@ -654,7 +693,7 @@ function prependReadingRow(reading) {
 }
 
 // -----------------------------------------------------------
-//  8. POLLING stato dispositivo ogni 15s
+//  9. POLLING stato dispositivo ogni 15s
 // -----------------------------------------------------------
 function initSensorPolling() {
     if (!PLANT_DATA.has_device || !PLANT_DATA.device_token) return;
@@ -712,6 +751,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSensorPolling();
 
     if (PlantViewer && window.PLANT_HEALTH) {
-        PlantViewer.setHealth(window.PLANT_HEALTH);
+        const state = calcPlantState(window.PLANT_HEALTH);
+        PlantViewer.setState(state);
     }
 });

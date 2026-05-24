@@ -27,17 +27,9 @@ export const PlantViewer = (() => {
 
     const MAX_APPEARANCE = {
         POT_COLOR: 2,
-        PLANT_VARIANT: 6,
+        PLANT_VARIANT: 7,
         PLANT_COLOR: 5,
         FLOWER_COLOR: 6
-    };
-
-    const HEALTH_THRESHOLDS = {
-        soil_humidity_min: 30,
-        air_humidity_min: 40,
-        temperature_min: 15,
-        temperature_max: 35,
-        overdue_multiplier: 1.2,
     };
 
     let _model = null;
@@ -49,7 +41,6 @@ export const PlantViewer = (() => {
     let _targetEyeBlink = 1;
     let _nextBlinkTime = 0;
 
-    // Variabili per il tracking del cursore
     let _targetMouseX = 0;
     let _targetMouseY = 0;
     let _currentMouseX = 0;
@@ -58,9 +49,10 @@ export const PlantViewer = (() => {
     let _state = {
         sleeping: false,
         sad: false,
+        mid: false,
         passwordMode: false,
-        appearance: {pot_color: 0, plant_variant: 0, plant_color: 0, flower_color: 0},
-        health: {sad_plant: 0, sad_plant_color: 0},
+        appearance: { pot_color: 0, plant_variant: 0, plant_color: 0, flower_color: 0 },
+        health: { sad_plant: 0, sad_plant_color: 0 },
     };
 
     // ----------------------------------------------------------
@@ -73,7 +65,7 @@ export const PlantViewer = (() => {
         _MotionPriority = window.PIXI.live2d?.MotionPriority;
 
         if (!Live2DModel) {
-            console.error(`[PlantViewer] window.PIXI.live2d non disponibile. Controlla i tag script.`);
+            console.error('[PlantViewer] window.PIXI.live2d non disponibile. Controlla i tag script.');
             return;
         }
 
@@ -111,15 +103,18 @@ export const PlantViewer = (() => {
             _model.motion('Idle', 0, _MotionPriority.FORCE);
             _updateExpression();
 
+            // Applica stato pendente (es. sleep impostato prima che il modello fosse pronto)
+            if (_state.sleeping) {
+                _model.motion('Sleep', 0, _MotionPriority.FORCE);
+            }
+
             canvas.addEventListener('pointerdown', () => tap());
 
-            // Tracking globale del cursore
             window.addEventListener('mousemove', (e) => {
                 _targetMouseX = (e.clientX / window.innerWidth) * 2 - 1;
                 _targetMouseY = ((e.clientY / window.innerHeight) * 2 - 1) * -1;
             });
 
-            // Reset quando il mouse esce dalla finestra
             document.addEventListener('mouseleave', () => {
                 _targetMouseX = 0;
                 _targetMouseY = 0;
@@ -151,52 +146,40 @@ export const PlantViewer = (() => {
     //  API PUBBLICA
     // ----------------------------------------------------------
 
-    function setAppearance({pot_color = 0, plant_variant = 0, plant_color = 0, flower_color = 0} = {}) {
-        _state.appearance = {pot_color, plant_variant, plant_color, flower_color};
+    function setAppearance({ pot_color = 0, plant_variant = 0, plant_color = 0, flower_color = 0 } = {}) {
+        _state.appearance = { pot_color, plant_variant, plant_color, flower_color };
     }
 
-    // Nuova funzione per generare un look casuale ✨
     function randomizeAppearance() {
-        //_state.appearance.pot_color = Math.floor(Math.random() * (MAX_APPEARANCE.POT_COLOR + 1));
         _state.appearance.plant_variant = Math.floor(Math.random() * (MAX_APPEARANCE.PLANT_VARIANT + 1));
-        //_state.appearance.plant_color = Math.floor(Math.random() * (MAX_APPEARANCE.PLANT_COLOR + 1));
-        _state.appearance.flower_color = Math.floor(Math.random() * (MAX_APPEARANCE.FLOWER_COLOR + 1));
+        _state.appearance.flower_color  = Math.floor(Math.random() * (MAX_APPEARANCE.FLOWER_COLOR + 1));
 
         console.log(`[PlantViewer] Random Appearance: Pot=${_state.appearance.pot_color}, Variant=${_state.appearance.plant_variant}, PlantColor=${_state.appearance.plant_color}, Flower=${_state.appearance.flower_color}`);
     }
 
-    function setHealth({soil_humidity, air_humidity, temperature, last_watered, water_interval_hours} = {}) {
-        const t = HEALTH_THRESHOLDS;
-        let sadScore = 0;
+    /**
+     * Imposta lo stato emotivo della pianta.
+     * @param {'normal'|'mid'|'sad'|'sleep'} state
+     */
+    function setState(state) {
+        const sleeping = state === 'sleep';
+        const sad      = state === 'sad';
+        const mid      = state === 'mid';
 
-        if (temperature !== undefined && (temperature < t.temperature_min || temperature > t.temperature_max)) sadScore++;
-        if (soil_humidity !== undefined && soil_humidity < t.soil_humidity_min) sadScore++;
-        if (air_humidity !== undefined && air_humidity < t.air_humidity_min) sadScore++;
-
-        if (last_watered && water_interval_hours) {
-            const elapsed = (Date.now() - new Date(last_watered).getTime()) / 3600000;
-            if (elapsed > water_interval_hours * t.overdue_multiplier) sadScore++;
+        if (_state.sleeping !== sleeping) {
+            _state.sleeping = sleeping;
+            _isTapping = false;
+            if (_model) {
+                _model.motion(sleeping ? 'Sleep' : 'Idle', 0, _MotionPriority.FORCE);
+            }
         }
 
-        const isSad = sadScore >= 2;
-        const intensity = Math.min(sadScore / 3, 1);
+        _state.sad = sad;
+        _state.mid = mid;
 
-        _state.sad = isSad;
-        _state.health.sad_plant = isSad ? intensity : 0;
-        _state.health.sad_plant_color = isSad ? intensity : 0;
-
-        _updateExpression();
-    }
-
-    function setSleeping(sleeping) {
-        if (_state.sleeping === sleeping) return;
-        _state.sleeping = sleeping;
-        _isTapping = false;
-
-        if (_model) {
-            const group = sleeping ? 'Sleep' : 'Idle';
-            _model.motion(group, 0, _MotionPriority.FORCE);
-        }
+        // Intensita parametri sad per il modello
+        _state.health.sad_plant       = sad ? 1 : (mid ? 0.5 : 0);
+        _state.health.sad_plant_color = _state.health.sad_plant;
 
         _updateExpression();
     }
@@ -211,23 +194,25 @@ export const PlantViewer = (() => {
         if (!_model || _isTapping) return;
 
         const normalStates = [0, 1, 4];
-        const sadStates = [2, 5];
-        const sleepStates = [3];
+        const sadStates    = [2, 5];
+        const midStates    = [6];
+        const sleepStates  = [3];
 
         _isTapping = true;
         let index = 0;
+
         if (_state.sleeping) {
             index = sleepStates[Math.floor(Math.random() * sleepStates.length)];
         } else if (_state.sad) {
             index = sadStates[Math.floor(Math.random() * sadStates.length)];
+        } else if (_state.mid) {
+            index = midStates[Math.floor(Math.random() * midStates.length)];
         } else {
             index = normalStates[Math.floor(Math.random() * normalStates.length)];
         }
 
         _model.motion('Tap', index, _MotionPriority.FORCE)
-            .finally(() => {
-                _isTapping = false;
-            });
+            .finally(() => { _isTapping = false; });
     }
 
     // ----------------------------------------------------------
@@ -239,8 +224,9 @@ export const PlantViewer = (() => {
 
         if (_state.passwordMode) _model.expression('Password');
         else if (_state.sleeping) _model.expression('Sleep');
-        else if (_state.sad) _model.expression('Sad');
-        else _model.expression('Normal');
+        else if (_state.sad)      _model.expression('Sad');
+        else if (_state.mid)      _model.expression('Mid');
+        else                      _model.expression('Normal');
     }
 
     function _tickBlink() {
@@ -248,9 +234,7 @@ export const PlantViewer = (() => {
         if (now > _nextBlinkTime) {
             _targetEyeBlink = 0;
 
-            setTimeout(() => {
-                _targetEyeBlink = 1;
-            }, 100);
+            setTimeout(() => { _targetEyeBlink = 1; }, 100);
             _nextBlinkTime = now + 2000 + Math.random() * 4000;
         }
     }
@@ -258,29 +242,28 @@ export const PlantViewer = (() => {
     function _tickParams() {
         if (!_model) return;
         const core = _model.internalModel.coreModel;
-        const ids = core._parameterIds;
+        const ids  = core._parameterIds;
         const vals = core._parameterValues;
         if (!ids || !ids.length) return;
 
-        // Lerp abbassato a 0.1 per renderlo super smooth 💫
         _currentMouseX += (_targetMouseX - _currentMouseX) * 0.1;
         _currentMouseY += (_targetMouseY - _currentMouseY) * 0.1;
 
-        let outputX = _state.passwordMode ? 0 : _currentMouseX;
-        let outputY = _state.passwordMode ? 0 : _currentMouseY;
+        let outputX = (_state.passwordMode || _state.sleeping) ? 0 : _currentMouseX;
+        let outputY = (_state.passwordMode || _state.sleeping) ? 0 : _currentMouseY;
 
-        _setParam(ids, vals, PARAMS.POT_COLOR, _state.appearance.pot_color);
-        _setParam(ids, vals, PARAMS.PLANT_VARIANT, _state.appearance.plant_variant);
-        _setParam(ids, vals, PARAMS.PLANT_COLOR, _state.appearance.plant_color);
-        _setParam(ids, vals, PARAMS.FLOWER_COLOR, _state.appearance.flower_color);
-        _setParam(ids, vals, PARAMS.SAD_PLANT, _state.health.sad_plant);
+        _setParam(ids, vals, PARAMS.POT_COLOR,      _state.appearance.pot_color);
+        _setParam(ids, vals, PARAMS.PLANT_VARIANT,   _state.appearance.plant_variant);
+        _setParam(ids, vals, PARAMS.PLANT_COLOR,     _state.appearance.plant_color);
+        _setParam(ids, vals, PARAMS.FLOWER_COLOR,    _state.appearance.flower_color);
+        _setParam(ids, vals, PARAMS.SAD_PLANT,       _state.health.sad_plant);
         _setParam(ids, vals, PARAMS.SAD_PLANT_COLOR, _state.health.sad_plant_color);
 
         _setParam(ids, vals, PARAMS.EYE_POS_X, outputX + outputX * 0.5);
         _setParam(ids, vals, PARAMS.EYE_POS_Y, outputY + outputY * 0.5);
-        _setParam(ids, vals, PARAMS.PLANT_X, outputX + outputX * 1.1);
-        _setParam(ids, vals, PARAMS.PLANT_Y, outputY + outputY * 3);
-        _setParam(ids, vals, PARAMS.PLANT_Z, outputX + outputX * 2.5);
+        _setParam(ids, vals, PARAMS.PLANT_X,   outputX + outputX * 1.1);
+        _setParam(ids, vals, PARAMS.PLANT_Y,   outputY + outputY * 3);
+        _setParam(ids, vals, PARAMS.PLANT_Z,   outputX + outputX * 2.5);
 
         if (!_state.sleeping && !_isTapping && !_state.passwordMode) {
             _tickBlink();
@@ -313,10 +296,8 @@ export const PlantViewer = (() => {
     }
 
     async function capturePreview(plantId, appearance = null) {
-        // Applica l'aspetto se passato, altrimenti usa quello corrente
         if (appearance) setAppearance(appearance);
 
-        // Crea un canvas offscreen temporaneo
         const offCanvas = document.createElement('canvas');
         offCanvas.width = 512;
         offCanvas.height = 512;
@@ -335,7 +316,6 @@ export const PlantViewer = (() => {
             const offModel = await Live2DModel.from(MODEL_PATH);
             offApp.stage.addChild(offModel);
 
-            // Applica stessa scala del modello principale
             const scale = Math.min(512 / offModel.internalModel.originalWidth,
                 512 / offModel.internalModel.originalHeight) * 0.85;
             offModel.scale.set(scale);
@@ -343,23 +323,20 @@ export const PlantViewer = (() => {
             offModel.y = 256;
             offModel.anchor.set(0.5, 0.5);
 
-            // Applica i parametri di aspetto
             const core = offModel.internalModel.coreModel;
             const ids  = core._parameterIds;
             const vals = core._parameterValues;
 
             const s = _state.appearance;
-            _setParam(ids, vals, PARAMS.POT_COLOR,     s.pot_color);
-            _setParam(ids, vals, PARAMS.PLANT_VARIANT,  s.plant_variant);
-            _setParam(ids, vals, PARAMS.PLANT_COLOR,    s.plant_color);
-            _setParam(ids, vals, PARAMS.FLOWER_COLOR,   s.flower_color);
+            _setParam(ids, vals, PARAMS.POT_COLOR,    s.pot_color);
+            _setParam(ids, vals, PARAMS.PLANT_VARIANT, s.plant_variant);
+            _setParam(ids, vals, PARAMS.PLANT_COLOR,   s.plant_color);
+            _setParam(ids, vals, PARAMS.FLOWER_COLOR,  s.flower_color);
 
-            // Aspetta 3 frame che il renderer applichi tutto
             await new Promise(r => setTimeout(r, 100));
 
             const dataURL = offCanvas.toDataURL('image/png');
 
-            // Manda a Laravel
             const response = await fetch(`/api/plants/${plantId}/preview`, {
                 method: 'POST',
                 headers: {
@@ -378,6 +355,6 @@ export const PlantViewer = (() => {
         }
     }
 
-    return { init, setAppearance, randomizeAppearance, setHealth, setSleeping, tap, setPasswordMode, capturePreview };
+    return { init, setAppearance, randomizeAppearance, setState, tap, setPasswordMode, capturePreview };
 
 })();

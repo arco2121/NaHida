@@ -31,7 +31,7 @@ class StorePlantRequest extends FormRequest
             'watering_cycle'=> ['required', 'integer', 'min:1'],
 
             // Personalizzazione modello
-            'plant_variant' => ['nullable', 'string', 'max:50'],
+            'plant_variant' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:7'],
             'plant_color'   => ['nullable', 'string', 'max:20'],
             'flower_color'  => ['nullable', 'string', 'max:20'],
             'pot_color'     => ['nullable', 'string', 'max:20'],

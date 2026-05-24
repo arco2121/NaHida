@@ -14,7 +14,8 @@
       { "Name": "Normal", "File": "expressions/Expression Normal.exp3.json" },
       { "Name": "Sad",    "File": "expressions/Expression Sad.exp3.json" },
       { "Name": "Sleep",  "File": "expressions/Expression Sleep.exp3.json" },
-      { "Name": "Password",  "File": "expressions/Expression Password.exp3.json", "FadeInTime": 0.50, "FadeOutTime": 0.2  }
+      { "Name": "Password",  "File": "expressions/Expression Password.exp3.json", "FadeInTime": 0.50, "FadeOutTime": 0.2  },
+      { "Name": "Mid",  "File": "expressions/Expression Mid.exp3.json" }
     ],
     "Motions": {
       "Tap": [
@@ -23,7 +24,8 @@
         { "File": "motions/Tap_2.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 },
         { "File": "motions/Tap_3.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 },
         { "File": "motions/Tap_4.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 },
-        { "File": "motions/Tap_5.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 }
+        { "File": "motions/Tap_5.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 },
+        { "File": "motions/Tap_6.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 }
       ],
       "Idle": [
         { "File": "motions/Idle.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 }

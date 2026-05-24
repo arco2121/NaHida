@@ -94,6 +94,13 @@
             device_token:   {!! json_encode($device?->device_token) !!},
             has_device:     {{ $device ? 'true' : 'false' }},
         };
+
+        window.PLANT_HEALTH = {
+            temperature:   {{ $latest?->temperature   ?? 'null' }},
+            humidity:      {{ $latest?->humidity       ?? 'null' }},
+            soil_humidity: {{ $latest?->soil_humidity  ?? 'null' }},
+            luminosity:    {{ $latest?->luminosity     ?? 'null' }},
+        };
     </script>
 
     @if(session('success'))
@@ -214,7 +221,7 @@
                                 {{-- Umidità aria --}}
                                 <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
                                     <div class="flex items-center gap-1.5">
-                                        <img src="{{ asset('assets/NaHida_Icon_Humidity.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
+                                        <img src="{{ asset('assets/NaHida_Icon_Water.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
                                         <span class="text-xs text-base-content/50 font-bold uppercase tracking-wide">Umidità aria</span>
                                     </div>
                                     <p id="val_hum" class="text-2xl font-bold text-{{ $humColor }}">{{ round($latest->humidity) }}%</p>
@@ -331,7 +338,7 @@
                     <button class="card bg-base-100 shadow hover:shadow-md active:scale-95 transition-all cursor-pointer"
                             onclick="document.getElementById('modal_conditions').showModal()">
                         <div class="card-body p-4 items-center text-center gap-2">
-                            <img src="{{ asset('assets/NaHida_Icon_Settings.png') }}" class="w-9 h-9 object-contain" alt="" onerror="this.style.display='none'">
+                            <img src="{{ asset('assets/NaHida_Icon_Plant.png') }}" class="w-9 h-9 object-contain" alt="" onerror="this.style.display='none'">
                             <span class="text-sm font-bold text-base-content">Condizioni</span>
                         </div>
                     </button>

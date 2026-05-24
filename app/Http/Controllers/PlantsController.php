@@ -87,7 +87,7 @@ class PlantsController extends Controller
             'soil_hum_min'   => ['sometimes', 'numeric', 'min:0', 'max:100'],
             'soil_hum_max'   => ['sometimes', 'numeric', 'min:0', 'max:100', 'gte:soil_hum_min'],
             'watering_cycle' => ['sometimes', 'integer', 'min:1'],
-            'plant_variant'  => ['sometimes', 'nullable', 'integer', 'min:0', 'max:6'],
+            'plant_variant'  => ['sometimes', 'nullable', 'integer', 'min:0', 'max:7'],
             'plant_color'    => ['sometimes', 'nullable', 'integer', 'min:0', 'max:5'],
             'flower_color'   => ['sometimes', 'nullable', 'integer', 'min:0', 'max:6'],
             'pot_color'      => ['sometimes', 'nullable', 'integer', 'min:0', 'max:2'],

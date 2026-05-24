@@ -16,7 +16,15 @@
         <div class="card bg-primary text-primary-content shadow">
             <div class="card-body py-5 px-5">
                 <h2 class="text-2xl font-bold">{{ $message  }}, {{ $params['user']->name }}!</h2>
-                <p class="opacity-80 text-sm">{{ucfirst($now->dayName)}}, {{$now->day}}/{{$now->month}}/{{$now->year}} - hai 3 piante da monitorare</p>
+                @php $attentionCount = $params['attentionPlants']->count(); @endphp
+<p class="opacity-80 text-sm">
+    {{ucfirst($now->dayName)}}, {{$now->day}}/{{$now->month}}/{{$now->year}} •
+    @if($attentionCount > 0)
+        {{ $attentionCount }} {{ $attentionCount === 1 ? 'pianta richiede attenzione' : 'piante richiedono attenzione' }}
+    @else
+        Tutte le piante stanno bene 🌿
+    @endif
+</p>
             </div>
         </div>
 

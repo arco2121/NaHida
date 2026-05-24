@@ -63,20 +63,28 @@
         <h3 class="text-lg font-bold mb-4">Musica di sottofondo</h3>
         <div class="flex flex-col gap-2">
             <label class="flex items-center gap-3 p-3 bg-base-200 rounded-box cursor-pointer">
-                <input type="radio" name="music" class="radio radio-primary" checked />
+                <input type="radio" name="music" class="radio radio-primary" value="-1" checked />
                 <span class="text-sm font-bold">Nessuna</span>
             </label>
             <label class="flex items-center gap-3 p-3 bg-base-200 rounded-box cursor-pointer">
-                <input type="radio" name="music" class="radio radio-primary" />
-                <span class="text-sm font-bold">Pioggia leggera</span>
+                <input type="radio" name="music" class="radio radio-primary" value="6"/>
+                <span class="text-sm font-bold">Lily & Daisy</span>
             </label>
             <label class="flex items-center gap-3 p-3 bg-base-200 rounded-box cursor-pointer">
-                <input type="radio" name="music" class="radio radio-primary" />
-                <span class="text-sm font-bold">Foresta</span>
+                <input type="radio" name="music" class="radio radio-primary" value="7"/>
+                <span class="text-sm font-bold">City Lights</span>
             </label>
             <label class="flex items-center gap-3 p-3 bg-base-200 rounded-box cursor-pointer">
-                <input type="radio" name="music" class="radio radio-primary" />
-                <span class="text-sm font-bold">Lo-fi chill</span>
+                <input type="radio" name="music" class="radio radio-primary" value="8"/>
+                <span class="text-sm font-bold">Dreamy Days</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 bg-base-200 rounded-box cursor-pointer">
+                <input type="radio" name="music" class="radio radio-primary" value="9"/>
+                <span class="text-sm font-bold">Sunny Symphony</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 bg-base-200 rounded-box cursor-pointer">
+                <input type="radio" name="music" class="radio radio-primary" value="10"/>
+                <span class="text-sm font-bold">Jazzberry Jam</span>
             </label>
         </div>
         <div class="modal-action">
@@ -185,11 +193,11 @@
                     <label class="label text-sm font-bold p-0">Variante pianta</label>
                     <span id="lbl_variant" class="text-sm font-bold text-primary">0</span>
                 </div>
-                <input type="range" id="range_variant" min="0" max="6" value="0" step="1"
+                <input type="range" id="range_variant" min="0" max="7" value="0" step="1"
                        class="range w-full range-primary range-sm"
                        oninput="document.getElementById('lbl_variant').textContent = this.value" />
                 <div class="flex justify-between text-xs text-base-content/40 px-0.5 mt-0.5">
-                    <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+                    <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
                 </div>
             </div>
 

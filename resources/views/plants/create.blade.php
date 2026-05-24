@@ -35,7 +35,7 @@
                                 <span id="lbl_variant" class="text-sm font-bold text-primary">0</span>
                             </div>
                             <input type="range" id="range_variant" name="plant_variant"
-                                   min="0" max="6" value="0" step="1" class="range range-primary range-sm"/>
+                                   min="0" max="7" value="0" step="1" class="range range-primary range-sm"/>
                         </div>
 
                         <div>
