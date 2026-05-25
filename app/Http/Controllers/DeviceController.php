@@ -60,7 +60,7 @@ class DeviceController extends Controller
         ]);
 
         try {
-            MQTT::connection()->publish("device/{$token}/config", $payload, 0, true);
+            MQTT::connection()->publish("device/{$token}/config", $payload, 1, true);
             Log::info("Config inviata a {$token}: {$payload}");
             return response()->json(['status' => 'Config inviata', 'payload' => json_decode($payload)]);
         } catch (\Exception $e) {

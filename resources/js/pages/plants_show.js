@@ -600,6 +600,7 @@ function initAppearance() {
                 document.title = plantName;
 
                 await sendDeviceConfig();
+                await PlantViewer?.capturePreview(PLANT_ID);
             } else {
                 const serverError = data.errors?.plant_name?.[0];
                 if (serverError) {
@@ -833,7 +834,7 @@ window.applyAppearance = function () {
     };
     PlantViewer?.setAppearance(appearance);
     document.getElementById('modal_edit_plant')?.close();
-    PlantViewer?.capturePreview(PLANT_DATA.id);
+    PlantViewer?.capturePreview(PLANT_ID);
 };
 
 // -----------------------------------------------------------

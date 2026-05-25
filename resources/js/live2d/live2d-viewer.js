@@ -83,6 +83,7 @@ export const PlantViewer = (() => {
             view: canvas, width: W, height: H,
             transparent: true, antialias: true,
             resolution: window.devicePixelRatio || 1, autoDensity: true,
+            preserveDrawingBuffer: true,
         });
 
         try {
@@ -298,61 +299,119 @@ export const PlantViewer = (() => {
     async function capturePreview(plantId, appearance = null) {
         if (appearance) setAppearance(appearance);
 
-        const offCanvas = document.createElement('canvas');
-        offCanvas.width = 512;
-        offCanvas.height = 512;
+        if (!_model || !_app) return null;
 
-        const offApp = new window.PIXI.Application({
-            view: offCanvas,
-            width: 512,
-            height: 512,
-            transparent: true,
-            antialias: true,
-            preserveDrawingBuffer: true,
-        });
+        const core = _model.internalModel.coreModel;
+        const ids  = core._parameterIds;
+        const vals = core._parameterValues;
 
-        try {
-            const Live2DModel = window.PIXI.live2d.Live2DModel;
-            const offModel = await Live2DModel.from(MODEL_PATH);
-            offApp.stage.addChild(offModel);
+        // --- Salva stato corrente ---
+        const savedMouse = { x: _currentMouseX, y: _currentMouseY };
+        const savedTarget = { x: _targetMouseX, y: _targetMouseY };
+        const savedState = {
+            sleeping: _state.sleeping,
+            sad: _state.sad,
+            mid: _state.mid,
+            passwordMode: _state.passwordMode,
+            sad_plant: _state.health.sad_plant,
+            sad_plant_color: _state.health.sad_plant_color,
+        };
 
-            const scale = Math.min(512 / offModel.internalModel.originalWidth,
-                512 / offModel.internalModel.originalHeight) * 0.85;
-            offModel.scale.set(scale);
-            offModel.x = 256;
-            offModel.y = 256;
-            offModel.anchor.set(0.5, 0.5);
+        // --- Ferma il ticker per evitare che _tickParams sovrascriva ---
+        _app.ticker.remove(_tickParams);
 
-            const core = offModel.internalModel.coreModel;
-            const ids  = core._parameterIds;
-            const vals = core._parameterValues;
+        // --- Forza stato neutrale ---
+        _targetMouseX = 0;
+        _targetMouseY = 0;
+        _currentMouseX = 0;
+        _currentMouseY = 0;
+        _state.sleeping = false;
+        _state.sad = false;
+        _state.mid = false;
+        _state.passwordMode = false;
+        _state.health.sad_plant = 0;
+        _state.health.sad_plant_color = 0;
+        _model.expression('Normal');
 
-            const s = _state.appearance;
-            _setParam(ids, vals, PARAMS.POT_COLOR,    s.pot_color);
-            _setParam(ids, vals, PARAMS.PLANT_VARIANT, s.plant_variant);
-            _setParam(ids, vals, PARAMS.PLANT_COLOR,   s.plant_color);
-            _setParam(ids, vals, PARAMS.FLOWER_COLOR,  s.flower_color);
+        // Scrivi direttamente tutti i parametri in posa neutra
+        _setParam(ids, vals, PARAMS.POT_COLOR,      _state.appearance.pot_color);
+        _setParam(ids, vals, PARAMS.PLANT_VARIANT,   _state.appearance.plant_variant);
+        _setParam(ids, vals, PARAMS.PLANT_COLOR,     _state.appearance.plant_color);
+        _setParam(ids, vals, PARAMS.FLOWER_COLOR,    _state.appearance.flower_color);
+        _setParam(ids, vals, PARAMS.SAD_PLANT,       0);
+        _setParam(ids, vals, PARAMS.SAD_PLANT_COLOR, 0);
+        _setParam(ids, vals, PARAMS.EYE_POS_X,       0);
+        _setParam(ids, vals, PARAMS.EYE_POS_Y,       0);
+        _setParam(ids, vals, PARAMS.PLANT_X,         0);
+        _setParam(ids, vals, PARAMS.PLANT_Y,         0);
+        _setParam(ids, vals, PARAMS.PLANT_Z,         0);
+        _setParam(ids, vals, PARAMS.EYE_OPEN_L,      1);
+        _setParam(ids, vals, PARAMS.EYE_OPEN_R,      1);
+        _setParam(ids, vals, PARAMS.CLOSED_EYES,     1);
 
-            await new Promise(r => setTimeout(r, 100));
+        // Aspetta che PIXI renderizzi almeno un frame con questi valori
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-            const dataURL = offCanvas.toDataURL('image/png');
+        // --- Cattura ---
+        const sourceCanvas = document.getElementById('live2d-canvas');
+        let url = null;
 
-            const response = await fetch(`/api/plants/${plantId}/preview`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
-                },
-                body: JSON.stringify({ image: dataURL }),
-            });
+        if (sourceCanvas) {
+            // Dimensione fissa per lo snapshot indipendente dal canvas UI
+            const SIZE = 512;
 
-            const data = await response.json();
-            console.log('[PlantViewer] Preview salvata:', data.url);
-            return data.url;
+            const destCanvas = document.createElement('canvas');
+            destCanvas.width = SIZE;
+            destCanvas.height = SIZE;
+            const ctx = destCanvas.getContext('2d');
 
-        } finally {
-            offApp.destroy(true);
+            // Scala mantenendo proporzioni e centrando
+            const srcW = sourceCanvas.width;
+            const srcH = sourceCanvas.height;
+            const scale = Math.min(SIZE / srcW, SIZE / srcH);
+            const dw = srcW * scale;
+            const dh = srcH * scale;
+            const dx = (SIZE - dw) / 2;
+            const dy = (SIZE - dh) / 2;
+
+            ctx.drawImage(sourceCanvas, dx, dy, dw, dh);
+
+            const dataURL = destCanvas.toDataURL('image/png');
+
+            try {
+                const response = await fetch(`/api/plants/${plantId}/preview`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+                    },
+                    body: JSON.stringify({ image: dataURL }),
+                });
+                const data = await response.json();
+                url = data.url;
+                console.log('[PlantViewer] Preview salvata:', url);
+            } catch (e) {
+                console.error('[PlantViewer] Errore salvataggio preview:', e);
+            }
         }
+
+        // --- Ripristina tutto ---
+        _state.sleeping = savedState.sleeping;
+        _state.sad = savedState.sad;
+        _state.mid = savedState.mid;
+        _state.passwordMode = savedState.passwordMode;
+        _state.health.sad_plant = savedState.sad_plant;
+        _state.health.sad_plant_color = savedState.sad_plant_color;
+        _targetMouseX = savedTarget.x;
+        _targetMouseY = savedTarget.y;
+        _currentMouseX = savedMouse.x;
+        _currentMouseY = savedMouse.y;
+        _updateExpression();
+
+        // Riavvia il ticker
+        _app.ticker.add(_tickParams);
+
+        return url;
     }
 
     return { init, setAppearance, randomizeAppearance, setState, tap, setPasswordMode, capturePreview };

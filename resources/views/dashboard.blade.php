@@ -117,7 +117,13 @@
 
                         <div class="card bg-base-100 shadow min-w-[160px] snap-start flex-shrink-0">
                             <div class="card-body p-4 items-center text-center gap-2">
-                                <img src="{{ asset('assets/NaHida_Plant.png') }}" class="w-13 h-13 object-contain" alt="" onerror="this.style.display='none'">
+                                @php
+                                    $previewPath = 'storage/plants/' . $plant->plant_id . '/preview.png';
+                                    $previewUrl = file_exists(public_path($previewPath))
+                                        ? asset($previewPath) . '?v=' . filemtime(public_path($previewPath))
+                                        : asset('assets/NaHida_Plant.png');
+                                @endphp
+                                <img src="{{ $previewUrl }}" class="w-13 h-13 object-contain" alt="" onerror="this.src='{{ asset('assets/NaHida_Plant.png') }}'">
                                 <p class="font-bold text-sm leading-tight">
                                     {!! nl2br(e($plant->plant_name)) !!}
                                 </p>

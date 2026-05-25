@@ -77,10 +77,16 @@
                         <div class="card-body p-4 flex-row items-center gap-4">
 
                             <div class="relative flex-shrink-0">
-                                <img src="{{ asset('assets/NaHida_Plant.png') }}"
+                                @php
+                                    $previewPath = 'storage/plants/' . $plant->plant_id . '/preview.png';
+                                    $previewUrl  = file_exists(public_path($previewPath))
+                                        ? asset($previewPath) . '?v=' . filemtime(public_path($previewPath))
+                                        : asset('assets/NaHida_Plant.png');
+                                @endphp
+                                <img src="{{ $previewUrl }}"
                                      class="w-16 h-16 object-contain"
                                      alt="{{ $plant->plant_name }}"
-                                     onerror="this.style.display='none'">
+                                     onerror="this.src='{{ asset('assets/NaHida_Plant.png') }}'">
                                 <img src="{{ asset('assets/' . $emoji) }}"
                                      class="absolute -bottom-1 -right-1 w-6 h-6 object-contain"
                                      alt="stato"
