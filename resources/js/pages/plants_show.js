@@ -59,28 +59,76 @@ async function apiRequest(url, method = 'GET', body = null) {
 
 // -----------------------------------------------------------
 //  Helper: invia configurazione ottimale all'ESP via MQTT
-//  Chiamato dopo ogni aggiornamento condizioni, nome, o link device
 // -----------------------------------------------------------
 async function sendDeviceConfig() {
     const token = PLANT_DATA.device_token;
     if (!token) return;
-
     try {
         await apiRequest('/device/send-config', 'POST', { device_token: token });
-        console.log('[NaHida] Config MQTT inviata al dispositivo:', token);
-    } catch {
-    }
+    } catch {}
 }
 
 async function sendMusic(source) {
     const token = PLANT_DATA.device_token;
     if (!token) return;
-
     try {
         await apiRequest('/device/send-music', 'POST', { device_token: token, source });
-        console.log('[NaHida] Music MQTT inviata al dispositivo:', token, 'source:', source);
-    } catch {
-        // silenzioso
+    } catch {}
+}
+
+// -----------------------------------------------------------
+//  Stato salute: calcolo centralizzato
+//  Ritorna { state, errorCount, healthColor, healthLabel, healthEmoji }
+// -----------------------------------------------------------
+function calcHealth(reading) {
+    if (!reading) return { state: 'normal', errorCount: 0, healthColor: 'success', healthLabel: 'Condizioni ottimali', healthEmoji: 'NaHida_Emoji_Happy.png' };
+
+    const pd = PLANT_DATA;
+    let errorCount = 0;
+
+    if (reading.temperature !== null && reading.temperature !== undefined) {
+        if (reading.temperature < pd.temp_min || reading.temperature > pd.temp_max) errorCount++;
+    }
+    if (reading.humidity !== null && reading.humidity !== undefined) {
+        if (reading.humidity < pd.hum_min || reading.humidity > pd.hum_max) errorCount++;
+    }
+    if (reading.soil_humidity !== null && reading.soil_humidity !== undefined) {
+        if (reading.soil_humidity < pd.soil_hum_min || reading.soil_humidity > pd.soil_hum_max) errorCount++;
+    }
+
+    // Stato Live2D (tiene conto anche del sonno per luminosità)
+    let state = 'normal';
+    if (reading.luminosity !== null && reading.luminosity !== undefined && reading.luminosity < 150) {
+        state = 'sleep';
+    } else if (errorCount >= 2) {
+        state = 'sad';
+    } else if (errorCount === 1) {
+        state = 'mid';
+    }
+
+    const healthColor = errorCount === 0 ? 'success' : errorCount === 1 ? 'warning' : 'error';
+    const healthLabel = errorCount === 0 ? 'Condizioni ottimali' : errorCount === 1 ? 'Attenzione richiesta' : 'Condizioni pessime';
+    const healthEmoji = errorCount === 0 ? 'NaHida_Emoji_Happy.png' : errorCount === 1 ? 'NaHida_Emoji_Mid.png' : 'NaHida_Emoji_Sad.png';
+
+    return { state, errorCount, healthColor, healthLabel, healthEmoji };
+}
+
+// -----------------------------------------------------------
+//  Aggiorna badge salute in cima al modello Live2D
+// -----------------------------------------------------------
+function updateHealthBadge({ healthColor, healthLabel, healthEmoji }) {
+    const badge = document.getElementById('health_badge');
+    if (!badge) return;
+
+    badge.className = `flex items-center gap-2 bg-${healthColor}/12 border border-${healthColor}/25 rounded-full px-4 py-1.5`;
+
+    const img = badge.querySelector('[data-health-emoji]');
+    if (img) img.src = `/assets/${healthEmoji}`;
+
+    const label = badge.querySelector('[data-health-label]');
+    if (label) {
+        label.textContent = healthLabel;
+        label.className   = `text-sm font-bold text-${healthColor}`;
     }
 }
 
@@ -101,6 +149,7 @@ function initWatering() {
             if (data.status === 'ok') {
                 document.getElementById('modal_watered')?.close();
                 showToast('Annaffiatura registrata! 💧', 'success');
+                updateNextWateringDisplay(data.watered_at);
                 setTimeout(() => window.location.reload(), 800);
             } else {
                 showToast('Errore nel salvataggio.', 'error');
@@ -115,7 +164,56 @@ function initWatering() {
 }
 
 // -----------------------------------------------------------
-//  2. STORICO — icone e campi corretti dall'API
+//  Aggiorna la card "Prossima annaffiata" dinamicamente
+//  wateredAt: stringa ISO o null (usa now)
+// -----------------------------------------------------------
+function updateNextWateringDisplay(wateredAt = null) {
+    const base     = wateredAt ? new Date(wateredAt) : new Date();
+    const cycleMs  = (PLANT_DATA.watering_cycle ?? 24) * 3600 * 1000;
+    const nextDate = new Date(base.getTime() + cycleMs);
+    const now      = new Date();
+    const diffMs   = nextDate - now;
+    const diffH    = diffMs / 3600000;
+
+    // Etichetta leggibile
+    let dateLabel, subLabel;
+    if (diffMs < 0) {
+        dateLabel = 'In ritardo!';
+        subLabel  = `Avrebbe dovuto essere annaffiata ${formatRelative(nextDate)}`;
+    } else {
+        dateLabel = formatDay(nextDate);
+        subLabel  = formatRelative(nextDate);
+    }
+
+    const isOverdue = diffMs < 0;
+    const color     = isOverdue ? 'error' : 'base-content';
+
+    document.querySelectorAll('[data-watering-title]').forEach(el => {
+        el.textContent  = dateLabel;
+        el.className    = `font-bold text-${color}`;
+    });
+    document.querySelectorAll('[data-watering-sub]').forEach(el => {
+        el.textContent = subLabel;
+    });
+}
+
+function formatDay(date) {
+    return date.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+}
+
+function formatRelative(date) {
+    const diffMs = date - new Date();
+    const abs    = Math.abs(diffMs);
+    const h      = Math.floor(abs / 3600000);
+    const d      = Math.floor(h / 24);
+    const suffix = diffMs < 0 ? 'fa' : 'da ora';
+    if (d > 0) return `tra ${d} giorn${d === 1 ? 'o' : 'i'}`.replace('tra', diffMs < 0 ? '' : 'tra').trim() + (diffMs < 0 ? ` ${d} giorn${d===1?'o':'i'} fa` : '');
+    if (h > 0) return diffMs < 0 ? `${h} or${h===1?'a':'e'} fa` : `tra ${h} or${h===1?'a':'e'}`;
+    return diffMs < 0 ? 'poco fa' : 'tra poco';
+}
+
+// -----------------------------------------------------------
+//  2. STORICO
 // -----------------------------------------------------------
 function initHistory() {
     document.querySelectorAll('[onclick*="modal_history"]').forEach(btn => {
@@ -187,7 +285,6 @@ function initDevice() {
         });
     });
 
-    // Salva token → collega + invia config MQTT
     btnSave?.addEventListener('click', async () => {
         const token = input.value.trim();
         if (!token) { showToast('Inserisci un token valido.', 'warning'); return; }
@@ -205,8 +302,6 @@ function initDevice() {
                 PLANT_DATA.has_device   = true;
                 btnUnlink?.classList.remove('hidden');
                 fetchDeviceStatus(token, statusRow, statusBadge, statusToken);
-
-                // Invia subito le condizioni ottimali al dispositivo appena collegato
                 await sendDeviceConfig();
             } else {
                 showToast(data.message ?? 'Errore nel collegamento.', 'error');
@@ -219,7 +314,6 @@ function initDevice() {
         }
     });
 
-    // Scollega
     btnUnlink?.addEventListener('click', async () => {
         if (!confirm('Vuoi scollegare il dispositivo?')) return;
 
@@ -246,7 +340,7 @@ async function fetchDeviceStatus(token, statusRow, statusBadge, statusToken) {
     if (!token) return;
 
     try {
-        const data = await apiRequest(`/device/status?device_token=${token}`);
+        const data     = await apiRequest(`/device/status?device_token=${token}`);
         const isOnline = data.online;
 
         if (statusRow) {
@@ -263,9 +357,7 @@ async function fetchDeviceStatus(token, statusRow, statusBadge, statusToken) {
         }
 
         setPageDeviceStatus(isOnline, data.last_seen_at);
-    } catch {
-        // silenzioso
-    }
+    } catch {}
 }
 
 function setPageDeviceStatus(isOnline, lastSeenAt) {
@@ -292,10 +384,8 @@ function setPageDeviceStatus(isOnline, lastSeenAt) {
 }
 
 // -----------------------------------------------------------
-//  4. CONDIZIONI OTTIMALI — salva + invia config MQTT
+//  4. CONDIZIONI OTTIMALI
 // -----------------------------------------------------------
-
-// Mappa preset luce → [min, max] in lux
 const LUX_PRESETS = {
     low:    [0,    500],
     medium: [500,  2000],
@@ -315,7 +405,6 @@ function initConditions() {
     const btnSave = document.getElementById('btn_save_conditions');
     if (!modal || !btnSave) return;
 
-    // Preselect valori quando si apre il modal
     document.querySelectorAll('[onclick*="modal_conditions"]').forEach(btn => {
         btn.addEventListener('click', () => {
             setValue('cond_temp_min',  PLANT_DATA.temp_min);
@@ -326,7 +415,6 @@ function initConditions() {
             setValue('cond_soil_max',  PLANT_DATA.soil_hum_max);
             setValue('cond_watering',  PLANT_DATA.watering_cycle);
 
-            // Preselect preset luminosità in base ai valori salvati
             const luxMax = PLANT_DATA.lux_max ?? 100000;
             const sel = document.getElementById('cond_lux_preset');
             if (sel) {
@@ -338,7 +426,6 @@ function initConditions() {
         });
     });
 
-    // Aggiorna hidden inputs quando cambia il select
     document.getElementById('cond_lux_preset')?.addEventListener('change', function () {
         updateLuxHidden(this.value);
     });
@@ -373,7 +460,14 @@ function initConditions() {
                 showToast('Condizioni aggiornate! ✅', 'success');
                 updateConditionLabels(data.plant);
 
-                // Propaga le nuove condizioni al dispositivo ESP via MQTT
+                // Ricalcola lo stato salute con i nuovi range
+                const lastReading = window.PLANT_HEALTH;
+                if (lastReading) {
+                    const health = calcHealth(lastReading);
+                    updateHealthBadge(health);
+                    PlantViewer?.setState(health.state);
+                }
+
                 await sendDeviceConfig();
             } else {
                 showToast('Errore nel salvataggio.', 'error');
@@ -439,13 +533,12 @@ function initNotes() {
 }
 
 // -----------------------------------------------------------
-//  6. ASPETTO + NOME validazione e aggiornamento DOM
+//  6. ASPETTO + NOME
 // -----------------------------------------------------------
 function initAppearance() {
     const btnSave = document.getElementById('btn_save_appearance');
     if (!btnSave) return;
 
-    // Pre-popola slider e nome quando si apre il modal
     document.querySelectorAll('[onclick*="modal_edit_plant"]').forEach(btn => {
         btn.addEventListener('click', () => {
             const nameInput = document.getElementById('edit_plant_name');
@@ -460,7 +553,6 @@ function initAppearance() {
         });
     });
 
-    // Anteprima Live2D in tempo reale
     ['range_variant', 'range_pot', 'range_plant_color', 'range_flower'].forEach(id => {
         document.getElementById(id)?.addEventListener('input', () => {
             PlantViewer?.setAppearance({
@@ -472,7 +564,6 @@ function initAppearance() {
         });
     });
 
-    // Reset errore nome mentre si digita
     document.getElementById('edit_plant_name')?.addEventListener('input', hideNameError);
 
     btnSave.addEventListener('click', async () => {
@@ -510,12 +601,10 @@ function initAppearance() {
                 document.getElementById('modal_edit_plant')?.close();
                 showToast('Aspetto aggiornato! 🌸', 'success');
 
-                // Aggiorna il nome visibile nella pagina senza reload
                 const nameDisplay = document.getElementById('plant_name_display');
                 if (nameDisplay) nameDisplay.textContent = plantName;
                 document.title = plantName;
 
-                // Propaga il nuovo nome all'ESP via MQTT
                 await sendDeviceConfig();
             } else {
                 const serverError = data.errors?.plant_name?.[0];
@@ -549,42 +638,7 @@ function hideNameError() {
 }
 
 // -----------------------------------------------------------
-//  7. STATO EMOTIVO PIANTA
-// -----------------------------------------------------------
-/**
- * Calcola lo stato emotivo in base ai dati sensore.
- * Priorità: sleep (lux < 150) > sad (2+ anomalie) > mid (1 anomalia) > normal
- * @param {object} reading
- * @returns {'normal'|'mid'|'sad'|'sleep'}
- */
-function calcPlantState(reading) {
-    if (!reading) return 'normal';
-
-    const pd = PLANT_DATA;
-
-    if (reading.luminosity !== null && reading.luminosity < 150) {
-        return 'sleep';
-    }
-
-    let anomalies = 0;
-
-    if (reading.temperature !== null) {
-        if (reading.temperature < pd.temp_min || reading.temperature > pd.temp_max) anomalies++;
-    }
-    if (reading.humidity !== null) {
-        if (reading.humidity < pd.hum_min || reading.humidity > pd.hum_max) anomalies++;
-    }
-    if (reading.soil_humidity !== null) {
-        if (reading.soil_humidity < pd.soil_hum_min || reading.soil_humidity > pd.soil_hum_max) anomalies++;
-    }
-
-    if (anomalies >= 2) return 'sad';
-    if (anomalies === 1) return 'mid';
-    return 'normal';
-}
-
-// -----------------------------------------------------------
-//  8. REAL-TIME via Echo (ButtonPressed + SensorUpdated)
+//  7. REAL-TIME via Echo (ButtonPressed + SensorUpdated)
 // -----------------------------------------------------------
 function initEcho() {
     if (!window.Echo || !PLANT_ID) return;
@@ -592,21 +646,32 @@ function initEcho() {
     window.Echo.channel(`plant.${PLANT_ID}`)
         .listen('.ButtonPressed', (e) => {
             showToast(e.message ?? '💧 Annaffiatura rilevata!', 'success');
+            // Aggiorna la card "Prossima annaffiata" subito senza reload
+            updateNextWateringDisplay(new Date().toISOString());
+            // Ricarica dopo 1.5s per aggiornare lo storico e altri dati server-side
             setTimeout(() => window.location.reload(), 1500);
         })
         .listen('.SensorUpdated', (e) => {
+            // Salva l'ultima lettura in memoria per uso futuro (es. cambio condizioni)
+            window.PLANT_HEALTH = {
+                temperature:   e.temperature,
+                humidity:      e.humidity,
+                soil_humidity: e.soil_humidity,
+                luminosity:    e.luminosity,
+            };
+
             updateSensorDisplay(e);
-            if (window.PlantViewer) {
-                const state = calcPlantState(e);
-                PlantViewer.setState(state);
-            }
+
+            // Aggiorna stato emotivo Live2D + badge salute
+            const health = calcHealth(e);
+            updateHealthBadge(health);
+            PlantViewer?.setState(health.state);
         });
 }
 
-/**
- * Aggiorna i valori dei sensori nel DOM senza ricaricare la pagina,
- * e aggiorna last_seen_at del dispositivo.
- */
+// -----------------------------------------------------------
+//  Aggiorna i valori dei sensori nel DOM senza ricaricare
+// -----------------------------------------------------------
 function updateSensorDisplay(reading) {
     const pd = PLANT_DATA;
 
@@ -618,52 +683,51 @@ function updateSensorDisplay(reading) {
 
     // Temperatura
     const tempEl = document.getElementById('val_temp');
-    if (tempEl && reading.temperature !== null) {
+    if (tempEl && reading.temperature !== null && reading.temperature !== undefined) {
         tempEl.textContent = `${parseFloat(reading.temperature).toFixed(1)}°C`;
         tempEl.className   = `text-2xl font-bold ${colorClass(reading.temperature, pd.temp_min, pd.temp_max)}`;
     }
 
     // Umidità aria
     const humEl = document.getElementById('val_hum');
-    if (humEl && reading.humidity !== null) {
+    if (humEl && reading.humidity !== null && reading.humidity !== undefined) {
         humEl.textContent = `${Math.round(reading.humidity)}%`;
         humEl.className   = `text-2xl font-bold ${colorClass(reading.humidity, pd.hum_min, pd.hum_max)}`;
     }
 
     // Umidità suolo
     const soilEl = document.getElementById('val_soil');
-    if (soilEl && reading.soil_humidity !== null) {
+    if (soilEl && reading.soil_humidity !== null && reading.soil_humidity !== undefined) {
         soilEl.textContent = `${Math.round(reading.soil_humidity)}%`;
         soilEl.className   = `text-2xl font-bold ${colorClass(reading.soil_humidity, pd.soil_hum_min, pd.soil_hum_max)}`;
     }
 
     // Luminosità
     const lumEl = document.getElementById('val_lum');
-    if (lumEl && reading.luminosity !== null) {
+    if (lumEl && reading.luminosity !== null && reading.luminosity !== undefined) {
         lumEl.textContent = `${Math.round(reading.luminosity)} lx`;
-        // Controlla range solo se è stato impostato un lux_min > 0
         const luxColor = (pd.lux_min > 0)
             ? colorClass(reading.luminosity, pd.lux_min, pd.lux_max)
             : 'text-base-content';
         lumEl.className = `text-2xl font-bold ${luxColor}`;
     }
 
-    // Timestamp aggiornamento
+    // Timestamp
     const updEl = document.getElementById('sensor_updated_at');
     if (updEl) updEl.textContent = 'Aggiornato adesso';
 
-    // Aggiorna il badge online dato che abbiamo appena ricevuto dati
+    // Badge online
     setPageDeviceStatus(true, new Date().toISOString());
 
-    // Prepend nuova riga nella lista "Ultime letture"
+    // Nuova riga letture
     prependReadingRow(reading);
 
     showToast('📊 Sensori aggiornati', 'info');
 }
 
-/**
- * Inserisce una nuova lettura in cima alla lista #latest_readings_list.
- */
+// -----------------------------------------------------------
+//  Inserisce una nuova lettura in cima a #latest_readings_list
+// -----------------------------------------------------------
 function prependReadingRow(reading) {
     let list = document.getElementById('latest_readings_list');
 
@@ -683,10 +747,10 @@ function prependReadingRow(reading) {
     }
 
     const badges = [
-        reading.temperature   !== null ? `<span class="badge badge-ghost badge-sm">${parseFloat(reading.temperature).toFixed(1)}°C</span>`  : '',
-        reading.humidity      !== null ? `<span class="badge badge-ghost badge-sm">${Math.round(reading.humidity)}% aria</span>`             : '',
-        reading.soil_humidity !== null ? `<span class="badge badge-ghost badge-sm">${Math.round(reading.soil_humidity)}% suolo</span>`       : '',
-        reading.luminosity    !== null ? `<span class="badge badge-ghost badge-sm">${Math.round(reading.luminosity)} lx</span>`              : '',
+        reading.temperature   !== null && reading.temperature   !== undefined ? `<span class="badge badge-ghost badge-sm">${parseFloat(reading.temperature).toFixed(1)}°C</span>`  : '',
+        reading.humidity      !== null && reading.humidity      !== undefined ? `<span class="badge badge-ghost badge-sm">${Math.round(reading.humidity)}% aria</span>`             : '',
+        reading.soil_humidity !== null && reading.soil_humidity !== undefined ? `<span class="badge badge-ghost badge-sm">${Math.round(reading.soil_humidity)}% suolo</span>`       : '',
+        reading.luminosity    !== null && reading.luminosity    !== undefined ? `<span class="badge badge-ghost badge-sm">${Math.round(reading.luminosity)} lx</span>`              : '',
     ].join('');
 
     const li = document.createElement('li');
@@ -704,7 +768,7 @@ function prependReadingRow(reading) {
 }
 
 // -----------------------------------------------------------
-//  9. POLLING stato dispositivo ogni 15s
+//  8. POLLING stato dispositivo ogni 15s
 // -----------------------------------------------------------
 function initSensorPolling() {
     if (!PLANT_DATA.has_device || !PLANT_DATA.device_token) return;
@@ -719,6 +783,29 @@ function initSensorPolling() {
 
     poll();
     setInterval(poll, 15_000);
+}
+
+// -----------------------------------------------------------
+//  9. MUSICA
+// -----------------------------------------------------------
+function initMusic() {
+    const modal = document.getElementById('modal_music');
+    if (!modal) return;
+
+    modal.addEventListener('close', async () => {
+        const selected = modal.querySelector('input[name="music"]:checked');
+        if (!selected) return;
+
+        const source = parseInt(selected.value);
+        await sendMusic(source);
+
+        if (source === -1) {
+            showToast('Musica disattivata 🔇', 'info');
+        } else {
+            const label = selected.closest('label')?.querySelector('span')?.textContent ?? `Traccia ${source}`;
+            showToast(`Musica: ${label} 🎵`, 'success');
+        }
+    });
 }
 
 // -----------------------------------------------------------
@@ -749,30 +836,6 @@ window.applyAppearance = function () {
 };
 
 // -----------------------------------------------------------
-//  5. NOTE
-// -----------------------------------------------------------
-function initMusic() {
-    const modal   = document.getElementById('modal_music');
-    if (!modal) return;
-
-    // Quando si chiude il modale col pulsante Conferma, legge il radio selezionato e manda
-    modal.addEventListener('close', async () => {
-        const selected = modal.querySelector('input[name="music"]:checked');
-        if (!selected) return;
-
-        const source = parseInt(selected.value);
-        await sendMusic(source);
-
-        if (source === -1) {
-            showToast('Musica disattivata 🔇', 'info');
-        } else {
-            const label = selected.closest('label')?.querySelector('span')?.textContent ?? `Traccia ${source}`;
-            showToast(`Musica: ${label} 🎵`, 'success');
-        }
-    });
-}
-
-// -----------------------------------------------------------
 //  INIT
 // -----------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
@@ -786,8 +849,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initEcho();
     initSensorPolling();
 
-    if (PlantViewer && window.PLANT_HEALTH) {
-        const state = calcPlantState(window.PLANT_HEALTH);
-        PlantViewer.setState(state);
+    // Stato iniziale Live2D + badge salute al caricamento pagina
+    if (window.PLANT_HEALTH) {
+        const health = calcHealth(window.PLANT_HEALTH);
+        updateHealthBadge(health);
+        PlantViewer?.setState(health.state);
     }
 });

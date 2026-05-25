@@ -8,7 +8,7 @@ window.Alpine = Alpine;
 Alpine.start();
 
 //Theme
-document.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("pageshow", () => {
     const theme = localStorage.getItem('theme');
     try { setTheme(theme) } catch {}
     document.getElementById('theme_controller').checked = theme === "dark";

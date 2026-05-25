@@ -57,7 +57,6 @@
             && $device->last_seen_at
             && $device->last_seen_at->diffInSeconds(now()) < 90;
 
-        // Etichetta leggibile per la preferenza luce
         $luxMin = $plant->lux_min ?? 0;
         $luxMax = $plant->lux_max ?? 100000;
         $luxLabel = match(true) {
@@ -139,10 +138,21 @@
                     </div>
                 </div>
 
+                {{--
+                    Badge salute — aggiornato live da JS via updateHealthBadge().
+                    data-health-emoji e data-health-label sono i target degli aggiornamenti.
+                --}}
                 <div class="relative flex justify-center pb-5">
-                    <div class="flex items-center gap-2 bg-{{ $healthColor }}/12 border border-{{ $healthColor }}/25 rounded-full px-4 py-1.5">
-                        <img src="{{ asset('assets/' . $healthEmoji) }}" class="w-5 h-5 object-contain" alt="" onerror="this.style.display='none'">
-                        <span class="text-sm font-bold text-{{ $healthColor }}">{{ $healthLabel }}</span>
+                    <div id="health_badge"
+                         class="flex items-center gap-2 bg-{{ $healthColor }}/12 border border-{{ $healthColor }}/25 rounded-full px-4 py-1.5
+                                transition-colors duration-500">
+                        <img data-health-emoji
+                             src="{{ asset('assets/' . $healthEmoji) }}"
+                             class="w-5 h-5 object-contain"
+                             alt=""
+                             onerror="this.style.display='none'">
+                        <span data-health-label
+                              class="text-sm font-bold text-{{ $healthColor }}">{{ $healthLabel }}</span>
                     </div>
                 </div>
             </div>
@@ -155,11 +165,12 @@
                         <img src="{{ asset('assets/NaHida_Icon_Clock.png') }}" class="w-12 h-12 object-contain flex-shrink-0" alt="" onerror="this.style.display='none'">
                         <div class="flex-1">
                             @if($isOverdue)
-                                <p class="font-bold text-error">In ritardo!</p>
-                                <p class="text-sm text-base-content/60">Avrebbe dovuto essere annaffiata {{ $nextWatering->locale('it')->diffForHumans() }}</p>
+                                {{-- data-watering-title / data-watering-sub sono aggiornati da JS --}}
+                                <p data-watering-title class="font-bold text-error">In ritardo!</p>
+                                <p data-watering-sub class="text-sm text-base-content/60">Avrebbe dovuto essere annaffiata {{ $nextWatering->locale('it')->diffForHumans() }}</p>
                             @else
-                                <p class="font-bold text-base-content">{{ ucfirst($nextWatering->locale('it')->isoFormat('dddd D MMMM')) }}</p>
-                                <p class="text-sm text-base-content/60">{{ $nextWatering->locale('it')->diffForHumans() }}</p>
+                                <p data-watering-title class="font-bold text-base-content">{{ ucfirst($nextWatering->locale('it')->isoFormat('dddd D MMMM')) }}</p>
+                                <p data-watering-sub class="text-sm text-base-content/60">{{ $nextWatering->locale('it')->diffForHumans() }}</p>
                             @endif
                         </div>
                         <button class="btn btn-primary btn-sm flex-shrink-0"
@@ -257,6 +268,7 @@
                             <div class="py-6 text-center text-sm text-base-content/50">
                                 Nessuna lettura sensori disponibile. In attesa di dati dal dispositivo…
                             </div>
+                            {{-- Placeholder nascosti: aggiornati da JS quando arrivano dati live --}}
                             <div class="hidden">
                                 <span id="val_temp"></span>
                                 <span id="val_hum"></span>
@@ -277,11 +289,11 @@
                         <img src="{{ asset('assets/NaHida_Icon_Clock.png') }}" class="w-12 h-12 object-contain flex-shrink-0" alt="" onerror="this.style.display='none'">
                         <div class="flex-1">
                             @if($isOverdue)
-                                <p class="font-bold text-error">In ritardo!</p>
-                                <p class="text-sm text-base-content/60">{{ $nextWatering->locale('it')->diffForHumans() }}</p>
+                                <p data-watering-title class="font-bold text-error">In ritardo!</p>
+                                <p data-watering-sub class="text-sm text-base-content/60">{{ $nextWatering->locale('it')->diffForHumans() }}</p>
                             @else
-                                <p class="font-bold text-base-content">{{ ucfirst($nextWatering->locale('it')->isoFormat('dddd D MMMM')) }}</p>
-                                <p class="text-sm text-base-content/60">{{ $nextWatering->locale('it')->diffForHumans() }}</p>
+                                <p data-watering-title class="font-bold text-base-content">{{ ucfirst($nextWatering->locale('it')->isoFormat('dddd D MMMM')) }}</p>
+                                <p data-watering-sub class="text-sm text-base-content/60">{{ $nextWatering->locale('it')->diffForHumans() }}</p>
                             @endif
                         </div>
                         <button class="btn btn-primary btn-sm flex-shrink-0"
