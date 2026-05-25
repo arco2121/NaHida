@@ -97,7 +97,7 @@ function calcHealth(reading) {
     }
 
     let state = 'normal';
-    if (reading.luminosity !== null && reading.luminosity !== undefined && reading.luminosity < 150) {
+    if (reading.luminosity !== null && reading.luminosity !== undefined && reading.luminosity < 50) {
         state = 'sleep';
     } else if (errorCount >= 2) {
         state = 'sad';
