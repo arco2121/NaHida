@@ -69,7 +69,18 @@ async function sendDeviceConfig() {
         await apiRequest('/device/send-config', 'POST', { device_token: token });
         console.log('[NaHida] Config MQTT inviata al dispositivo:', token);
     } catch {
-        // silenzioso: non bloccare l'UX per un errore MQTT
+    }
+}
+
+async function sendMusic(source) {
+    const token = PLANT_DATA.device_token;
+    if (!token) return;
+
+    try {
+        await apiRequest('/device/send-music', 'POST', { device_token: token, source });
+        console.log('[NaHida] Music MQTT inviata al dispositivo:', token, 'source:', source);
+    } catch {
+        // silenzioso
     }
 }
 
@@ -428,7 +439,7 @@ function initNotes() {
 }
 
 // -----------------------------------------------------------
-//  6. ASPETTO + NOME — validazione e aggiornamento DOM
+//  6. ASPETTO + NOME validazione e aggiornamento DOM
 // -----------------------------------------------------------
 function initAppearance() {
     const btnSave = document.getElementById('btn_save_appearance');
@@ -738,6 +749,30 @@ window.applyAppearance = function () {
 };
 
 // -----------------------------------------------------------
+//  5. NOTE
+// -----------------------------------------------------------
+function initMusic() {
+    const modal   = document.getElementById('modal_music');
+    if (!modal) return;
+
+    // Quando si chiude il modale col pulsante Conferma, legge il radio selezionato e manda
+    modal.addEventListener('close', async () => {
+        const selected = modal.querySelector('input[name="music"]:checked');
+        if (!selected) return;
+
+        const source = parseInt(selected.value);
+        await sendMusic(source);
+
+        if (source === -1) {
+            showToast('Musica disattivata 🔇', 'info');
+        } else {
+            const label = selected.closest('label')?.querySelector('span')?.textContent ?? `Traccia ${source}`;
+            showToast(`Musica: ${label} 🎵`, 'success');
+        }
+    });
+}
+
+// -----------------------------------------------------------
 //  INIT
 // -----------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
@@ -746,6 +781,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initDevice();
     initConditions();
     initNotes();
+    initMusic();
     initAppearance();
     initEcho();
     initSensorPolling();

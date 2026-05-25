@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
 // --- Device / MQTT ---
 Route::post('/device/toggle-led',  [DeviceController::class, 'toggleLed']);
 Route::post('/device/send-config', [DeviceController::class, 'sendConfig']);
+Route::post('/device/send-music', [DeviceController::class, 'sendMuic']);
 Route::get('/device/status',       [DeviceController::class, 'getStatus']);
 
 // TEST

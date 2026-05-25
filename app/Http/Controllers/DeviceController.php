@@ -70,6 +70,34 @@ class DeviceController extends Controller
     }
 
     /**
+     * Invia le condizioni ottimali della pianta all'ESP via MQTT.
+     */
+    public function sendMuic(Request $request): JsonResponse
+    {
+        $request->validate([
+            'device_token' => 'required|string|exists:devices,device_token',
+            'source'       => 'required|integer|min:-1',
+        ]);
+
+        $token  = $request->input('device_token');
+        $source = $request->input('source');
+
+        $payload = json_encode([
+            'command' => 'PLAY_MUSIC',
+            'source'  => $source,
+        ]);
+
+        try {
+            MQTT::connection()->publish("device/{$token}/updates", $payload, 0, false);
+            Log::info("Music command inviato a {$token}: {$payload}");
+            return response()->json(['status' => 'Music inviata', 'payload' => json_decode($payload)]);
+        } catch (\Exception $e) {
+            Log::error("Errore MQTT sendMuic: " . $e->getMessage());
+            return response()->json(['status' => 'Errore server'], 500);
+        }
+    }
+
+    /**
      * Ritorna lo stato online/offline di un dispositivo.
      */
     public function getStatus(Request $request): JsonResponse
