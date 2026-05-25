@@ -35,7 +35,7 @@
                                 <span id="lbl_variant" class="text-sm font-bold text-primary">0</span>
                             </div>
                             <input type="range" id="range_variant" name="plant_variant"
-                                   min="0" max="7" value="0" step="1" class="range range-primary range-sm"/>
+                                   min="0" max="7" value="0" step="1" class="range w-full range-primary range-sm"/>
                         </div>
 
                         <div>
@@ -44,7 +44,7 @@
                                 <span id="lbl_plant_color" class="text-sm font-bold text-accent">0</span>
                             </div>
                             <input type="range" id="range_plant_color" name="plant_color"
-                                   min="0" max="5" value="0" step="1" class="range range-accent range-sm"/>
+                                   min="0" max="5" value="0" step="1" class="range w-full range-accent range-sm"/>
                         </div>
 
                         <div>
@@ -53,7 +53,7 @@
                                 <span id="lbl_flower" class="text-sm font-bold text-secondary">0</span>
                             </div>
                             <input type="range" id="range_flower" name="flower_color"
-                                   min="0" max="6" value="0" step="1" class="range range-secondary range-sm"/>
+                                   min="0" max="6" value="0" step="1" class="range w-full range-secondary range-sm"/>
                         </div>
 
                         <div>
@@ -62,7 +62,7 @@
                                 <span id="lbl_pot" class="text-sm font-bold">0</span>
                             </div>
                             <input type="range" id="range_pot" name="pot_color"
-                                   min="0" max="2" value="0" step="1" class="range range-sm"/>
+                                   min="0" max="2" value="0" step="1" class="range w-full range-sm"/>
                         </div>
 
                     </div>
