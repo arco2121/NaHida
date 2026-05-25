@@ -351,10 +351,7 @@
         <input type="text" id="delete_confirm_input" class="input w-full" placeholder="ELIMINA" />
         <div class="modal-action gap-2">
             <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
-            <button class="btn btn-error" id="btn_delete_final" disabled
-                    onclick="alert('Account eliminato (mockup)')">
-                Elimina definitivamente
-            </button>
+            <form method="post" action="{{route("eraseAccount")}}"><button class="btn btn-error" id="btn_delete_final" disabled>Elimina definitivamente</button></form>
         </div>
     </div>
     <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
