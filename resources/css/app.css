@@ -114,3 +114,8 @@ body {
     transform-origin: top center;
     animation: fade 0.4s ease;
 }
+
+.stats, .btn { transition: all 0.15s ease; }
+.stats:active, .btn:active {
+    scale: 0.95;
+}

@@ -96,7 +96,6 @@ function calcHealth(reading) {
         if (reading.soil_humidity < pd.soil_hum_min || reading.soil_humidity > pd.soil_hum_max) errorCount++;
     }
 
-    // Stato Live2D (tiene conto anche del sonno per luminosità)
     let state = 'normal';
     if (reading.luminosity !== null && reading.luminosity !== undefined && reading.luminosity < 150) {
         state = 'sleep';
@@ -165,7 +164,6 @@ function initWatering() {
 
 // -----------------------------------------------------------
 //  Aggiorna la card "Prossima annaffiata" dinamicamente
-//  wateredAt: stringa ISO o null (usa now)
 // -----------------------------------------------------------
 function updateNextWateringDisplay(wateredAt = null) {
     const base     = wateredAt ? new Date(wateredAt) : new Date();
@@ -173,9 +171,7 @@ function updateNextWateringDisplay(wateredAt = null) {
     const nextDate = new Date(base.getTime() + cycleMs);
     const now      = new Date();
     const diffMs   = nextDate - now;
-    const diffH    = diffMs / 3600000;
 
-    // Etichetta leggibile
     let dateLabel, subLabel;
     if (diffMs < 0) {
         dateLabel = 'In ritardo!';
@@ -206,8 +202,7 @@ function formatRelative(date) {
     const abs    = Math.abs(diffMs);
     const h      = Math.floor(abs / 3600000);
     const d      = Math.floor(h / 24);
-    const suffix = diffMs < 0 ? 'fa' : 'da ora';
-    if (d > 0) return `tra ${d} giorn${d === 1 ? 'o' : 'i'}`.replace('tra', diffMs < 0 ? '' : 'tra').trim() + (diffMs < 0 ? ` ${d} giorn${d===1?'o':'i'} fa` : '');
+    if (d > 0) return diffMs < 0 ? `${d} giorn${d===1?'o':'i'} fa` : `tra ${d} giorn${d===1?'o':'i'}`;
     if (h > 0) return diffMs < 0 ? `${h} or${h===1?'a':'e'} fa` : `tra ${h} or${h===1?'a':'e'}`;
     return diffMs < 0 ? 'poco fa' : 'tra poco';
 }
@@ -460,7 +455,6 @@ function initConditions() {
                 showToast('Condizioni aggiornate! ✅', 'success');
                 updateConditionLabels(data.plant);
 
-                // Ricalcola lo stato salute con i nuovi range
                 const lastReading = window.PLANT_HEALTH;
                 if (lastReading) {
                     const health = calcHealth(lastReading);
@@ -646,13 +640,10 @@ function initEcho() {
     window.Echo.channel(`plant.${PLANT_ID}`)
         .listen('.ButtonPressed', (e) => {
             showToast(e.message ?? '💧 Annaffiatura rilevata!', 'success');
-            // Aggiorna la card "Prossima annaffiata" subito senza reload
             updateNextWateringDisplay(new Date().toISOString());
-            // Ricarica dopo 1.5s per aggiornare lo storico e altri dati server-side
             setTimeout(() => window.location.reload(), 1500);
         })
         .listen('.SensorUpdated', (e) => {
-            // Salva l'ultima lettura in memoria per uso futuro (es. cambio condizioni)
             window.PLANT_HEALTH = {
                 temperature:   e.temperature,
                 humidity:      e.humidity,
@@ -662,7 +653,6 @@ function initEcho() {
 
             updateSensorDisplay(e);
 
-            // Aggiorna stato emotivo Live2D + badge salute
             const health = calcHealth(e);
             updateHealthBadge(health);
             PlantViewer?.setState(health.state);
@@ -670,9 +660,21 @@ function initEcho() {
 }
 
 // -----------------------------------------------------------
-//  Aggiorna i valori dei sensori nel DOM senza ricaricare
+//  Aggiorna i valori dei sensori nel DOM senza ricaricare.
+//  Se la griglia era nascosta (nessuna lettura iniziale),
+//  la svela prima di scrivere i valori.
 // -----------------------------------------------------------
 function updateSensorDisplay(reading) {
+    // --- Svela la griglia se era nascosta (caso "nessun dato iniziale") ---
+    const noData = document.getElementById('sensor_no_data');
+    const grid   = document.getElementById('sensor_grid');
+    const updEl  = document.getElementById('sensor_updated_at');
+
+    if (noData) noData.classList.add('hidden');
+    if (grid)   grid.classList.remove('hidden');
+    if (updEl)  updEl.classList.remove('hidden');
+    // ---------------------------------------------------------------------
+
     const pd = PLANT_DATA;
 
     function colorClass(val, min, max) {
@@ -713,7 +715,6 @@ function updateSensorDisplay(reading) {
     }
 
     // Timestamp
-    const updEl = document.getElementById('sensor_updated_at');
     if (updEl) updEl.textContent = 'Aggiornato adesso';
 
     // Badge online

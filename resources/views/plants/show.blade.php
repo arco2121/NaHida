@@ -165,7 +165,6 @@
                         <img src="{{ asset('assets/NaHida_Icon_Clock.png') }}" class="w-12 h-12 object-contain flex-shrink-0" alt="" onerror="this.style.display='none'">
                         <div class="flex-1">
                             @if($isOverdue)
-                                {{-- data-watering-title / data-watering-sub sono aggiornati da JS --}}
                                 <p data-watering-title class="font-bold text-error">In ritardo!</p>
                                 <p data-watering-sub class="text-sm text-base-content/60">Avrebbe dovuto essere annaffiata {{ $nextWatering->locale('it')->diffForHumans() }}</p>
                             @else
@@ -213,13 +212,14 @@
                 <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider mb-2">Stato sensori</p>
                 <div class="card bg-base-100 shadow">
                     <div class="card-body p-4 gap-3">
+
                         @if($latest)
+                            {{-- Lettura iniziale disponibile --}}
                             <p id="sensor_updated_at" class="text-xs text-base-content/40 -mb-1">
                                 Aggiornato {{ Carbon::parse($latest->recorded_at)->locale('it')->diffForHumans() }}
                             </p>
-                            <div class="grid grid-cols-2 gap-3">
+                            <div id="sensor_grid" class="grid grid-cols-2 gap-3">
 
-                                {{-- Temperatura --}}
                                 <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
                                     <div class="flex items-center gap-1.5">
                                         <img src="{{ asset('assets/NaHida_Icon_Temp.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
@@ -229,7 +229,6 @@
                                     <p id="lbl_range_temp" class="text-xs text-base-content/40">Ottimale: {{ $plant->temp_min }} — {{ $plant->temp_max }}°C</p>
                                 </div>
 
-                                {{-- Umidità aria --}}
                                 <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
                                     <div class="flex items-center gap-1.5">
                                         <img src="{{ asset('assets/NaHida_Icon_Water.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
@@ -239,7 +238,6 @@
                                     <p id="lbl_range_hum" class="text-xs text-base-content/40">Ottimale: {{ $plant->hum_min }} — {{ $plant->hum_max }}%</p>
                                 </div>
 
-                                {{-- Umidità suolo --}}
                                 <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
                                     <div class="flex items-center gap-1.5">
                                         <img src="{{ asset('assets/NaHida_Icon_Soil.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
@@ -249,7 +247,6 @@
                                     <p id="lbl_range_soil" class="text-xs text-base-content/40">Ottimale: {{ $plant->soil_hum_min }} — {{ $plant->soil_hum_max }}%</p>
                                 </div>
 
-                                {{-- Luminosità --}}
                                 <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
                                     <div class="flex items-center gap-1.5">
                                         <img src="{{ asset('assets/NaHida_Icon_Light.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
@@ -264,19 +261,61 @@
                                 </div>
 
                             </div>
+
                         @else
-                            <div class="py-6 text-center text-sm text-base-content/50">
+                            {{--
+                                Nessuna lettura iniziale.
+                                sensor_no_data: placeholder visibile al caricamento.
+                                sensor_grid: griglia nascosta, svelata da JS al primo evento SensorUpdated.
+                                sensor_updated_at: nascosto, svelato da JS insieme alla griglia.
+                            --}}
+                            <div id="sensor_no_data" class="py-6 text-center text-sm text-base-content/50">
                                 Nessuna lettura sensori disponibile. In attesa di dati dal dispositivo…
                             </div>
-                            {{-- Placeholder nascosti: aggiornati da JS quando arrivano dati live --}}
-                            <div class="hidden">
-                                <span id="val_temp"></span>
-                                <span id="val_hum"></span>
-                                <span id="val_soil"></span>
-                                <span id="val_lum"></span>
-                                <span id="sensor_updated_at"></span>
+
+                            <p id="sensor_updated_at" class="hidden text-xs text-base-content/40 -mb-1"></p>
+
+                            <div id="sensor_grid" class="hidden grid grid-cols-2 gap-3">
+
+                                <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="{{ asset('assets/NaHida_Icon_Temp.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
+                                        <span class="text-xs text-base-content/50 font-bold uppercase tracking-wide">Temperatura</span>
+                                    </div>
+                                    <p id="val_temp" class="text-2xl font-bold text-base-content">—</p>
+                                    <p id="lbl_range_temp" class="text-xs text-base-content/40">Ottimale: {{ $plant->temp_min }} — {{ $plant->temp_max }}°C</p>
+                                </div>
+
+                                <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="{{ asset('assets/NaHida_Icon_Water.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
+                                        <span class="text-xs text-base-content/50 font-bold uppercase tracking-wide">Umidità aria</span>
+                                    </div>
+                                    <p id="val_hum" class="text-2xl font-bold text-base-content">—</p>
+                                    <p id="lbl_range_hum" class="text-xs text-base-content/40">Ottimale: {{ $plant->hum_min }} — {{ $plant->hum_max }}%</p>
+                                </div>
+
+                                <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="{{ asset('assets/NaHida_Icon_Soil.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
+                                        <span class="text-xs text-base-content/50 font-bold uppercase tracking-wide">Umidità suolo</span>
+                                    </div>
+                                    <p id="val_soil" class="text-2xl font-bold text-base-content">—</p>
+                                    <p id="lbl_range_soil" class="text-xs text-base-content/40">Ottimale: {{ $plant->soil_hum_min }} — {{ $plant->soil_hum_max }}%</p>
+                                </div>
+
+                                <div class="bg-base-200 rounded-box p-3 flex flex-col gap-1">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="{{ asset('assets/NaHida_Icon_Light.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
+                                        <span class="text-xs text-base-content/50 font-bold uppercase tracking-wide">Luminosità</span>
+                                    </div>
+                                    <p id="val_lum" class="text-2xl font-bold text-base-content">—</p>
+                                    <p class="text-xs text-base-content/40">{{ $luxLabel }}: {{ $luxMin }} — {{ number_format($luxMax, 0, ',', '.') }} lx</p>
+                                </div>
+
                             </div>
                         @endif
+
                     </div>
                 </div>
             </div>
