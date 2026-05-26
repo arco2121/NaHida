@@ -41,5 +41,6 @@ Route::get('/device/status',       [DeviceController::class, 'getStatus']);
 
 // TEST
 Route::get('/test', fn() => renderPage("test"));
+Route::get('/plants/{id}/latest-reading', [PlantsController::class, 'latestReading'])->name('plants.latest');
 
 require __DIR__.'/auth.php';

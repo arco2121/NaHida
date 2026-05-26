@@ -182,4 +182,27 @@ class PlantsController extends Controller
 
         return response()->json(['events' => $events]);
     }
+
+    public function latestReading(Request $request, int $id): JsonResponse
+    {
+        $plant = Plant::where('user_id', $request->user()->user_id)->findOrFail($id);
+
+        $reading = $plant->sensorReadings()
+            ->latest('recorded_at')
+            ->first();
+
+        if (!$reading) {
+            return response()->json(['reading' => null]);
+        }
+
+        return response()->json([
+            'reading' => [
+                'temperature'   => $reading->temperature,
+                'humidity'      => $reading->humidity,
+                'soil_humidity' => $reading->soil_humidity,
+                'luminosity'    => $reading->luminosity,
+                'recorded_at'   => $reading->recorded_at->toDateTimeString(),
+            ]
+        ]);
+    }
 }

@@ -657,7 +657,70 @@ function initEcho() {
             const health = calcHealth(e);
             updateHealthBadge(health);
             PlantViewer?.setState(health.state);
+
+            // Segna che abbiamo ricevuto un aggiornamento live recente
+            window._lastEchoUpdate = Date.now();
         });
+
+    console.log(`[Echo] In ascolto su plant.${PLANT_ID}`);
+}
+
+// -----------------------------------------------------------
+//  8. POLLING AJAX come fallback/integrazione a Echo
+//     Gira ogni 15s; se Echo ha già aggiornato negli ultimi
+//     20s non fa nulla (evita doppioni).
+// -----------------------------------------------------------
+function initSensorPolling() {
+    if (!PLANT_DATA.has_device || !PLANT_DATA.device_token) return;
+
+    const statusRow   = document.getElementById('device_status_row');
+    const statusBadge = document.getElementById('device_status_badge');
+    const statusToken = document.getElementById('device_status_token');
+
+    async function pollReading() {
+        // Se Echo ha aggiornato di recente, skip (evita richieste inutili)
+        if (window._lastEchoUpdate && (Date.now() - window._lastEchoUpdate) < 20_000) {
+            return;
+        }
+
+        try {
+            const data = await apiRequest(`/plants/${PLANT_ID}/latest-reading`);
+            if (data?.reading) {
+                const r = data.reading;
+
+                // Aggiorna solo se la lettura è più recente di quella attuale
+                const newTime = new Date(r.recorded_at).getTime();
+                if (!window._lastReadingTime || newTime > window._lastReadingTime) {
+                    window._lastReadingTime = newTime;
+
+                    window.PLANT_HEALTH = {
+                        temperature:   r.temperature,
+                        humidity:      r.humidity,
+                        soil_humidity: r.soil_humidity,
+                        luminosity:    r.luminosity,
+                    };
+
+                    updateSensorDisplay(r);
+
+                    const health = calcHealth(r);
+                    updateHealthBadge(health);
+                    PlantViewer?.setState(health.state);
+                }
+            }
+        } catch { /* silenzioso */ }
+    }
+
+    async function pollStatus() {
+        await fetchDeviceStatus(PLANT_DATA.device_token, statusRow, statusBadge, statusToken);
+    }
+
+    // Prima esecuzione immediata
+    pollReading();
+    pollStatus();
+
+    // Poi ogni 15 secondi
+    setInterval(pollReading, 15_000);
+    setInterval(pollStatus, 15_000);
 }
 
 // -----------------------------------------------------------
@@ -716,7 +779,13 @@ function updateSensorDisplay(reading) {
     }
 
     // Timestamp
-    if (updEl) updEl.textContent = 'Aggiornato adesso';
+    if (updEl) {
+        const ts = reading.recorded_at
+            ? new Date(reading.recorded_at).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+            : null;
+        updEl.textContent = ts ? `Aggiornato alle ${ts}` : 'Aggiornato adesso';
+        updEl.classList.remove('hidden');
+    }
 
     // Badge online
     setPageDeviceStatus(true, new Date().toISOString());
@@ -767,24 +836,6 @@ function prependReadingRow(reading) {
     while (list.children.length > 6) {
         list.removeChild(list.lastChild);
     }
-}
-
-// -----------------------------------------------------------
-//  8. POLLING stato dispositivo ogni 15s
-// -----------------------------------------------------------
-function initSensorPolling() {
-    if (!PLANT_DATA.has_device || !PLANT_DATA.device_token) return;
-
-    const statusRow   = document.getElementById('device_status_row');
-    const statusBadge = document.getElementById('device_status_badge');
-    const statusToken = document.getElementById('device_status_token');
-
-    async function poll() {
-        await fetchDeviceStatus(PLANT_DATA.device_token, statusRow, statusBadge, statusToken);
-    }
-
-    poll();
-    setInterval(poll, 15_000);
 }
 
 // -----------------------------------------------------------
