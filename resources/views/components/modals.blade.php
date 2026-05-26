@@ -187,7 +187,7 @@
 
             <div class="divider my-0 text-xs text-base-content/40">Aspetto del modello</div>
 
-            <!-- Variante pianta: 0-6 -->
+            <!-- Variante pianta: 0-7 -->
             <div>
                 <div class="flex justify-between items-baseline mb-1">
                     <label class="label text-sm font-bold p-0">Variante pianta</label>
@@ -286,26 +286,42 @@
 <dialog id="modal_password" class="modal modal-bottom sm:modal-middle">
     <div class="modal-box">
         <form method="dialog">
-            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            <button id="btn_close_pwd_modal" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
         </form>
         <h3 class="text-lg font-bold mb-4">Cambia password</h3>
+
+        {{-- Box errore generico (es. "current_password" errata) --}}
+        <div id="pwd_error_box" class="alert alert-error mb-3 text-sm hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span id="pwd_error_text"></span>
+        </div>
+
         <div class="flex flex-col gap-3">
             <div>
-                <label class="label text-sm font-bold">Password attuale</label>
-                <input type="password" class="input w-full" placeholder="••••••••" />
+                <label class="label text-sm font-bold" for="pwd_current">Password attuale</label>
+                <input type="password" id="pwd_current" class="input w-full"
+                       placeholder="••••••••" autocomplete="current-password" />
+                <p id="pwd_current_error" class="text-error text-xs mt-1 hidden"></p>
             </div>
             <div>
-                <label class="label text-sm font-bold">Nuova password</label>
-                <input type="password" class="input w-full" placeholder="••••••••" />
+                <label class="label text-sm font-bold" for="pwd_new">Nuova password</label>
+                <input type="password" id="pwd_new" class="input w-full"
+                       placeholder="••••••••" autocomplete="new-password" />
+                <p id="pwd_new_error" class="text-error text-xs mt-1 hidden"></p>
             </div>
             <div>
-                <label class="label text-sm font-bold">Conferma nuova password</label>
-                <input type="password" class="input w-full" placeholder="••••••••" />
+                <label class="label text-sm font-bold" for="pwd_confirm">Conferma nuova password</label>
+                <input type="password" id="pwd_confirm" class="input w-full"
+                       placeholder="••••••••" autocomplete="new-password" />
+                <p id="pwd_confirm_error" class="text-error text-xs mt-1 hidden"></p>
             </div>
         </div>
+
         <div class="modal-action">
             <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
-            <button class="btn btn-primary">Salva</button>
+            <button id="btn_save_password" class="btn btn-primary">Salva password</button>
         </div>
     </div>
     <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
@@ -318,7 +334,10 @@
         <p class="text-sm text-base-content/60 mb-4">Verrai reindirizzato alla pagina di login.</p>
         <div class="modal-action gap-2">
             <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
-            <form method="post" action="{{ route("logout") }}"><button type="submit" class="btn btn-neutral">Logout</button></form>
+            <form method="post" action="{{ route("logout") }}">
+                @csrf
+                <button type="submit" class="btn btn-neutral">Logout</button>
+            </form>
         </div>
     </div>
     <form method="dialog" class="modal-backdrop"><button>chiudi</button></form>
@@ -353,7 +372,7 @@
             <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
             <form method="post" action="{{ route("eraseAccount") }}">
                 @csrf
-                <button class="btn btn-error" id="btn_delete_final" disabled >Elimina definitivamente</button>
+                <button class="btn btn-error" id="btn_delete_final" disabled>Elimina definitivamente</button>
             </form>
         </div>
     </div>
