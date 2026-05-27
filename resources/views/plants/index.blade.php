@@ -101,7 +101,7 @@
                         </button>
                         <button data-filter="device" data-value="none"
                                 class="filter-chip btn btn-xs btn-ghost gap-1">
-                            Senza ESP
+                            Senza dispositivo
                         </button>
                     </div>
 
