@@ -1,5 +1,5 @@
 # STAGE 1: Frontend
-FROM node:20-alpine AS node_builder
+FROM node:20-slim AS node_builder
 WORKDIR /app
 
 # Copia solo i file necessari alla gestione dei pacchetti
