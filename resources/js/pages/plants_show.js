@@ -528,25 +528,44 @@ function initNotes() {
 
 // -----------------------------------------------------------
 //  6. ASPETTO + NOME
+//  - Snapshot dell'aspetto salvato al momento dell'apertura.
+//  - I cambiamenti agli slider aggiornano il modello in tempo reale.
+//  - Se il modale viene chiuso senza salvare (Annulla, X, backdrop),
+//    il modello torna all'aspetto originale (snapshot).
+//  - Solo un salvataggio riuscito aggiorna lo snapshot.
 // -----------------------------------------------------------
 function initAppearance() {
+    const modal   = document.getElementById('modal_edit_plant');
     const btnSave = document.getElementById('btn_save_appearance');
-    if (!btnSave) return;
+    if (!modal || !btnSave) return;
 
+    // Snapshot dell'aspetto al momento dell'apertura del modale.
+    // Viene aggiornato solo dopo un salvataggio riuscito.
+    let _savedAppearance = null;
+
+    // Flag: diventa true solo quando btnSave porta a termine con successo.
+    let _didSave = false;
+
+    // --- Apertura modale: popola slider e scatta snapshot ---
     document.querySelectorAll('[onclick*="modal_edit_plant"]').forEach(btn => {
         btn.addEventListener('click', () => {
             const nameInput = document.getElementById('edit_plant_name');
             if (nameInput) nameInput.value = PLANT_DATA.plant_name ?? '';
             hideNameError();
 
-            if (!window.PLANT_APPEARANCE) return;
-            setSlider('range_variant',     'lbl_variant',     PLANT_APPEARANCE.plant_variant ?? 0);
-            setSlider('range_pot',         'lbl_pot',         PLANT_APPEARANCE.pot_color     ?? 0);
-            setSlider('range_plant_color', 'lbl_plant_color', PLANT_APPEARANCE.plant_color   ?? 0);
-            setSlider('range_flower',      'lbl_flower',      PLANT_APPEARANCE.flower_color  ?? 0);
+            const appearance = window.PLANT_APPEARANCE ?? {};
+            setSlider('range_variant',     'lbl_variant',     appearance.plant_variant ?? 0);
+            setSlider('range_pot',         'lbl_pot',         appearance.pot_color     ?? 0);
+            setSlider('range_plant_color', 'lbl_plant_color', appearance.plant_color   ?? 0);
+            setSlider('range_flower',      'lbl_flower',      appearance.flower_color  ?? 0);
+
+            // Scatta lo snapshot dell'aspetto corrente (quello salvato sul server)
+            _savedAppearance = { ...appearance };
+            _didSave = false;
         });
     });
 
+    // --- Slider: aggiorna il modello in anteprima live ---
     ['range_variant', 'range_pot', 'range_plant_color', 'range_flower'].forEach(id => {
         document.getElementById(id)?.addEventListener('input', () => {
             PlantViewer?.setAppearance({
@@ -560,6 +579,15 @@ function initAppearance() {
 
     document.getElementById('edit_plant_name')?.addEventListener('input', hideNameError);
 
+    // --- Chiusura modale: ripristina se non è stato salvato ---
+    modal.addEventListener('close', () => {
+        if (!_didSave && _savedAppearance) {
+            PlantViewer?.setAppearance(_savedAppearance);
+        }
+        _didSave = false;
+    });
+
+    // --- Salva ---
     btnSave.addEventListener('click', async () => {
         const nameInput = document.getElementById('edit_plant_name');
         const plantName = nameInput?.value.trim() ?? '';
@@ -588,11 +616,14 @@ function initAppearance() {
             const data = await apiRequest(`/plants/${PLANT_ID}`, 'PATCH', appearance);
 
             if (data.status === 'ok') {
+                // Segnala che la chiusura è conseguente a un salvataggio riuscito
+                _didSave = true;
+
                 Object.assign(PLANT_DATA, appearance);
                 window.PLANT_APPEARANCE = { ...window.PLANT_APPEARANCE, ...appearance };
                 PlantViewer?.setAppearance(appearance);
 
-                document.getElementById('modal_edit_plant')?.close();
+                modal.close();
                 showToast('Aspetto aggiornato! 🌸', 'success');
 
                 const nameDisplay = document.getElementById('plant_name_display');
@@ -658,7 +689,6 @@ function initEcho() {
             updateHealthBadge(health);
             PlantViewer?.setState(health.state);
 
-            // Segna che abbiamo ricevuto un aggiornamento live recente
             window._lastEchoUpdate = Date.now();
         });
 
@@ -667,8 +697,6 @@ function initEcho() {
 
 // -----------------------------------------------------------
 //  8. POLLING AJAX come fallback/integrazione a Echo
-//     Gira ogni 15s; se Echo ha già aggiornato negli ultimi
-//     20s non fa nulla (evita doppioni).
 // -----------------------------------------------------------
 function initSensorPolling() {
     if (!PLANT_DATA.has_device || !PLANT_DATA.device_token) return;
@@ -678,7 +706,6 @@ function initSensorPolling() {
     const statusToken = document.getElementById('device_status_token');
 
     async function pollReading() {
-        // Se Echo ha aggiornato di recente, skip (evita richieste inutili)
         if (window._lastEchoUpdate && (Date.now() - window._lastEchoUpdate) < 20_000) {
             return;
         }
@@ -688,7 +715,6 @@ function initSensorPolling() {
             if (data?.reading) {
                 const r = data.reading;
 
-                // Aggiorna solo se la lettura è più recente di quella attuale
                 const newTime = new Date(r.recorded_at).getTime();
                 if (!window._lastReadingTime || newTime > window._lastReadingTime) {
                     window._lastReadingTime = newTime;
@@ -714,22 +740,17 @@ function initSensorPolling() {
         await fetchDeviceStatus(PLANT_DATA.device_token, statusRow, statusBadge, statusToken);
     }
 
-    // Prima esecuzione immediata
     pollReading();
     pollStatus();
 
-    // Poi ogni 15 secondi
     setInterval(pollReading, 15_000);
     setInterval(pollStatus, 15_000);
 }
 
 // -----------------------------------------------------------
 //  Aggiorna i valori dei sensori nel DOM senza ricaricare.
-//  Se la griglia era nascosta (nessuna lettura iniziale),
-//  la svela prima di scrivere i valori.
 // -----------------------------------------------------------
 function updateSensorDisplay(reading) {
-    // --- Svela la griglia se era nascosta (caso "nessun dato iniziale") ---
     const noData = document.getElementById('sensor_no_data');
     const grid   = document.getElementById('sensor_grid');
     const updEl  = document.getElementById('sensor_updated_at');
@@ -737,7 +758,6 @@ function updateSensorDisplay(reading) {
     if (noData) noData.classList.add('hidden');
     if (grid)   grid.classList.remove('hidden');
     if (updEl)  updEl.classList.remove('hidden');
-    // ---------------------------------------------------------------------
 
     const pd = PLANT_DATA;
 
@@ -747,28 +767,24 @@ function updateSensorDisplay(reading) {
             : 'text-error';
     }
 
-    // Temperatura
     const tempEl = document.getElementById('val_temp');
     if (tempEl && reading.temperature !== null && reading.temperature !== undefined) {
         tempEl.textContent = `${parseFloat(reading.temperature).toFixed(1)}°C`;
         tempEl.className   = `text-2xl font-bold ${colorClass(reading.temperature, pd.temp_min, pd.temp_max)}`;
     }
 
-    // Umidità aria
     const humEl = document.getElementById('val_hum');
     if (humEl && reading.humidity !== null && reading.humidity !== undefined) {
         humEl.textContent = `${Math.round(reading.humidity)}%`;
         humEl.className   = `text-2xl font-bold ${colorClass(reading.humidity, pd.hum_min, pd.hum_max)}`;
     }
 
-    // Umidità suolo
     const soilEl = document.getElementById('val_soil');
     if (soilEl && reading.soil_humidity !== null && reading.soil_humidity !== undefined) {
         soilEl.textContent = `${Math.round(reading.soil_humidity)}%`;
         soilEl.className   = `text-2xl font-bold ${colorClass(reading.soil_humidity, pd.soil_hum_min, pd.soil_hum_max)}`;
     }
 
-    // Luminosità
     const lumEl = document.getElementById('val_lum');
     if (lumEl && reading.luminosity !== null && reading.luminosity !== undefined) {
         lumEl.textContent = `${Math.round(reading.luminosity)} lx`;
@@ -778,7 +794,6 @@ function updateSensorDisplay(reading) {
         lumEl.className = `text-2xl font-bold ${luxColor}`;
     }
 
-    // Timestamp
     if (updEl) {
         const ts = reading.recorded_at
             ? new Date(reading.recorded_at).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
@@ -787,12 +802,8 @@ function updateSensorDisplay(reading) {
         updEl.classList.remove('hidden');
     }
 
-    // Badge online
     setPageDeviceStatus(true, new Date().toISOString());
-
-    // Nuova riga letture
     prependReadingRow(reading);
-
     showToast('📊 Sensori aggiornati', 'info');
 }
 
@@ -902,7 +913,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initEcho();
     initSensorPolling();
 
-    // Stato iniziale Live2D + badge salute al caricamento pagina
     if (window.PLANT_HEALTH) {
         const health = calcHealth(window.PLANT_HEALTH);
         updateHealthBadge(health);

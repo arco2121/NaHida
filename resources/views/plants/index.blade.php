@@ -1,8 +1,7 @@
 @extends('layouts.app')
 @section('title', $title)
 @section('content')
-
-    <div class="mx-auto pb-24 w-11/12 px-4 pt-6 flex flex-col gap-6">
+    <div class="mx-auto pb-24 w-full lg:w-11/12 px-4 pt-6 flex flex-col gap-6">
 
         <div class="flex items-center justify-between">
             <div>

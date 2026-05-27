@@ -11,20 +11,20 @@
 @extends('layouts.app')
 @section('title', $title)
 @section('content')
-    <div class="mx-auto pb-20 w-11/12 px-4 pt-6 flex flex-col gap-6">
+    <div class="mx-auto pb-10 w-full lg:w-11/12 px-4 pt-6 flex flex-col gap-6">
 
         <div class="card bg-primary text-primary-content shadow">
             <div class="card-body py-5 px-5">
                 <h2 class="text-2xl font-bold">{{ $message  }}, {{ $params['user']->name }}!</h2>
                 @php $attentionCount = $params['attentionPlants']->count(); @endphp
-<p class="opacity-80 text-sm">
-    {{ucfirst($now->dayName)}}, {{$now->day}}/{{$now->month}}/{{$now->year}} •
-    @if($attentionCount > 0)
-        {{ $attentionCount }} {{ $attentionCount === 1 ? 'pianta richiede attenzione' : 'piante richiedono attenzione' }}
-    @else
-        Tutte le piante stanno bene 🌿
-    @endif
-</p>
+                <p class="opacity-80 text-sm">
+                    {{ucfirst($now->dayName)}}, {{$now->day}}/{{$now->month}}/{{$now->year}} •
+                    @if($attentionCount > 0)
+                        {{ $attentionCount }} {{ $attentionCount === 1 ? 'pianta richiede attenzione' : 'piante richiedono attenzione' }}
+                    @else
+                        Tutte le piante stanno bene 🌿
+                    @endif
+                </p>
             </div>
         </div>
 

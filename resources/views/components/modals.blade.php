@@ -6,7 +6,7 @@
         <h3 class="text-lg font-bold mb-1">Hai annaffiato la pianta?</h3>
         <p class="text-sm text-base-content/60 mb-4">Verrà registrata una nuova annaffiatura e il timer verrà resettato.</p>
         <div class="modal-action gap-2">
-            <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
+            <form method="dialog"><button onclick="location.reload()" class="btn btn-ghost">Annulla</button></form>
             <button id="btn_confirm_water" class="btn btn-primary">Sì, confermo</button>
         </div>
     </div>
