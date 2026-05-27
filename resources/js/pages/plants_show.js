@@ -400,6 +400,28 @@ function initConditions() {
     const btnSave = document.getElementById('btn_save_conditions');
     if (!modal || !btnSave) return;
 
+    let _condUnit = 'ore';
+
+    function setCondUnit(unit) {
+        _condUnit = unit;
+        const isOre = unit === 'ore';
+        document.getElementById('cond_btn_ore').className =
+            `cond-unit-btn px-3 py-1.5 text-xs font-bold transition-all ${isOre ? 'bg-primary text-primary-content' : 'bg-base-200 text-base-content'}`;
+        document.getElementById('cond_btn_giorni').className =
+            `cond-unit-btn px-3 py-1.5 text-xs font-bold transition-all ${!isOre ? 'bg-primary text-primary-content' : 'bg-base-200 text-base-content'}`;
+        syncCondWateringPreview();
+    }
+
+    function syncCondWateringPreview() {
+        const val = document.getElementById('cond_watering_display')?.value;
+        const prev = document.getElementById('cond_watering_preview');
+        if (prev) prev.textContent = val ? `Verrà annaffiata ogni ${val} ${_condUnit}` : '';
+        // Aggiorna il hidden in ore
+        const hrs = val ? (parseInt(val) * (_condUnit === 'giorni' ? 24 : 1)) : '';
+        const hidden = document.getElementById('cond_watering');
+        if (hidden) hidden.value = hrs;
+    }
+
     document.querySelectorAll('[onclick*="modal_conditions"]').forEach(btn => {
         btn.addEventListener('click', () => {
             setValue('cond_temp_min',  PLANT_DATA.temp_min);
@@ -408,7 +430,11 @@ function initConditions() {
             setValue('cond_hum_max',   PLANT_DATA.hum_max);
             setValue('cond_soil_min',  PLANT_DATA.soil_hum_min);
             setValue('cond_soil_max',  PLANT_DATA.soil_hum_max);
-            setValue('cond_watering',  PLANT_DATA.watering_cycle);
+            _condUnit = 'ore';
+            setCondUnit('ore');
+            const dispEl = document.getElementById('cond_watering_display');
+            if (dispEl) dispEl.value = PLANT_DATA.watering_cycle ?? '';
+            syncCondWateringPreview();
 
             const luxMax = PLANT_DATA.lux_max ?? 100000;
             const sel = document.getElementById('cond_lux_preset');
@@ -424,6 +450,9 @@ function initConditions() {
     document.getElementById('cond_lux_preset')?.addEventListener('change', function () {
         updateLuxHidden(this.value);
     });
+    document.getElementById('cond_btn_ore')?.addEventListener('click', () => setCondUnit('ore'));
+    document.getElementById('cond_btn_giorni')?.addEventListener('click', () => setCondUnit('giorni'));
+    document.getElementById('cond_watering_display')?.addEventListener('input', syncCondWateringPreview);
 
     btnSave.addEventListener('click', async () => {
         const payload = {
