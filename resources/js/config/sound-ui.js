@@ -1,35 +1,50 @@
 // ============================================================
 //  NaHida — Sound UI Integration
 //
-//  Si aggancia all'app esistente tramite event delegation e
-//  MutationObserver, senza dover riscrivere i file di pagina.
-//
 //  Mappatura suoni:
 //  • Dock click              → tap (alterna tap0/tap1)
+//  • Qualsiasi .btn / <a>    → tap (delegation, cattura tutti inclusi futuri)
+//  • Apertura modal          → tap
+//  • Tap canvas Live2D       → suono emotivo (happy/mid/sad) in base allo stato
 //  • Toast success           → positive
 //  • Toast error/warning     → negative
-//  • Toast info              → chime1
-//  • Apertura modal          → chime1
-//  • Tap canvas Live2D       → chime2
-//  • Salute pianta: ottimale → plantHappy
-//  • Salute pianta: warning  → plantMid
-//  • Salute pianta: pessima  → plantSad
-//  • Pulsante mute (#btn_toggle_sound) → toggle mute
+//  • Toast info              → negative
+//  • Bottone mute            → toggle mute
 // ============================================================
 
 import { Sound } from './sound.js';
 
 export function initSoundUI() {
 
-    // ── 1. Dock navigation ───────────────────────────────────────────
-    // Capture phase: garantisce che il suono parta prima della nav.
+    // ── 1. Tap globale via delegation ────────────────────────────────
+    // Cattura click su .btn, <a>, e qualsiasi elemento cliccabile
+    // anche se aggiunto dinamicamente al DOM dopo il DOMContentLoaded.
+    // Usa la capture phase per garantire che il suono parta prima.
     document.addEventListener('click', (e) => {
-        if (e.target.closest('.docke')) Sound.tap();
+        // Escludi il bottone mute (gestito separatamente al punto 6)
+        if (e.target.closest('#btn_toggle_sound')) return;
+
+        const target = e.target;
+
+        // Dock (suono tap)
+        if (target.closest('.docke')) {
+            Sound.tap();
+            return;
+        }
+
+        // Bottoni e link generici
+        if (target.closest('.btn, a, button')) {
+            Sound.tap();
+            return;
+        }
+
+        // Elementi con onclick che aprono modali
+        if (target.closest('[onclick*="showModal"]')) {
+            Sound.tap();
+        }
     }, true);
 
     // ── 2. Toast observer ────────────────────────────────────────────
-    // Ascolta nuovi toast aggiunti in #toast-container e mappa il
-    // tipo alert al suono corretto.
     const toastContainer = document.getElementById('toast-container');
     if (toastContainer) {
         new MutationObserver((mutations) => {
@@ -40,64 +55,36 @@ export function initSoundUI() {
                     if      (cl.contains('alert-success'))  { Sound.play('positive'); return; }
                     else if (cl.contains('alert-error'))    { Sound.play('negative'); return; }
                     else if (cl.contains('alert-warning'))  { Sound.play('negative'); return; }
-                    else if (cl.contains('alert-info'))     { Sound.play('negative');   return; }
+                    else if (cl.contains('alert-info'))     { Sound.play('negative'); return; }
                 }
             }
         }).observe(toastContainer, { childList: true });
     }
 
-    Array.from(new Set([...document.querySelectorAll(".btn, a")]).keys()).forEach(e => e.addEventListener('click', () => Sound.tap()));
-
-    // ── 3. Apertura modal → chime ────────────────────────────────────
-    // Intercetta qualsiasi elemento con onclick="... .showModal()"
-    document.addEventListener('click', (e) => {
-        const trigger = e.target.closest('[onclick*="showModal"]');
-        if (trigger) Sound.tap();
-    });
-
-    // ── 4. Tap canvas Live2D → chime2 ────────────────────────────────
+    // ── 3. Tap canvas Live2D → suono emotivo della pianta ────────────
+    // Il suono dipende dallo stato corrente della pianta al momento
+    // del tap, non dal cambio del badge.
     const canvas = document.getElementById('live2d-canvas');
     if (canvas) {
-        canvas.addEventListener('pointerdown', () => Sound.tap());
+        canvas.addEventListener('pointerdown', () => {
+            // Legge lo stato salute corrente dal badge (già aggiornato da JS)
+            const label = document.querySelector('[data-health-label]')?.textContent ?? '';
+
+            if      (label.includes('ottimali'))  Sound.play('plantHappy');
+            else if (label.includes('ttenzione')) Sound.play('plantMid');
+            else if (label.includes('pessime'))   Sound.play('plantSad');
+            else                                   Sound.play('plantHappy'); // fallback
+        });
     }
 
-    // ── 5. Salute pianta → suoni emotivi ─────────────────────────────
-    // Osserva il badge #health_badge: quando il testo del label cambia
-    // riproduce il suono corrispondente allo stato.
-    // _initialized evita che il suono parta al primo render della pagina.
-    const healthBadge = document.getElementById('health_badge');
-    if (healthBadge) {
-        let _prevLabel    = null;
-        let _initialized  = false;
-
-        setTimeout(() => {
-            // Legge lo stato iniziale prima di abilitare l'observer
-            _prevLabel   = healthBadge.querySelector('[data-health-label]')?.textContent ?? '';
-            _initialized = true;
-        }, 1500);
-
-        new MutationObserver(() => {
-            if (!_initialized) return;
-            const label = healthBadge.querySelector('[data-health-label]')?.textContent ?? '';
-            if (label === _prevLabel) return; // nessun cambiamento reale
-            _prevLabel = label;
-
-            if      (label.includes('ottimali'))   Sound.play('plantHappy');
-            else if (label.includes('ttenzione'))  Sound.play('plantMid');
-            else if (label.includes('pessime'))    Sound.play('plantSad');
-        }).observe(healthBadge, { subtree: true, childList: true, characterData: true });
-    }
-
-    // ── 6. Bottone mute (opzionale) ──────────────────────────────────
-    // Se nel DOM esiste un elemento con id="btn_toggle_sound", viene
-    // usato come toggle mute. Vedi navbar modificata per l'esempio.
+    // ── 4. Bottone mute ──────────────────────────────────────────────
     document.addEventListener('click', (e) => {
         if (!e.target.closest('#btn_toggle_sound')) return;
         const isMuted = Sound.toggle();
         _updateMuteBtn(isMuted);
     });
 
-    // Stato iniziale del bottone mute (se presente)
+    // Stato iniziale del bottone mute
     _updateMuteBtn(Sound.muted);
 }
 
@@ -110,6 +97,5 @@ function _updateMuteBtn(muted) {
     const icon = btn.querySelector('[data-sound-icon]');
     if (icon) icon.style.opacity = muted ? '0.35' : '1';
 
-    // Aggiorna l'aria-label per accessibilità
     btn.setAttribute('aria-label', muted ? 'Suoni disattivati' : 'Suoni attivi');
 }
