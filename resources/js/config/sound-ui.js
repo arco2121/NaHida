@@ -40,23 +40,25 @@ export function initSoundUI() {
                     if      (cl.contains('alert-success'))  { Sound.play('positive'); return; }
                     else if (cl.contains('alert-error'))    { Sound.play('negative'); return; }
                     else if (cl.contains('alert-warning'))  { Sound.play('negative'); return; }
-                    else if (cl.contains('alert-info'))     { Sound.play('chime1');   return; }
+                    else if (cl.contains('alert-info'))     { Sound.play('negative');   return; }
                 }
             }
         }).observe(toastContainer, { childList: true });
     }
 
+    Array.from(new Set([...document.querySelectorAll(".btn, a")]).keys()).forEach(e => e.addEventListener('click', () => Sound.tap()));
+
     // ── 3. Apertura modal → chime ────────────────────────────────────
     // Intercetta qualsiasi elemento con onclick="... .showModal()"
     document.addEventListener('click', (e) => {
         const trigger = e.target.closest('[onclick*="showModal"]');
-        if (trigger) Sound.play('chime1');
+        if (trigger) Sound.tap();
     });
 
     // ── 4. Tap canvas Live2D → chime2 ────────────────────────────────
     const canvas = document.getElementById('live2d-canvas');
     if (canvas) {
-        canvas.addEventListener('pointerdown', () => Sound.play('chime2'));
+        canvas.addEventListener('pointerdown', () => Sound.tap());
     }
 
     // ── 5. Salute pianta → suoni emotivi ─────────────────────────────
