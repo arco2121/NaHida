@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Installazione pulita (inclusa la compilazione dei moduli nativi per Alpine)
-RUN npm ci
+RUN npm install
 
 # Copia il resto dei file (Vite necessita anche di tailwind.config.js, vite.config.js, ecc.)
 COPY . .
