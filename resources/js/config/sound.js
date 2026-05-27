@@ -32,7 +32,7 @@ const VOLUMES = {
 
 class SoundManager {
     constructor() {
-        this._muted  = localStorage.getItem('nahida_muted') === 'true';
+        this._muted  = localStorage.getItem('Nahida_muted') === 'true';
         this._pool   = {};
         this._tapIdx = 0;
     }
@@ -67,7 +67,7 @@ class SoundManager {
 
     setMuted(v) {
         this._muted = !!v;
-        localStorage.setItem('nahida_muted', this._muted);
+        localStorage.setItem('Nahida_muted', this._muted);
     }
 
     /** Inverte lo stato mute e restituisce il nuovo valore. */

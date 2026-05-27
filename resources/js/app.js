@@ -9,7 +9,7 @@ Alpine.start();
 
 // Theme
 window.addEventListener("pageshow", () => {
-    const theme = localStorage.getItem('theme');
+    const theme = localStorage.getItem('Nahida_theme');
     try { setTheme(theme) } catch {}
     document.getElementById('theme_controller').checked = theme === "dark";
 });

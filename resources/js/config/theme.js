@@ -26,7 +26,7 @@ function setTheme(theme) {
                 controller.dispatchEvent(new Event('change'));
             }
         } catch {}
-        localStorage.setItem('theme', 'light');
+        localStorage.setItem('Nahida_theme', 'light');
     } else {
         try {
             btnDark.classList.add(...activeClasses);
@@ -44,7 +44,7 @@ function setTheme(theme) {
                 controller.dispatchEvent(new Event('change'));
             }
         } catch {}
-        localStorage.setItem('theme', 'dark');
+        localStorage.setItem('Nahida_theme', 'dark');
     }
 }
 
