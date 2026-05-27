@@ -100,6 +100,19 @@
             soil_humidity: {{ $latest?->soil_humidity  ?? 'null' }},
             luminosity:    {{ $latest?->luminosity     ?? 'null' }},
         };
+
+        window.PLANT_READINGS = {!! json_encode(
+            $plant->sensorReadings
+                ->reverse()
+                ->values()
+                ->map(fn($r) => [
+                    'temperature'   => $r->temperature,
+                    'humidity'      => $r->humidity,
+                    'soil_humidity' => $r->soil_humidity,
+                    'luminosity'    => $r->luminosity,
+                    'recorded_at'   => $r->recorded_at->format('H:i'),
+                ])
+        ) !!};
     </script>
 
     @if(session('success'))
@@ -435,6 +448,28 @@
                                 </li>
                             @endforeach
                         </ul>
+                    </div>
+                </div>
+            @endif
+
+            {{-- Grafici sensori --}}
+            @if($plant->sensorReadings->count() > 1)
+                <div>
+                    <div class="card bg-base-100 shadow">
+                        <div class="card-body p-4 gap-3">
+
+                            <div role="tablist" class="tabs tabs-box tabs-sm">
+                                <button role="tab" class="tab tab-active" data-chart="temp">🌡 Temp.</button>
+                                <button role="tab" class="tab"            data-chart="hum">💧 Umidità</button>
+                                <button role="tab" class="tab"            data-chart="soil">🌱 Suolo</button>
+                                <button role="tab" class="tab"            data-chart="lum">☀️ Luce</button>
+                            </div>
+
+                            <div class="relative min-h-[200px]">
+                                <canvas id="sensor-chart"></canvas>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             @endif

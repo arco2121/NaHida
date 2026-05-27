@@ -1,4 +1,7 @@
 import { PlantViewer } from "../live2d/live2d-viewer.js";
+import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip } from 'https://cdn.jsdelivr.net/npm/chart.js@4.5.1/+esm';
+
+Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip);
 
 // -----------------------------------------------------------
 //  Toast
@@ -831,6 +834,13 @@ function updateSensorDisplay(reading) {
         updEl.classList.remove('hidden');
     }
 
+    if (window._appendChartReading) {
+        window._appendChartReading({
+            ...reading,
+            recorded_at: reading.recorded_at ?? new Date().toISOString(),
+        });
+    }
+
     setPageDeviceStatus(true, new Date().toISOString());
     prependReadingRow(reading);
     showToast('📊 Sensori aggiornati', 'info');
@@ -928,6 +938,197 @@ window.applyAppearance = function () {
     PlantViewer?.capturePreview(PLANT_ID);
 };
 
+function initCharts() {
+    if (!window.PLANT_READINGS?.length || typeof Chart === 'undefined') return;
+
+    const readings = window.PLANT_READINGS;
+    const pd       = PLANT_DATA;
+    const labels   = readings.map(r => r.recorded_at);
+
+    // Recupera un colore CSS custom property come stringa hex/oklch
+    function css(v) {
+        return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+    }
+
+    // Configurazioni per ogni metrica
+    const METRICS = {
+        temp: {
+            data:     readings.map(r => r.temperature),
+            label:    'Temperatura',
+            unit:     '°C',
+            color:    css('--color-primary'),
+            min:      pd.temp_min,
+            max:      pd.temp_max,
+        },
+        hum: {
+            data:     readings.map(r => r.humidity),
+            label:    'Umidità aria',
+            unit:     '%',
+            color:    css('--color-info'),
+            min:      pd.hum_min,
+            max:      pd.hum_max,
+        },
+        soil: {
+            data:     readings.map(r => r.soil_humidity),
+            label:    'Umidità suolo',
+            unit:     '%',
+            color:    css('--color-success'),
+            min:      pd.soil_hum_min,
+            max:      pd.soil_hum_max,
+        },
+        lum: {
+            data:     readings.map(r => r.luminosity ?? null),
+            label:    'Luminosità',
+            unit:     ' lx',
+            color:    css('--color-warning'),
+            min:      null,
+            max:      null,
+        },
+    };
+
+    let activeKey = 'temp';
+
+    function buildDatasets(key) {
+        const m = METRICS[key];
+        const datasets = [];
+
+        // Linee tratteggiate per il range ottimale
+        if (m.min !== null && m.max !== null) {
+            datasets.push({
+                label: '_max',
+                data:  labels.map(() => m.max),
+                borderColor: `color-mix(in srgb, ${m.color} 45%, transparent)`,
+                borderWidth: 1.5,
+                borderDash: [5, 4],
+                pointRadius: 0,
+                fill: false,
+            });
+            datasets.push({
+                label: '_min',
+                data:  labels.map(() => m.min),
+                borderColor: `color-mix(in srgb, ${m.color} 45%, transparent)`,
+                borderWidth: 1.5,
+                borderDash: [5, 4],
+                pointRadius: 0,
+                fill: false,
+            });
+        }
+
+        // Linea principale
+        datasets.push({
+            label:                m.label,
+            data:                 m.data,
+            borderColor:          m.color,
+            borderWidth:          2,
+            backgroundColor:      'transparent',
+            pointRadius:          2,
+            pointHoverRadius:     5,
+            pointBackgroundColor: m.color,
+            tension:              0.35,
+            fill:                 false,
+            spanGaps:             true,
+        });
+
+        return datasets;
+    }
+
+    function buildScales(key) {
+        const m = METRICS[key];
+
+        // Calcola il range reale dei dati
+        const valid   = m.data.filter(v => v !== null && v !== undefined);
+        const dataMin = valid.length ? Math.min(...valid) : (m.min ?? 0);
+        const dataMax = valid.length ? Math.max(...valid) : (m.max ?? 100);
+
+        // Includi anche i limiti ottimali nel range visibile, con padding
+        const visMin  = Math.min(dataMin, m.min ?? dataMin);
+        const visMax  = Math.max(dataMax, m.max ?? dataMax);
+        const pad     = Math.max((visMax - visMin) * 0.25, 2);
+
+        return {
+            x: {
+                grid:  { color: 'rgba(128,128,128,0.1)' },
+                ticks: { maxTicksLimit: 7, font: { size: 10 } },
+            },
+            y: {
+                grid:  { color: 'rgba(128,128,128,0.1)' },
+                ticks: { font: { size: 10 }, callback: v => v + m.unit },
+                min:   Math.floor(visMin - pad),
+                max:   Math.ceil(visMax  + pad),
+            },
+        };
+    }
+
+    // Crea il chart iniziale
+    const ctx   = document.getElementById('sensor-chart');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets: buildDatasets(activeKey) },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 250 },
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: item => {
+                            if (item.dataset.label?.startsWith('_')) return null;
+                            return ` ${item.parsed.y}${METRICS[activeKey].unit}`;
+                        },
+                    },
+                    filter: item => !item.dataset.label?.startsWith('_'),
+                },
+            },
+            scales: buildScales(activeKey),
+        },
+    });
+
+    // Cambio tab: swappa dataset e scala
+    document.querySelectorAll('[data-chart]').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const key = tab.dataset.chart;
+            if (key === activeKey) return;
+            activeKey = key;
+
+            // Aggiorna tab attiva
+            document.querySelectorAll('[data-chart]').forEach(t =>
+                t.classList.toggle('tab-active', t === tab)
+            );
+
+            // Aggiorna chart
+            chart.data.datasets = buildDatasets(key);
+            chart.options.scales = buildScales(key);
+            chart.update();
+        });
+    });
+
+    // Aggiornamento live
+    window._appendChartReading = function (reading) {
+        const time = new Date(reading.recorded_at)
+            .toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+
+        // Aggiorna i dati in memoria per ogni metrica
+        METRICS.temp.data.push(reading.temperature);
+        METRICS.hum.data.push(reading.humidity);
+        METRICS.soil.data.push(reading.soil_humidity);
+        METRICS.lum.data.push(reading.luminosity ?? null);
+        labels.push(time);
+
+        // Mantieni max 50 punti
+        if (labels.length > 50) {
+            labels.shift();
+            Object.values(METRICS).forEach(m => m.data.shift());
+        }
+
+        // Ridisegna solo se la tab è quella attiva
+        chart.data.labels   = labels;
+        chart.data.datasets = buildDatasets(activeKey);
+        chart.update('none');
+    };
+}
+
 // -----------------------------------------------------------
 //  INIT
 // -----------------------------------------------------------
@@ -941,6 +1142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAppearance();
     initEcho();
     initSensorPolling();
+    initCharts();
 
     if (window.PLANT_HEALTH) {
         const health = calcHealth(window.PLANT_HEALTH);
