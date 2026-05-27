@@ -10,7 +10,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/js/bootstrap.js',
-                'resources/js/theme.js',
+                'resources/js/config/theme.js',
                 'resources/js/live2d/live2d-viewer.js',
                 'resources/js/live2d/live2d-start.js',
                 'resources/js/pages/login_register.js',
