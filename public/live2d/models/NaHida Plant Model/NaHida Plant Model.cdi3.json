@@ -142,6 +142,11 @@
 			"Name": "Cartoon Reactions Animation 3"
 		},
 		{
+			"Id": "WateringAnimation",
+			"GroupId": "",
+			"Name": "Watering Animation"
+		},
+		{
 			"Id": "PlantVariant",
 			"GroupId": "",
 			"Name": "Plant Variant"
@@ -234,6 +239,10 @@
 	],
 	"ParameterGroups": [],
 	"Parts": [
+		{
+			"Id": "Part",
+			"Name": "NaHida_Icon_Water.png"
+		},
 		{
 			"Id": "CartoonReactionsPart",
 			"Name": "CartoonReactions"

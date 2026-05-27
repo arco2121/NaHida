@@ -30,9 +30,12 @@
       "Idle": [
         { "File": "motions/Idle.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 }
       ],
-      "Sleep": [
-        { "File": "motions/SleepIdle.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 }
-      ]
+        "Sleep": [
+            { "File": "motions/SleepIdle.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 }
+        ],
+        "Watering": [
+            { "File": "motions/Watering.motion3.json", "FadeInTime": 0.0, "FadeOutTime": 0.0 }
+        ]
     }
   },
   "Groups": [
