@@ -122,3 +122,7 @@ body {
 .docke:active {
     scale: 0.9;
 }
+
+input[type="search"]:focus {
+    outline: none;
+}

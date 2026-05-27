@@ -16,6 +16,7 @@ export default defineConfig({
                 'resources/js/pages/login_register.js',
                 'resources/js/pages/plants_create.js',
                 'resources/js/pages/plants_show.js',
+                'resources/js/pages/plants_index.js',
                 'resources/js/pages/settings.js',
             ],
             refresh: true,
