@@ -22,26 +22,22 @@ class MqttListener extends Command
 
         $mqtt = MQTT::connection();
 
-        // Letture sensori e bottone
         $mqtt->subscribe('device/+/updates', function (string $topic, string $message) {
-            $token = explode('/', $topic)[1];
+            $token  = explode('/', $topic)[1];
             $device = $this->findDevice($token);
             if (!$device) return;
-
-            $device->touch(); // aggiorna last_seen_at
 
             $data = json_decode($message, true);
 
             if (json_last_error() === JSON_ERROR_NONE && isset($data['type'])) {
-                $this->handleJson($data, $device->plant_id, $token);
+                $this->handleJson($data, $device);
             } else {
-                $this->handlePlainMessage($message, $device->plant_id, $token);
+                $this->handlePlainMessage($message, $device);
             }
         }, 1);
 
-        // Ping online dall'ESP
         $mqtt->subscribe('device/+/status', function (string $topic, string $message) {
-            $token = explode('/', $topic)[1];
+            $token  = explode('/', $topic)[1];
             $device = $this->findDevice($token);
             if (!$device) return;
 
@@ -67,58 +63,55 @@ class MqttListener extends Command
         return $device;
     }
 
-    private function handleJson(array $data, int $plantId, string $token): void
+    private function handleJson(array $data, Device $device): void
     {
         switch ($data['type']) {
             case 'sensor_data':
                 $reading = SensorReading::create([
-                    'plant_id' => $plantId,
-                    'humidity' => $data['humidity'] ?? null,
-                    'temperature' => $data['temperature'] ?? null,
-                    'soil_humidity' => $data['soil_humidity'] ?? null,
-                    'luminosity' => $data['luminosity'] ?? null,
+                    'plant_id'      => $device->plant_id,
+                    'humidity'      => $data['humidity']      ?? null,
+                    'temperature'   => $data['temperature']   ?? null,
+                    'soil_humidity' => $data['soil_humidity']  ?? null,
+                    'luminosity'    => $data['luminosity']     ?? null,
                 ]);
 
-                // Broadcast real-time al browser
                 event(new SensorUpdated(
-                    plantId: $plantId,
-                    humidity: $reading->humidity,
-                    temperature: $reading->temperature,
+                    plantId:       $device->plant_id,
+                    humidity:      $reading->humidity,
+                    temperature:   $reading->temperature,
                     soil_humidity: $reading->soil_humidity,
-                    luminosity: $reading->luminosity,
-                    recordedAt: $reading->recorded_at->toDateTimeString(),
+                    luminosity:    $reading->luminosity,
+                    recordedAt:    $reading->recorded_at->toDateTimeString(),
                 ));
 
-                $this->info("[{$token}] 📊 Lettura salvata e broadcast per pianta #{$plantId}");
-
-                $device = $this->findDevice($token);
-                if (!$device) return;
                 $device->last_seen_at = now();
                 $device->save();
-                $this->info("[{$token}] 🟢 Ping online ricevuto");
 
+                $this->info("[{$device->device_token}] 📊 Lettura salvata per pianta #{$device->plant_id}");
                 break;
 
             default:
-                $this->warn("[{$token}] Tipo JSON sconosciuto: {$data['type']}");
+                $this->warn("[{$device->device_token}] Tipo JSON sconosciuto: {$data['type']}");
                 break;
         }
     }
 
-    private function handlePlainMessage(string $message, int $plantId, string $token): void
+    private function handlePlainMessage(string $message, Device $device): void
     {
         switch ($message) {
             case 'BUTTON_PRESSED':
                 WateringEvent::create([
-                    'plant_id' => $plantId,
-                    'source' => 'button',
+                    'plant_id' => $device->plant_id,
+                    'source'   => 'button',
                 ]);
-                event(new ButtonPressed($plantId, "Pianta #{$plantId} annaffiata! 💧"));
-                $this->info("[{$token}] 💧 Annaffiatura registrata per pianta #{$plantId}");
+                event(new ButtonPressed($device->plant_id, "Pianta #{$device->plant_id} annaffiata! 💧"));
+                $device->last_seen_at = now();
+                $device->save();
+                $this->info("[{$device->device_token}] 💧 Annaffiatura registrata per pianta #{$device->plant_id}");
                 break;
 
             default:
-                $this->warn("[{$token}] Messaggio sconosciuto: {$message}");
+                $this->warn("[{$device->device_token}] Messaggio sconosciuto: {$message}");
                 break;
         }
     }

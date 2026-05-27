@@ -107,7 +107,7 @@ class DeviceController extends Controller
         ]);
 
         $device   = Device::where('device_token', $request->input('device_token'))->firstOrFail();
-        $isOnline = $device->last_seen_at && $device->last_seen_at->diffInSeconds(now()) < 90;
+        $isOnline = $device->last_seen_at && $device->last_seen_at->diffInSeconds(now()) < 30;
 
         return response()->json([
             'online'       => $isOnline,
