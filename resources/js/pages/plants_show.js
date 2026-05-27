@@ -153,7 +153,7 @@ function initWatering() {
                 showToast('Annaffiatura registrata! 💧', 'success');
                 PlantViewer?.playWatering();
                 updateNextWateringDisplay(data.watered_at);
-                setTimeout(() => window.location.reload(), 800);
+                //setTimeout(() => window.location.reload(), 800);
             } else {
                 showToast('Errore nel salvataggio.', 'error');
             }
@@ -707,7 +707,8 @@ function initEcho() {
             showToast(e.message ?? '💧 Annaffiatura rilevata!', 'success');
             PlantViewer?.playWatering();
             updateNextWateringDisplay(new Date().toISOString());
-            setTimeout(() => window.location.reload(), 1500);
+            //setTimeout(() => window.location.reload(), 1500);
+            console.log("button")
         })
         .listen('.SensorUpdated', (e) => {
             window.PLANT_HEALTH = {
