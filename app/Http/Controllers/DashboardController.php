@@ -35,15 +35,15 @@ class DashboardController extends Controller
                     });
             })->get();
 
-        $nextWaterings = Plant::select('plants.*')
-            ->where('plants.user_id', $userId)
-            ->leftJoin('watering_events', function ($join) {
-                $join->on('plants.plant_id', '=', 'watering_events.plant_id')
-                    ->whereRaw('watering_events.watered_at = (SELECT MAX(we.watered_at) FROM watering_events we WHERE we.plant_id = plants.plant_id)');
-            })
-            ->orderByRaw('COALESCE(DATE_ADD(watering_events.watered_at, INTERVAL plants.watering_cycle HOUR), plants.created_at) ASC')
-            ->take(3)
-            ->get();
+        $nextWaterings = Plant::where('user_id', $userId)
+    ->with(['wateringEvents' => fn($q) => $q->latest('watered_at')->limit(1)])
+    ->get()
+    ->sortBy(function ($plant) {
+        $lastWatering = $plant->wateringEvents->first();
+        $base = $lastWatering ? $lastWatering->watered_at : $plant->created_at;
+        return $base->addHours($plant->watering_cycle);
+    })
+    ->take(3);
 
         $attentionIds = $attentionPlants->pluck('plant_id')->toArray();
         $yourPlants = collect($attentionPlants)->take(3);
