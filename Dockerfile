@@ -1,9 +1,17 @@
 # STAGE 1: Frontend
 FROM node:20-alpine AS node_builder
 WORKDIR /app
+
+# Copia solo i file necessari alla gestione dei pacchetti
 COPY package*.json ./
-RUN npm install
+
+# Installazione pulita (inclusa la compilazione dei moduli nativi per Alpine)
+RUN npm ci
+
+# Copia il resto dei file (Vite necessita anche di tailwind.config.js, vite.config.js, ecc.)
 COPY . .
+
+# Esegui la build compilando gli asset in public/build
 RUN npm run build
 
 # STAGE 2: PHP (usiamo CLI invece di Apache per evitare conflitti di log/porte)
