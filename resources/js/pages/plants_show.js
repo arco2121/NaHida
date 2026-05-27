@@ -151,6 +151,7 @@ function initWatering() {
             if (data.status === 'ok') {
                 document.getElementById('modal_watered')?.close();
                 showToast('Annaffiatura registrata! 💧', 'success');
+                PlantViewer?.playWatering();
                 updateNextWateringDisplay(data.watered_at);
                 setTimeout(() => window.location.reload(), 800);
             } else {
@@ -704,6 +705,7 @@ function initEcho() {
     window.Echo.channel(`plant.${PLANT_ID}`)
         .listen('.ButtonPressed', (e) => {
             showToast(e.message ?? '💧 Annaffiatura rilevata!', 'success');
+            PlantViewer?.playWatering();
             updateNextWateringDisplay(new Date().toISOString());
             setTimeout(() => window.location.reload(), 1500);
         })

@@ -414,6 +414,13 @@ export const PlantViewer = (() => {
         return url;
     }
 
-    return { init, setAppearance, randomizeAppearance, setState, tap, setPasswordMode, capturePreview };
+    function playWatering() {
+        if (!_model || _isTapping) return;
+        _isTapping = true;
+        _model.motion('Watering', 0, _MotionPriority.FORCE)
+            .finally(() => { _isTapping = false; });
+    }
+
+    return { init, setAppearance, randomizeAppearance, setState, tap, setPasswordMode, capturePreview, playWatering };
 
 })();
