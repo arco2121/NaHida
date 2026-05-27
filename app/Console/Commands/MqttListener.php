@@ -24,7 +24,7 @@ class MqttListener extends Command
 
         // Letture sensori e bottone
         $mqtt->subscribe('device/+/updates', function (string $topic, string $message) {
-            $token  = explode('/', $topic)[1];
+            $token = explode('/', $topic)[1];
             $device = $this->findDevice($token);
             if (!$device) return;
 
@@ -41,7 +41,7 @@ class MqttListener extends Command
 
         // Ping online dall'ESP
         $mqtt->subscribe('device/+/status', function (string $topic, string $message) {
-            $token  = explode('/', $topic)[1];
+            $token = explode('/', $topic)[1];
             $device = $this->findDevice($token);
             if (!$device) return;
 
@@ -72,24 +72,31 @@ class MqttListener extends Command
         switch ($data['type']) {
             case 'sensor_data':
                 $reading = SensorReading::create([
-                    'plant_id'      => $plantId,
-                    'humidity'      => $data['humidity']      ?? null,
-                    'temperature'   => $data['temperature']   ?? null,
+                    'plant_id' => $plantId,
+                    'humidity' => $data['humidity'] ?? null,
+                    'temperature' => $data['temperature'] ?? null,
                     'soil_humidity' => $data['soil_humidity'] ?? null,
-                    'luminosity'    => $data['luminosity']    ?? null,
+                    'luminosity' => $data['luminosity'] ?? null,
                 ]);
 
                 // Broadcast real-time al browser
                 event(new SensorUpdated(
-                    plantId:      $plantId,
-                    humidity:     $reading->humidity,
-                    temperature:  $reading->temperature,
+                    plantId: $plantId,
+                    humidity: $reading->humidity,
+                    temperature: $reading->temperature,
                     soil_humidity: $reading->soil_humidity,
-                    luminosity:   $reading->luminosity,
-                    recordedAt:   $reading->recorded_at->toDateTimeString(),
+                    luminosity: $reading->luminosity,
+                    recordedAt: $reading->recorded_at->toDateTimeString(),
                 ));
 
                 $this->info("[{$token}] 📊 Lettura salvata e broadcast per pianta #{$plantId}");
+
+                $device = $this->findDevice($token);
+                if (!$device) return;
+                $device->last_seen_at = now();
+                $device->save();
+                $this->info("[{$token}] 🟢 Ping online ricevuto");
+
                 break;
 
             default:
@@ -104,7 +111,7 @@ class MqttListener extends Command
             case 'BUTTON_PRESSED':
                 WateringEvent::create([
                     'plant_id' => $plantId,
-                    'source'   => 'button',
+                    'source' => 'button',
                 ]);
                 event(new ButtonPressed($plantId, "Pianta #{$plantId} annaffiata! 💧"));
                 $this->info("[{$token}] 💧 Annaffiatura registrata per pianta #{$plantId}");
