@@ -459,10 +459,22 @@
                         <div class="card-body p-4 gap-3">
 
                             <div role="tablist" class="tabs tabs-box tabs-sm">
-                                <button role="tab" class="tab tab-active" data-chart="temp">🌡 Temp.</button>
-                                <button role="tab" class="tab"            data-chart="hum">💧 Umidità</button>
-                                <button role="tab" class="tab"            data-chart="soil">🌱 Suolo</button>
-                                <button role="tab" class="tab"            data-chart="lum">☀️ Luce</button>
+                                <button role="tab" class="tab tab-active items-center gap-1.5" data-chart="temp">
+                                    <img src="{{ asset('assets/NaHida_Icon_Temp.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
+                                    Temp.
+                                </button>
+                                <button role="tab" class="tab items-center gap-1.5" data-chart="hum">
+                                    <img src="{{ asset('assets/NaHida_Icon_Water.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
+                                    Umidità
+                                </button>
+                                <button role="tab" class="tab items-center gap-1.5" data-chart="soil">
+                                    <img src="{{ asset('assets/NaHida_Icon_Soil.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
+                                    Suolo
+                                </button>
+                                <button role="tab" class="tab items-center gap-1.5" data-chart="lum">
+                                    <img src="{{ asset('assets/NaHida_Icon_Light.png') }}" class="w-4 h-4 object-contain" alt="" onerror="this.style.display='none'">
+                                    Luce
+                                </button>
                             </div>
 
                             <div class="relative min-h-[200px]">
