@@ -45,7 +45,7 @@
                     </div>
                 @endif
 
-                <button class="btn btn-neutral mt-4" type="submit">Accedi</button>
+                <button class="btn btn-neutral mt-4" type="submit">Registrati</button>
             </fieldset>
         </form>
     </div>
