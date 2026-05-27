@@ -14,7 +14,11 @@
     <div class="navbar-center">
         <span class="text-lg font-bold text-base-content">{{ $title }}</span>
     </div>
-    <div class="navbar-end">
+    <div class="navbar-end flex items-center gap-1">
+
+        @include("components.sound_toggle")
+
         @include('components.theme_toggle')
+
     </div>
 </div>

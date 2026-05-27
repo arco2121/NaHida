@@ -15,6 +15,7 @@
 </head>
 <body class="font-sans antialiased min-h-screen">
 
+    @include("components.sound_toggle")
     @include('components.theme_toggle')
 
     <div class="w-full">
