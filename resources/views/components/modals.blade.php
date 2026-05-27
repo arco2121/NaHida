@@ -6,7 +6,7 @@
         <h3 class="text-lg font-bold mb-1">Hai annaffiato la pianta?</h3>
         <p class="text-sm text-base-content/60 mb-4">Verrà registrata una nuova annaffiatura e il timer verrà resettato.</p>
         <div class="modal-action gap-2">
-            <form method="dialog"><button class="btn btn-ghost">Annulla</button></form>
+            <form method="dialog"><button onclick="location.reload()" class="btn btn-ghost">Annulla</button></form>
             <button id="btn_confirm_water" class="btn btn-primary">Sì, confermo</button>
         </div>
     </div>
@@ -129,8 +129,22 @@
                 </div>
             </div>
             <div>
-                <label class="label text-xs font-bold">Ogni quanto va annaffiata (ore)</label>
-                <input id="cond_watering" type="number" class="input input-sm w-full" min="1" />
+                <label class="label text-xs font-bold">Ogni quanto va annaffiata</label>
+                <div class="flex items-center gap-2 mt-1">
+                    <input id="cond_watering_display" type="number" class="input input-sm flex-1" min="1" placeholder="es. 2" />
+                    <div class="flex rounded-box overflow-hidden border-2 border-base-200 flex-shrink-0">
+                        <button type="button" id="cond_btn_ore"
+                                class="cond-unit-btn px-3 py-1.5 text-xs font-bold bg-primary text-primary-content transition-all">
+                            Ore
+                        </button>
+                        <button type="button" id="cond_btn_giorni"
+                                class="cond-unit-btn px-3 py-1.5 text-xs font-bold bg-base-200 text-base-content transition-all">
+                            Giorni
+                        </button>
+                    </div>
+                </div>
+                <p id="cond_watering_preview" class="text-xs text-base-content/40 mt-1"></p>
+                <input type="hidden" id="cond_watering" />
             </div>
             <div>
                 <label class="label text-xs font-bold">Esigenza di luce</label>

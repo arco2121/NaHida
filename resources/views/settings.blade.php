@@ -2,7 +2,7 @@
 @section('title', $title)
 @section('content')
     <div class="flex w-full justify-center items-center">
-        <div class="w-10/12 px-4 pt-6 flex flex-col gap-1 pb-24">
+        <div class="w-full lg:w-11/12 px-4 pt-6 flex flex-col gap-1 pb-24">
 
             {{-- ===== SEZIONE PROFILO ===== --}}
             <p class="text-xs font-bold text-base-content/50 uppercase tracking-wider px-1 mb-2">Profilo</p>
