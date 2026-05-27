@@ -115,7 +115,10 @@ body {
     animation: fade 0.4s ease;
 }
 
-.stats, .btn { transition: all 0.15s ease; }
+.stats, .btn, .docke { transition: all 0.15s ease; }
 .stats:active, .btn:active {
     scale: 0.95;
+}
+.docke:active {
+    scale: 0.9;
 }

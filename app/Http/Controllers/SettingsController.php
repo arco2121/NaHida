@@ -19,7 +19,7 @@ class SettingsController extends Controller
     {
         $user   = $request->user();
         return renderPage('settings', [
-            'title'  => 'Settings',
+            'title'  => 'Impostazioni',
             'user'   => $user
         ]);
     }
