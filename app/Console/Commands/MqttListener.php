@@ -20,50 +20,35 @@ class MqttListener extends Command
     {
         $this->info('🌿 MQTT Listener avviato, in ascolto...');
 
-        while (true) {
-            try {
-                $mqtt = MQTT::connection();
+        $mqtt = MQTT::connection();
 
-                $mqtt->subscribe('device/+/updates', function (string $topic, string $message) {
-                    $token  = explode('/', $topic)[1];
-                    $device = $this->findDevice($token);
-                    if (!$device) return;
+        $mqtt->subscribe('device/+/updates', function (string $topic, string $message) {
+            $token  = explode('/', $topic)[1];
+            $device = $this->findDevice($token);
+            if (!$device) return;
 
-                    $data = json_decode($message, true);
+            $data = json_decode($message, true);
 
-                    if (json_last_error() === JSON_ERROR_NONE && isset($data['type'])) {
-                        $this->handleJson($data, $device);
-                    } else {
-                        $this->handlePlainMessage($message, $device);
-                    }
-                }, 1);
-
-                $mqtt->subscribe('device/+/status', function (string $topic, string $message) {
-                    $token  = explode('/', $topic)[1];
-                    $device = $this->findDevice($token);
-                    if (!$device) return;
-
-                    if ($message === 'ONLINE') {
-                        $device->last_seen_at = now();
-                        $device->save();
-                        $this->info("[{$token}] 🟢 Ping online ricevuto");
-                    }
-                }, 0);
-
-                $this->info('✅ Connesso al broker MQTT');
-                $mqtt->loop(true);
-
-            } catch (\Exception $e) {
-                $this->warn('⚠️ Connessione persa: ' . $e->getMessage());
-                $this->info('🔄 Riconnessione tra 5 secondi...');
-
-                try {
-                    MQTT::disconnect();
-                } catch (\Exception) {}
-
-                sleep(5);
+            if (json_last_error() === JSON_ERROR_NONE && isset($data['type'])) {
+                $this->handleJson($data, $device);
+            } else {
+                $this->handlePlainMessage($message, $device);
             }
-        }
+        }, 1);
+
+        $mqtt->subscribe('device/+/status', function (string $topic, string $message) {
+            $token  = explode('/', $topic)[1];
+            $device = $this->findDevice($token);
+            if (!$device) return;
+
+            if ($message === 'ONLINE') {
+                $device->last_seen_at = now();
+                $device->save();
+                $this->info("[{$token}] 🟢 Ping online ricevuto");
+            }
+        }, 0);
+
+        $mqtt->loop(true);
     }
 
     private function findDevice(string $token): ?Device

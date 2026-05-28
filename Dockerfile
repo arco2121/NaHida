@@ -53,6 +53,7 @@ CMD php artisan migrate:fresh && \
     php artisan route:cache && \
     php artisan db:seed && \
     concurrently \
+    "php artisan queue:work" \
     "php artisan serve --host=0.0.0.0 --port=10000" \
     "php artisan reverb:start --host=0.0.0.0 --port=8080" \
     "php artisan mqtt:listen"
