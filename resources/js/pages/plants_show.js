@@ -702,14 +702,11 @@ function hideNameError() {
 function initEcho() {
     if (!window.Echo || !PLANT_ID) return;
 
-    alert("Madonna bagascia")
     Echo.channel(`plant.${PLANT_ID}`)
         .listen('.ButtonPressed', (e) => {
             showToast(e.message ?? '💧 Annaffiatura rilevata!', 'success');
             PlantViewer?.playWatering();
             updateNextWateringDisplay(new Date().toISOString());
-
-            alert("Madonna ")
             //setTimeout(() => window.location.reload(), 1500);
             console.log("button")
         })
