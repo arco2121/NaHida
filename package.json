@@ -6,7 +6,7 @@
         "build": "vite build",
         "build_app": "npm install && composer install && php artisan migrate:fresh && php artisan key:generate && php artisan db:seed",
         "dev": "vite",
-        "app": "concurrently \"npm run dev\" \"php artisan reverb:start\" \"php artisan serve\" \"php artisan mqtt:listen\"",
+        "app": "concurrently \"npm run dev\" \"php artisan queue:work\" \"php artisan reverb:start\" \"php artisan serve\" \"php artisan mqtt:listen\"",
         "database": "php artisan migrate:fresh && php artisan migrate --pretend"
     },
     "devDependencies": {

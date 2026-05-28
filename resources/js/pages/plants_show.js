@@ -702,7 +702,7 @@ function hideNameError() {
 function initEcho() {
     if (!window.Echo || !PLANT_ID) return;
 
-    window.Echo.channel(`plant.${PLANT_ID}`)
+    Echo.channel(`plant.${PLANT_ID}`)
         .listen('.ButtonPressed', (e) => {
             showToast(e.message ?? '💧 Annaffiatura rilevata!', 'success');
             PlantViewer?.playWatering();
