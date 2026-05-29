@@ -9,7 +9,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ButtonPressed implements ShouldBroadcastNow
+class ButtonPressed implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -26,7 +26,7 @@ class ButtonPressed implements ShouldBroadcastNow
     {
         // Canale specifico per pianta, così il browser ascolta solo la sua
         return [
-            new Channel("plant.{$this->plantId}"),
+            new Channel("plant.{$this->plantId}")
         ];
     }
 

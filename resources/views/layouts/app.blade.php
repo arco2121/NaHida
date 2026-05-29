@@ -10,7 +10,7 @@
     <meta name="env"
           content="{{ json_encode(collect($_ENV)->concat(getenv())->filter(fn($value,$key) => str_starts_with($key, 'VITE_'))->all()) }}">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet"/>
-    <link href="/assets/manifest.json" rel="manifest" />
+    <link href="{{ asset("manifest.json") }}" rel="manifest" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('components.live2d_import')
 </head>
