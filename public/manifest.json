@@ -1,0 +1,43 @@
+{
+    "name": "NaHida",
+    "short_name": "NaHida",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "natural",
+    "categories": ["care", "plants"],
+    "description": "NaHida è un sistema IoT composto da un dispositivo ESP32 con sensori ambientali e una Progressive Web App (PWA) che consente all'utente di monitorare in tempo reale lo stato delle proprie piante, ricevere notifiche sulle annaffiature e visualizzare i dati storici.",
+    "icons": [
+        {
+            "src": "/assets/NaHida_Icon.png",
+            "sizes": "1280x1280",
+            "type": "image/png"
+        },
+        {
+            "src": "/assets/NaHida_Icon.png",
+            "sizes": "1280x1280",
+            "type": "image/png"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Le mie piante",
+            "url": "/plants",
+            "icons": [
+                {
+                    "src": "/assets/NaHida_Plant.png",
+                    "sizes": "200x200"
+                }
+            ]
+        },
+        {
+            "name": "Impostazioni",
+            "url": "/settings",
+            "icons": [
+                {
+                    "src": "/assets/NaHida_Plant.png",
+                    "sizes": "200x200"
+                }
+            ]
+        }
+    ]
+}
