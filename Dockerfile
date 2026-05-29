@@ -47,7 +47,7 @@ EXPOSE 10000
 # 2. php artisan serve (Server Web sulla 10000)
 # 3. Reverb (Websocket)
 # 4. MQTT Client
-CMD php artisan migrate:fresh && \
+CMD php artisan migrate && \
     php artisan storage:link && \
     php artisan config:cache && \
     php artisan route:cache && \
