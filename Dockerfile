@@ -51,7 +51,6 @@ CMD php artisan migrate:fresh && \
     php artisan storage:link && \
     php artisan config:cache && \
     php artisan route:cache && \
-    php artisan db:seed && \
     concurrently \
     "php artisan serve --host=0.0.0.0 --port=10000" \
     "php artisan reverb:start --host=0.0.0.0 --port=8080" \
