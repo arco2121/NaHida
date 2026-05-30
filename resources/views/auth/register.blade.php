@@ -35,7 +35,7 @@
                 <label class="label">Conferma Password</label>
                 <input type="password" name="password_confirmation" class="input" id="passwordInput" placeholder="Password"/>
 
-                <a href="{{ route('login') }}" class="label-text-alt link link-hover">Hai un account? Loggati</a>
+                <a href="{{ route('login') }}" class="label-text-alt link link-hover">Hai già un account? Accedi</a>
 
                 @if ($errors->any())
                     <div class="p-2 text-center">
