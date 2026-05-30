@@ -40,6 +40,7 @@
 
                 <button class="btn btn-neutral mt-4" type="submit">Accedi</button>
             </fieldset>
+            <a href="/register">Oppure registrati</a>
         </form>
     </div>
 </div>
