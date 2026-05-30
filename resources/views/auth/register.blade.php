@@ -35,6 +35,8 @@
                 <label class="label">Conferma Password</label>
                 <input type="password" name="password_confirmation" class="input" id="passwordInput" placeholder="Password"/>
 
+                <a href="{{ login }}" class="label-text-alt link link-hover">Oppure loggati</a>
+
                 @if ($errors->any())
                     <div class="p-2 text-center">
                         <ul>
@@ -47,7 +49,6 @@
 
                 <button class="btn btn-neutral mt-4" type="submit">Registrati</button>
             </fieldset>
-            <a href="/login">Oppure loggati</a>
         </form>
     </div>
 </div>
