@@ -37,7 +37,7 @@
                 @endif
 
                 <a href="{{ route('password.request') }}" class="label-text-alt link link-hover">Password dimenticata?</a>
-                <a href="{{ route('register') }}" class="label-text-alt link link-hover">Oppure registrati</a>
+                <a href="{{ route('register') }}" class="label-text-alt link link-hover">Nom hai un account? Registrati</a>
 
                 <button class="btn btn-neutral mt-4" type="submit">Accedi</button>
             </fieldset>
