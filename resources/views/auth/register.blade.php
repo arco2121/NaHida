@@ -47,6 +47,7 @@
 
                 <button class="btn btn-neutral mt-4" type="submit">Registrati</button>
             </fieldset>
+            <a href="/login">Oppure loggati</a>
         </form>
     </div>
 </div>
