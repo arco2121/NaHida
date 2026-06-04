@@ -160,7 +160,7 @@
                         $hasDevice = $plant->device !== null;
                         $isOnline  = $hasDevice
                             && $plant->device->last_seen_at
-                            && $plant->device->last_seen_at->diffInSeconds(now()) < 60;
+                            && $plant->device->last_seen_at->diffInSeconds(now()) < 30;
 
                         $deviceValue = match(true) {
                             !$hasDevice => 'none',

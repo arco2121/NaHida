@@ -34,7 +34,7 @@
             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
         </form>
         <h3 class="text-lg font-bold mb-1">Collega dispositivo</h3>
-        <p class="text-sm text-base-content/60 mb-4">Inserisci il token del tuo dispositivo ESP32.</p>
+        <p class="text-sm text-base-content/60 mb-4">Inserisci il token del tuo dispositivo NaHida.</p>
 
         <div id="device_status_row" class="flex items-center gap-2 mb-4 hidden">
             <span id="device_status_badge" class="badge badge-success gap-1">Online</span>

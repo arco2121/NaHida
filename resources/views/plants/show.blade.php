@@ -55,7 +55,7 @@
 
         $isOnline = $device
             && $device->last_seen_at
-            && $device->last_seen_at->diffInSeconds(now()) < 90;
+            && $device->last_seen_at->diffInSeconds(now()) < 30;
 
         $luxMin = $plant->lux_min ?? 0;
         $luxMax = $plant->lux_max ?? 100000;
