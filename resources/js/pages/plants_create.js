@@ -4,6 +4,10 @@ const TEMPLATES = {
     tropicale:    { hum_min: 60, hum_max: 90, temp_min: 20, temp_max: 35, soil_hum_min: 50, soil_hum_max: 80 },
     mediterraneo: { hum_min: 40, hum_max: 70, temp_min: 15, temp_max: 28, soil_hum_min: 35, soil_hum_max: 65 },
     succulente:   { hum_min: 10, hum_max: 40, temp_min: 15, temp_max: 38, soil_hum_min: 10, soil_hum_max: 35 },
+    basilico: { hum_min: 50, hum_max: 70, temp_min: 20, temp_max: 30, soil_hum_min: 60, soil_hum_max: 80 },
+    monstera: { hum_min: 60, hum_max: 80, temp_min: 18, temp_max: 30, soil_hum_min: 50, soil_hum_max: 70 },
+    aloe:     { hum_min: 20, hum_max: 40, temp_min: 15, temp_max: 30, soil_hum_min: 10, soil_hum_max: 30 },
+    lavanda: { hum_min: 30, hum_max: 50, temp_min: 15, temp_max: 30, soil_hum_min: 20, soil_hum_max: 40 },
     custom:       null,
 };
 
